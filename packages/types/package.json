@@ -1,16 +1,14 @@
 {
-  "name": "@oslo-flanders/mycomponent",
+  "name": "@oslo-flanders/types",
   "version": "0.0.0",
-  "description": "> TODO: description",
+  "description": "Typescript types for OSLO Toolchain components",
   "author": "Dwight Van Lancker <dwight.vanlancker@hotmail.com>",
-  "homepage": "https://github.com/ddvlanck/OSLO-Toolchain/tree/main/packages/mycomponent#readme",
+  "homepage": "https://github.com/ddvlanck/OSLO-Toolchain/tree/main/packages/types#readme",
   "license": "MIT",
-  "lsd:module": true,
   "main": "index.js",
   "typings": "index",
   "directories": {
-    "lib": "lib",
-    "test": "__tests__"
+    "lib": "lib"
   },
   "files": [
     "lib"
@@ -19,10 +17,11 @@
     "type": "git",
     "url": "git+https://github.com/ddvlanck/OSLO-Toolchain.git"
   },
-  "scripts": {
-    "build:components": "componentsjs-generator"
-  },
+  "scripts": {},
   "bugs": {
     "url": "https://github.com/ddvlanck/OSLO-Toolchain/issues"
+  },
+  "dependencies": {
+    "winston": "^3.6.0"
   }
 }

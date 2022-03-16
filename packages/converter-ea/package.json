@@ -1,0 +1,40 @@
+{
+  "name": "@oslo-flanders/ea-to-rdf-converter",
+  "version": "0.0.0",
+  "description": "Converts a UML data model to an OSLO JSON-LD file",
+  "keywords": [
+    "semantic",
+    "web",
+    "oslo",
+    "interoperability",
+    "enterprise",
+    "architect",
+    "data",
+    "json-ld"
+  ],
+  "author": "Dwight Van Lancker <dwight.vanlancker@hotmail.com>",
+  "homepage": "https://github.com/ddvlanck/OSLO-Toolchain/tree/main/packages/converter-ea#readme",
+  "license": "MIT",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ddvlanck/OSLO-Toolchain.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/ddvlanck/OSLO-Toolchain/issues"
+  },
+  "dependencies": {
+    "@oslo-flanders/ea-data-extractor": "^0.0.0",
+    "@oslo-flanders/types": "^0.0.0"
+  }
+}

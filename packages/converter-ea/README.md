@@ -1,11 +1,11 @@
-# `mycomponent`
+# `converter-ea`
 
 > TODO: description
 
 ## Usage
 
 ```
-const mycomponent = require('mycomponent');
+const converterEa = require('converter-ea');
 
 // TODO: DEMONSTRATE API
 ```
