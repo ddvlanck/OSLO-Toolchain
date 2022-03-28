@@ -8,6 +8,7 @@ module.exports = {
   plugins: [
     "eslint-plugin-tsdoc",
     "eslint-plugin-import",
+    "eslint-plugin-jest",
     "eslint-plugin-unused-imports",
   ],
   extends: [
@@ -37,6 +38,7 @@ module.exports = {
     // Default
     "import/group-exports": "off",
     "import/exports-last": "off",
+    "mocha/valid-test-description": "off",
     "unicorn/prefer-at": "off",
     "array-bracket-spacing": "off",
     "linebreak-style": "off",
@@ -182,7 +184,10 @@ module.exports = {
     },
     {
       // Specific rules for test files
-      files: ["**/__tests__/**/*.ts"],
+      files: ["**/test/**/*.ts"],
+      env: {
+        "jest/globals": true,
+      },
       globals: {
         spyOn: false,
         fail: false,

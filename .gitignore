@@ -2,6 +2,7 @@ node_modules
 packages/**/*.js
 packages/**/*.d.ts
 packages/**/*.js.map
+packages/**/coverage
 lerna-debug.log
 packages/**/components/*
 .eslintcache
