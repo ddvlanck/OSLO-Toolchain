@@ -1,21 +1,32 @@
-import { Logger } from '@oslo-flanders/types';
+import { getLoggerFor } from '@oslo-flanders/types';
 import type { EaConnector } from '../types/EaConnector';
-import type { EaElement } from '../types/EaElement';
+import type { EaObject } from '../types/Object';
 import type { Tag } from '../types/Tag';
 
+// TODO: analyze what is best
+// Do we iterate the elements and search for their tags?
+// Or we iterate all tags and search for the corresponding element
+
+/**
+ * Iterates over tags and adds it to the corresponding object.
+ * @param tags - The tags to iterate. Could be element tags, package tags, attribute tags or connector tags.
+ * @param elements - The elements to add the tags to. Could be EaElement, EaPackage, EaAttribute or EaConnector
+ * @param objectIdPropertyName - The property name that contains the object id to whom the tag belongs.
+ * @param tagValueName - The property name that contains the tag value
+ */
 export function addEaTagsToElements(
   tags: any[],
-  elements: EaElement[],
+  elements: EaObject[],
   objectIdPropertyName: string,
   tagValueName: string,
 ): void {
-  const logger = Logger.getInstanceFor('AddEaTagsToElements');
+  const logger = getLoggerFor('AddEaTagsFunction');
 
   tags.forEach(tag => {
     const element = elements.find(x => x.id === tag[objectIdPropertyName]);
 
     if (!element) {
-      //logger.log(LOG_LEVELS[0], `Could not find EA Element with ID ${tag[objectIdPropertyName]} to add tag to.`);
+      logger.warn(`Could not find EaElement with id ${tag[objectIdPropertyName]} to add tag following tag to: ${JSON.stringify(tag, null, 4)}`);
     } else {
       const eaTag: Tag = {
         id: <number>tag.PropertyID,
@@ -28,6 +39,11 @@ export function addEaTagsToElements(
   });
 }
 
+/**
+ * Iterates all connectors and adds the corresponding role tags if added by the editor.
+ * @param tags - The array of role tags.
+ * @param eaConnectors - The array of connectors.
+ */
 export function addRoleTagsToElements(
   tags: any[],
   eaConnectors: EaConnector[],
@@ -46,7 +62,7 @@ export function addRoleTagsToElements(
         tagValue: <string>roleTag.Notes,
       };
 
-      if (roleTag.BaseClass === 'ASSOCIATION_TARGET') {
+      if (roleTag.BaseClass === 'ASSOCIATION_SOURCE') {
         con.sourceRoleTags = con.sourceRoleTags ? [...con.sourceRoleTags, eaRoleTag] : [eaRoleTag];
       }
 

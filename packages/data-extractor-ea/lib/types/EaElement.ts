@@ -1,7 +1,20 @@
-import type { Tag } from './Tag';
+import type { EaObject } from './Object';
 
-export interface EaElement {
-  id: number;
-  name?: string;
-  tags?: Tag[];
+/**
+ * Enumeration to reference the element type
+ */
+export enum ElementType {
+  Class,
+  DataType,
+  Enumeration
+}
+
+// TODO: make it a class
+/**
+ * Represents an element in Enterprise Architect
+ * @see ElementType for possible types of an EaElement
+ */
+export interface EaElement extends EaObject {
+  type: ElementType;
+  packageId: number;
 }

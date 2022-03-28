@@ -1,0 +1,5 @@
+export enum Scope {
+  IN_PACKAGE,
+  IN_PUBLICATION_ENVIRONMENT,
+  EXTERNAL,
+}

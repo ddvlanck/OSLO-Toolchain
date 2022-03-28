@@ -1,8 +1,14 @@
-import type { EaElement } from './EaElement';
+import type { EaObject } from './Object';
 
-// TODO: verify this with existing OSLO-EA-to-RDF
-export interface EaPackage extends EaElement {
-  name: string;
+/**
+ * Represents a package in Enterprise Architect
+ *
+ * A package has two fields pointing to an identifier:
+ * - id (inferred from EaObject) - references the object id
+ * - packageId - references the actual packageId which must be used by other objects
+ * to refer to the package
+ */
+export interface EaPackage extends EaObject {
   packageId: number;
   parentId: number;
 }

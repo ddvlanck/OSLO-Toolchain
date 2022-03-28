@@ -1,39 +1,53 @@
 {
-  "name": "@oslo-flanders/ea-data-extractor",
-  "version": "0.0.0",
-  "description": "Extracts the data from an Enterprise Architect file",
-  "keywords": [
-    "oslo",
-    "semantic",
-    "web",
-    "interoperability",
-    "enterprise",
-    "architect"
-  ],
-  "author": "Dwight Van Lancker <dwight.vanlancker@hotmail.com>",
-  "homepage": "https://github.com/ddvlanck/OSLO-Toolchain/tree/main/packages/data-extractor-ea#readme",
-  "license": "MIT",
-  "main": "index.js",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
-  "files": [
-    "lib"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ddvlanck/OSLO-Toolchain.git"
-  },
-  "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
-  },
-  "bugs": {
-    "url": "https://github.com/ddvlanck/OSLO-Toolchain/issues"
-  },
-  "dependencies": {
-    "@oslo-flanders/types": "^0.0.0",
-    "mdb-reader": "^1.0.9",
-    "node-fetch": "2.6.7"
-  }
+	"name": "@oslo-flanders/ea-data-extractor",
+	"version": "0.0.0",
+	"description": "Extracts the data from an Enterprise Architect file",
+	"keywords": [
+		"oslo",
+		"semantic",
+		"web",
+		"interoperability",
+		"enterprise",
+		"architect"
+	],
+	"author": "Dwight Van Lancker <dwight.vanlancker@hotmail.com>",
+	"homepage": "https://github.com/ddvlanck/OSLO-Toolchain/tree/main/packages/data-extractor-ea#readme",
+	"license": "MIT",
+	"main": "index.js",
+	"directories": {
+		"lib": "lib",
+		"test": "__tests__"
+	},
+	"files": [
+		"lib"
+	],
+	"jest": {
+		"globals": {
+			"ts-jest": {
+				"tsconfig": "../../tsconfig.json"
+			}
+		},
+		"transform": {
+			"^.+\\.ts$": "ts-jest"
+		},
+		"testRegex": "/test/.*.test.ts$",
+		"moduleFileExtensions": [
+			"ts",
+			"js"
+		],
+		"collectCoverage": true
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ddvlanck/OSLO-Toolchain.git"
+	},
+	"bugs": {
+		"url": "https://github.com/ddvlanck/OSLO-Toolchain/issues"
+	},
+	"dependencies": {
+		"@oslo-flanders/types": "^0.0.0",
+		"alasql": "^1.7.3",
+		"mdb-reader": "^1.0.9",
+		"node-fetch": "2.6.7"
+	}
 }

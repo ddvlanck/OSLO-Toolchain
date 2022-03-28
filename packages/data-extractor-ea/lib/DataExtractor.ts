@@ -1,19 +1,33 @@
-import { readFile, stat } from 'fs/promises';
-import { Logger } from '@oslo-flanders/types';
+import { fetchFileOrUrl, getLoggerFor } from '@oslo-flanders/types';
 import MDBReader from 'mdb-reader';
-import type { EaAttribute } from './types/EaAttribute';
-import type { EaClass } from './types/EaClass';
-import type { EaConnector } from './types/EaConnector';
+import { loadAttributes } from './AttributeLoader';
+import { loadDiagrams } from './DiagramLoader';
+import { loadElementConnectors } from './ElementConnectorLoader';
+import { loadElements } from './ElementLoader';
+import { loadPackages } from './PackageLoader';
 import { EaDocument } from './types/EaDocument';
-import type { EaPackage } from './types/EaPackage';
-import { addEaTagsToElements, addRoleTagsToElements } from './utils/tag';
+import { addEaTagsToElements } from './utils/tag';
 
-// eslint-disable-next-line import/no-commonjs
-const fetch = require('node-fetch');
+export enum EaTable {
+  Diagram = 't_diagram',
+  DiagramObject = 't_diagramobjects',
+  DiagramLink = 't_diagramlinks',
+  Connector = 't_connector',
+  ConnectorTag = 't_connectortag',
+  ConnectorRoleTag = 't_taggedvalue',
+  ClassAndPackage = 't_object',
+  ClassAndPackageTag = 't_objectproperties',
+  Package = 't_package',
+  Object = 't_object',
+  Attribute = 't_attribute',
+  AttributeTag = 't_attributetag'
+}
+
+// FIXME: what to do with imported packages (see ap Persoon)
 
 export class DataExtractor {
-  public file: string;
-  private readonly logger = Logger.getInstanceFor(this);
+  private readonly file: string;
+  private readonly logger = getLoggerFor(this);
 
   public constructor(file: string) {
     this.file = file;
@@ -22,105 +36,21 @@ export class DataExtractor {
   public async extractData(): Promise<EaDocument> {
     this.logger.info(`Start extraction data from ${this.file}`);
 
-    const buffer = await this.fetchFileOrUrl();
+    const buffer = await fetchFileOrUrl(this.file);
     const eaReader = new MDBReader(buffer);
 
-    const [connectors, attributes, [packages, classes]] =
-      await Promise.all([
-        this.extractConnectorsAndTags(eaReader),
-        this.extractAttributesAndTags(eaReader),
-        this.extractClassesAndPackagesAndTags(eaReader)]);
+    const packages = loadPackages(eaReader);
+    const elements = loadElements(eaReader);
 
-    return new EaDocument(connectors, classes, attributes, packages);
-  }
+    // Object tags contains tags for packages and elements.
+    // If tags are added in the load function, then warnings are logged because one is not present
+    const objectTags = eaReader.getTable(EaTable.ClassAndPackageTag).getData();
+    addEaTagsToElements(objectTags, [...packages, ...elements], 'Object_ID', 'Value');
 
-  private async extractConnectorsAndTags(reader: MDBReader): Promise<EaConnector[]> {
-    const connectors = reader.getTable('t_connector').getData();
-    const eaConnectors = connectors.map(connector => <EaConnector>{
-      id: connector.Connector_ID,
-      sourceObjectId: connector.Start_Object_ID,
-      destinationObjectId: connector.End_Object_ID,
-      name: connector.Name ? connector.Name : undefined,
-      type: connector.Connector_Type,
-      sourceCardinality: connector.SourceCard,
-      destinationCardinality: connector.DestCard,
-      sourceRole: connector.SourceRole,
-      destinationRole: connector.DestRole,
-      associationClassId: connector.SubType === 'Class' ? Number.parseInt(<string>connector.PDATA1, 10) : undefined,
-      guid: connector.ea_guid,
-    });
+    const attributes = loadAttributes(eaReader, elements.map(x => x.id));
+    const elementConnectors = loadElementConnectors(eaReader);
+    const diagrams = loadDiagrams(eaReader, elementConnectors);
 
-    const connectorTags = reader.getTable('t_connectortag').getData();
-    addEaTagsToElements(connectorTags, eaConnectors, 'ElementID', 'VALUE');
-
-    const roleTags = reader.getTable('t_taggedvalue').getData();
-    addRoleTagsToElements(roleTags, eaConnectors);
-
-    return eaConnectors;
-  }
-
-  private async extractClassesAndPackagesAndTags(reader: MDBReader): Promise<[EaPackage[], EaClass[]]> {
-    const objects = reader.getTable('t_object').getData();
-
-    const eaPackages: EaPackage[] = [];
-    const eaClasses: EaClass[] = [];
-
-    objects.forEach(object => {
-      if (object.Object_Type === 'Package') {
-        const eaPackage: EaPackage = {
-          id: <number>object.Object_ID,
-          name: <string>object.Name,
-          packageId: <number>object.Package_ID,
-          parentId: <number>object.ParentID,
-        };
-
-        eaPackages.push(eaPackage);
-      }
-
-      if (object.Object_Type === 'Class') {
-        const eaClass: EaClass = {
-          id: <number>object.Object_ID,
-          name: <string>object.Name,
-        };
-
-        eaClasses.push(eaClass);
-      }
-    });
-
-    const objectTags = reader.getTable('t_objectproperties').getData();
-    addEaTagsToElements(objectTags, [...eaClasses, ...eaPackages], 'Object_ID', 'Value');
-
-    return [eaPackages, eaClasses];
-  }
-
-  private async extractAttributesAndTags(reader: MDBReader): Promise<EaAttribute[]> {
-    const attributes = reader.getTable('t_attribute').getData();
-    const eaAttributes: EaAttribute[] = attributes.map(attribute => <EaAttribute>{
-      id: attribute.ID,
-      classId: attribute.Object_ID,
-      name: attribute.Name,
-      type: attribute.Type,
-      lowerBound: attribute.LowerBound,
-      upperBound: attribute.UpperBound,
-    });
-
-    const attributeTags = reader.getTable('t_attributetag').getData();
-    addEaTagsToElements(attributeTags, eaAttributes, 'ElementID', 'VALUE');
-
-    return eaAttributes;
-  }
-
-  private async fetchFileOrUrl(): Promise<Buffer> {
-    if (this.file.startsWith('http://') || this.file.startsWith('https://')) {
-      return (await fetch(this.file)).buffer();
-    }
-    if (this.file.startsWith('file://')) {
-      this.file = this.file.slice(7);
-    }
-    if (!(await stat(this.file)).isFile()) {
-      throw new Error(`Path does not refer to a valid file: ${this.file}`);
-    }
-    // FIXME: handle all paths
-    return readFile(this.file);
+    return new EaDocument(elementConnectors, attributes, elements, packages, diagrams);
   }
 }

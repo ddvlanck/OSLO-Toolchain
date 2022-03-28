@@ -1,7 +1,29 @@
-import type { EaElement } from './EaElement';
+import type { EaObject } from './Object';
 import type { Tag } from './Tag';
 
-export interface EaConnector extends EaElement {
+/**
+ * Enumeration used to specify the type of a connector
+ */
+export enum ConnectorType {
+  Aggregation = 'Aggregation',
+  Association = 'Association',
+  Generalization = 'Generalization'
+}
+
+/**
+ * Enumeration used to specify the direction of a connector
+ */
+export enum ConnectorDirection {
+  Unspecified,
+  SourceToDest,
+  Bidirectional,
+  DestToSource,
+}
+
+/**
+ * Represents a connector in Enterprise Architect
+ */
+export interface EaConnector extends EaObject {
   sourceObjectId: number;
   destinationObjectId: number;
   type: string;
@@ -9,10 +31,12 @@ export interface EaConnector extends EaElement {
   destinationCardinality?: string;
   sourceRole?: string;
   destinationRole?: string;
-  associationClassId: number;
-
-  // This is needed to extract connector role tags when present
-  guid: string;
+  associationClassId?: number;
   sourceRoleTags?: Tag[];
   destinationRoleTags?: Tag[];
+  direction: ConnectorDirection;
+
+  // These properties are derived in the DiagramLoader
+  diagramGeometryDirection: ConnectorDirection;
+  hidden: boolean;
 }
