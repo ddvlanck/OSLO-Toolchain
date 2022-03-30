@@ -6,18 +6,16 @@ import { createLogger, transports, format } from 'winston';
  *
  */
 
-// FIXME: once logger is initialized with a class, we can't change its name
-// TODO: make name changeable
-
 export class Logger {
   private readonly logger: WinstonLogger;
+  private readonly label: string;
 
   public constructor(label: string) {
     this.logger = this.createWinstonLogger(label);
+    this.label = label;
   }
 
   public log(level: string, message: string, meta?: any): WinstonLogger {
-    // TODO
     return this.logger.log(level, message, meta);
   }
 
