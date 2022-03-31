@@ -1,0 +1,61 @@
+{
+  "name": "@oslo-flanders/oslo-contributor",
+  "version": "0.0.0",
+  "description": "Package that extract contributors from a stakeholders file",
+  "keywords": [
+    "oslo",
+    "semantic",
+    "web",
+    "stakeholders"
+  ],
+  "author": "Dwight Van Lancker <dwight.vanlancker@hotmail.com>",
+  "homepage": "https://github.com/ddvlanck/OSLO-Toolchain/tree/main/packages/contributor-oslo#readme",
+  "license": "MIT",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "jest": {
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testRegex": "/test/.*.test.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "collectCoverage": true,
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "index.js"
+    ],
+    "testEnvironment": "node",
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ddvlanck/OSLO-Toolchain.git"
+  },
+  "scripts": {
+    "test": "node \"../../node_modules/jest/bin/jest.js\"",
+    "test:verbose": "node \"../../node_modules/jest/bin/jest.js\" --verbose"
+  },
+  "bugs": {
+    "url": "https://github.com/ddvlanck/OSLO-Toolchain/issues"
+  },
+  "dependencies": {
+    "@oslo-flanders/types": "^0.0.0",
+    "csv-parse": "^5.0.4"
+  }
+}
