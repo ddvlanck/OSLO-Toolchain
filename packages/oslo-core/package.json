@@ -1,7 +1,7 @@
 {
-  "name": "@oslo-flanders/types",
+  "name": "@oslo-flanders/core",
   "version": "0.0.0",
-  "description": "Typescript types for OSLO Toolchain components",
+  "description": "Core package for the OSLO Toolchain",
   "author": "Dwight Van Lancker <dwight.vanlancker@hotmail.com>",
   "homepage": "https://github.com/ddvlanck/OSLO-Toolchain/tree/main/packages/types#readme",
   "license": "MIT",
