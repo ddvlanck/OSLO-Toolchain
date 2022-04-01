@@ -1,5 +1,5 @@
 {
-	"name": "@oslo-flanders/ea-data-extractor",
+	"name": "@oslo-flanders/ea-extractor",
 	"version": "0.0.0",
 	"description": "Extracts the data from an Enterprise Architect file",
 	"keywords": [
@@ -45,9 +45,9 @@
 		"url": "https://github.com/ddvlanck/OSLO-Toolchain/issues"
 	},
 	"dependencies": {
-		"@oslo-flanders/types": "^0.0.0",
+		"@oslo-flanders/core": "^0.0.0",
 		"alasql": "^1.7.3",
-		"mdb-reader": "^1.0.9",
+		"mdb-reader": "^1.2.1",
 		"node-fetch": "2.6.7"
 	}
 }

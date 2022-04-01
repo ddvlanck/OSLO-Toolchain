@@ -1,4 +1,4 @@
-import { fetchFileOrUrl, getLoggerFor } from '@oslo-flanders/types';
+import { fetchFileOrUrl, getLoggerFor } from '@oslo-flanders/core';
 import MDBReader from 'mdb-reader';
 import { loadAttributes } from './AttributeLoader';
 import { loadDiagrams } from './DiagramLoader';
