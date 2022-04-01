@@ -1,5 +1,5 @@
-import type { Person } from '@oslo-flanders/types';
-import { ContributorType, getLoggerFor, fetchFileOrUrl } from '@oslo-flanders/types';
+import type { Person } from '@oslo-flanders/core';
+import { ContributorType, getLoggerFor, fetchFileOrUrl } from '@oslo-flanders/core';
 import type { Parser } from 'csv-parse';
 import { parse } from 'csv-parse';
 

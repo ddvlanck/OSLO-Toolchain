@@ -1,7 +1,7 @@
 {
-  "name": "@oslo-flanders/oslo-contributor",
+  "name": "@oslo-flanders/stakeholder-extractor",
   "version": "0.0.0",
-  "description": "Package that extract contributors from a stakeholders file",
+  "description": "Package that extract the stakeholders from a csv file",
   "keywords": [
     "oslo",
     "semantic",
@@ -55,7 +55,7 @@
     "url": "https://github.com/ddvlanck/OSLO-Toolchain/issues"
   },
   "dependencies": {
-    "@oslo-flanders/types": "^0.0.0",
+    "@oslo-flanders/core": "^0.0.0",
     "csv-parse": "^5.0.4"
   }
 }
