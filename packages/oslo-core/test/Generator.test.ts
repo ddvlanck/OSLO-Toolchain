@@ -1,5 +1,5 @@
 import { mock } from 'jest-mock-extended';
-import type { Generator } from '../lib/Generator';
+import type { Generator } from '../lib/interfaces/Generator';
 
 describe('Generator', () => {
   it('should generate an artifact', async () => {

@@ -1,5 +1,5 @@
 import { mock } from 'jest-mock-extended';
-import type { Converter } from '../lib/Converter';
+import type { Converter } from '../lib/interfaces/Converter';
 
 describe('Converter', () => {
   it('should convert and UML diagram to the intermediary format', async () => {
