@@ -24,8 +24,8 @@
     {
       "@id": "ex:Configuration",
       "@type": "Configuration",
-      "Configuration:_diagramName" : "MijnDomeinMetPackages",
-      "Configuration:_umlFile" : "https://github.com/Informatievlaanderen/OSLOthema-toolchainTestbed/blob/master/testAssociatiesMijnDomeinMetPackages.EAP?raw=true"
+      "Configuration:_diagramName" : "MijnDomeinMetPackages2",
+      "Configuration:_umlFile" : "https://github.com/Informatievlaanderen/OSLOthema-toolchainTestbed/blob/master/testAssociatiesMijnDomeinMetPackages2.EAP?raw=true"
     }
   ]
   

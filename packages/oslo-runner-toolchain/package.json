@@ -1,0 +1,29 @@
+{
+	"name": "@oslo-flanders/toolchain-runner",
+	"version": "0.0.0",
+	"description": "> TODO: description",
+	"author": "Dwight Van Lancker <dwight.vanlancker@hotmail.com>",
+	"homepage": "https://github.com/ddvlanck/OSLO-Toolchain/tree/main/packages/runner#readme",
+	"license": "MIT",
+	"main": "index.js",
+	"lsd:module": true,
+	"typings": "index",
+	"directories": {
+		"lib": "lib",
+		"test": "__tests__"
+	},
+	"files": [
+		"lib"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ddvlanck/OSLO-Toolchain.git"
+	},
+	"bugs": {
+		"url": "https://github.com/ddvlanck/OSLO-Toolchain/issues"
+	},
+	"dependencies": {
+		"@oslo-flanders/core": "^0.0.0",
+		"componentsjs": "^5.0.1"
+	}
+}
