@@ -86,40 +86,6 @@ export function connectorHasOldAssociationClassTags(connector: EaConnector): boo
   return hasOldClassTags;
 }
 
-/*function extractAssociationElementWithDeprecatedTags(
-  connector: EaConnector,
-  direction: ConnectorDirection,
-): EaConnector[] {
-  if (!connector.associationClassId) {
-    return [connector];
-  }
-
-  const prefixes: string[] = [
-    TagName.AssociationSourcePrefix,
-    TagName.AssociationSourceRevPrefix,
-    TagName.AssociationDestPrefix,
-    TagName.AssociationDestRevPrefix,
-  ];
-
-  let connectionParts: number[] = [
-    AssociationClassConnectionPart.SourceToAssociation,
-    AssociationClassConnectionPart.AssociationToSource,
-    AssociationClassConnectionPart.AssociationToDestination,
-    AssociationClassConnectionPart.DestinationToAssociation,
-  ];
-
-  if (direction === ConnectorDirection.DestToSource) {
-    connectionParts = connectionParts.reverse();
-  }
-
-  const connectors: EaConnector[] = [];
-  for (let i = 0; i < 4; i++) {
-    connectors.push(new AssociationClassConnector(connector, connectionParts[i], prefixes[i]));
-  }
-
-  return connectors;
-}*/
-
 export function normalize(connector: EaConnector, normalizedConnectors: NormalizedConnector[]): void {
   if (connector.sourceRole && connector.sourceRole !== '') {
     normalizedConnectors.push(new NormalizedConnector(
