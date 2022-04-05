@@ -1,7 +1,7 @@
 import alasql from 'alasql';
 import type MDBReader from 'mdb-reader';
 import { EaTable } from './DataExtractor';
-import type { EaPackage } from './types/EaPackage';
+import { EaPackage } from './types/EaPackage';
 
 export function loadPackages(eaReader: MDBReader): EaPackage[] {
   const packages = eaReader.getTable(EaTable.Package).getData();
@@ -13,12 +13,23 @@ export function loadPackages(eaReader: MDBReader): EaPackage[] {
     LEFT JOIN ? element ON package.ea_guid = element.ea_guid`;
 
   // TODO: add stereotype and note
-  const eaPackages = (<any[]>alasql(query, [packages, elements])).map(item => <EaPackage>{
-    id: <number>item.Object_ID,
-    name: <string>item.Name,
-    packageId: <number>item.Package_ID,
-    parentId: <number>item.Parent_ID,
-    guid: <string>item.ea_guid,
+  const eaPackages = (<any[]>alasql(query, [packages, elements])).map(item => new EaPackage(
+    <number>item.Object_ID,
+    <string>item.ea_guid,
+    <string>item.Name,
+    <number>item.Package_ID,
+    <number>item.Parent_ID,
+  ));
+
+  eaPackages.forEach(_package => {
+    const parentPackage = eaPackages.find(x => x.packageId === _package.parentId);
+
+    if (!parentPackage) {
+      // Log error
+      return;
+    }
+
+    _package.setParent(parentPackage);
   });
 
   return eaPackages;

@@ -1,4 +1,4 @@
-import type { EaObject } from './Object';
+import { EaObject } from './Object';
 
 /**
  * Enumeration to reference the element type
@@ -14,7 +14,34 @@ export enum ElementType {
  * Represents an element in Enterprise Architect
  * @see ElementType for possible types of an EaElement
  */
-export interface EaElement extends EaObject {
-  type: ElementType;
-  packageId: number;
+export class EaElement extends EaObject {
+  public readonly type: ElementType;
+  public readonly packageId: number;
+  private _path: string | undefined;
+
+  public constructor(
+    id: number,
+    guid: string,
+    name: string,
+    type: ElementType,
+    packageId: number,
+  ) {
+    super(id, guid, name);
+
+    this.type = type;
+    this.packageId = packageId;
+  }
+
+  public path(): string {
+    if (!this._path) {
+      // Log error that path was not set yet
+      return this.name;
+    }
+
+    return this._path;
+  }
+
+  public setPath(value: string): void {
+    this._path = value;
+  }
 }

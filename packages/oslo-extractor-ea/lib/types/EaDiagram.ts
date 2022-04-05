@@ -1,10 +1,37 @@
-import type { EaObject } from './Object';
+import { EaObject } from './Object';
 
 /**
  * Represents a diagram in Enterprise Architect
  */
-export interface EaDiagram extends EaObject {
-  packageId: number;
-  connectorsIds: number[];
-  elementIds: number[];
+export class EaDiagram extends EaObject {
+  public readonly packageId: number;
+  public connectorsIds: number[];
+  public elementIds: number[];
+  private _path: string | undefined;
+
+  public constructor(
+    id: number,
+    guid: string,
+    name: string,
+    packageId: number,
+  ) {
+    super(id, guid, name);
+
+    this.packageId = packageId;
+    this.connectorsIds = [];
+    this.elementIds = [];
+  }
+
+  public path(): string {
+    if (!this._path) {
+      // Log error
+      return this.name;
+    }
+
+    return this._path;
+  }
+
+  public setPath(path: string): void {
+    this._path = path;
+  }
 }

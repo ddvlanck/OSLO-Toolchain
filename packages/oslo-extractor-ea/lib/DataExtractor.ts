@@ -40,16 +40,16 @@ export class DataExtractor {
     const eaReader = new MDBReader(buffer);
 
     const packages = loadPackages(eaReader);
-    const elements = loadElements(eaReader);
+    const elements = loadElements(eaReader, packages);
 
     // Object tags contains tags for packages and elements.
     // If tags are added in the load function, then warnings are logged because one is not present
     const objectTags = eaReader.getTable(EaTable.ClassAndPackageTag).getData();
     addEaTagsToElements(objectTags, [...packages, ...elements], 'Object_ID', 'Value');
 
-    const attributes = loadAttributes(eaReader, elements.map(x => x.id));
-    const elementConnectors = loadElementConnectors(eaReader);
-    const diagrams = loadDiagrams(eaReader, elementConnectors);
+    const attributes = loadAttributes(eaReader, elements);
+    const elementConnectors = loadElementConnectors(eaReader, elements);
+    const diagrams = loadDiagrams(eaReader, elementConnectors, packages);
 
     return new EaDocument(elementConnectors, attributes, elements, packages, diagrams);
   }

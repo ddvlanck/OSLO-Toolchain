@@ -1,23 +1,27 @@
 import alasql from 'alasql';
 import type MDBReader from 'mdb-reader';
 import { EaTable } from './DataExtractor';
-import { ElementType } from './types/EaElement';
-import type { EaElement } from './types/EaElement';
+import { ElementType, EaElement } from './types/EaElement';
 
-export function loadElements(reader: MDBReader): EaElement[] {
+import type { EaPackage } from './types/EaPackage';
+
+export function loadElements(reader: MDBReader, packages: EaPackage[]): EaElement[] {
   const objects = reader.getTable(EaTable.Object).getData();
   const query = `
     SELECT Object_ID, Object_Type, Name, Note, Package_ID, Stereotype, ea_guid
     FROM ? object
     WHERE Object_Type IN ('Class', 'DataType', 'Enumeration')`;
 
-  return (<any[]>alasql(query, [objects])).map(item => <EaElement>{
-    id: <number>item.Object_ID,
-    type: getElementType(<string>item.Object_Type),
-    name: <string>item.Name,
-    packageId: <number>item.Package_ID,
-    guid: <string>item.ea_guid,
-  });
+  const eaElements = (<any[]>alasql(query, [objects])).map(item => new EaElement(
+    <number>item.Object_ID,
+    <string>item.ea_guid,
+    <string>item.Name,
+    getElementType(<string>item.Object_Type),
+    <number>item.Package_ID,
+  ));
+
+  eaElements.forEach(element => setPath(element, packages));
+  return eaElements;
 }
 
 function getElementType(type: string): ElementType {
@@ -34,4 +38,18 @@ function getElementType(type: string): ElementType {
     default:
       throw new Error(`Invalid element type: ${type}`);
   }
+}
+
+function setPath(element: EaElement, packages: EaPackage[]): void {
+  const elementPackage = packages.find(x => x.packageId === element.packageId);
+  let path: string;
+
+  if (!elementPackage) {
+    // Log error
+    path = element.name;
+  } else {
+    path = `${elementPackage.path()}:${element.name}`;
+  }
+
+  element.setPath(path);
 }

@@ -1,4 +1,4 @@
-import type { EaObject } from './Object';
+import { EaObject } from './Object';
 import type { Tag } from './Tag';
 
 /**
@@ -23,20 +23,64 @@ export enum ConnectorDirection {
 /**
  * Represents a connector in Enterprise Architect
  */
-export interface EaConnector extends EaObject {
-  sourceObjectId: number;
-  destinationObjectId: number;
-  type: string;
-  sourceCardinality?: string;
-  destinationCardinality?: string;
-  sourceRole?: string;
-  destinationRole?: string;
-  associationClassId?: number;
-  sourceRoleTags?: Tag[];
-  destinationRoleTags?: Tag[];
-  direction: ConnectorDirection;
+export class EaConnector extends EaObject {
+  public readonly sourceObjectId: number;
+  public readonly destinationObjectId: number;
+  public readonly type: string;
+  public readonly sourceCardinality: string;
+  public readonly destinationCardinality: string;
+  public readonly sourceRole: string;
+  public readonly destinationRole: string;
+  public readonly associationClassId?: number | null;
+  public sourceRoleTags?: Tag[];
+  public destinationRoleTags?: Tag[];
+  public readonly direction: ConnectorDirection;
+  private _path: string | undefined;
 
   // These properties are derived in the DiagramLoader
-  diagramGeometryDirection: ConnectorDirection;
-  hidden: boolean;
+  public diagramGeometryDirection: ConnectorDirection;
+  public hidden: boolean;
+
+  public constructor(
+    id: number,
+    guid: string,
+    name: string,
+    type: string,
+    sourceObjectId: number,
+    destinationObjectId: number,
+    sourceCardinality: string,
+    destinationCardinality: string,
+    sourceRole: string,
+    destinationRole: string,
+    associationClassId: number | null,
+    direction: ConnectorDirection,
+  ) {
+    super(id, guid, name);
+
+    this.type = type;
+    this.sourceObjectId = sourceObjectId;
+    this.destinationObjectId = destinationObjectId;
+    this.sourceCardinality = sourceCardinality;
+    this.destinationCardinality = destinationCardinality;
+    this.sourceRole = sourceRole;
+    this.destinationRole = destinationRole;
+    this.associationClassId = associationClassId;
+    this.direction = direction;
+
+    this.diagramGeometryDirection = ConnectorDirection.Unspecified;
+    this.hidden = false;
+  }
+
+  public path(): string {
+    if (!this._path) {
+      // Log error
+      return this.name;
+    }
+
+    return this._path;
+  }
+
+  public setPath(path: string): void {
+    this._path = path;
+  }
 }

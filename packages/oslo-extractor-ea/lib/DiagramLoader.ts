@@ -3,18 +3,21 @@ import type MDBReader from 'mdb-reader';
 import { EaTable } from './DataExtractor';
 import type { EaConnector } from './types/EaConnector';
 import { ConnectorDirection } from './types/EaConnector';
-import type { EaDiagram } from './types/EaDiagram';
+import { EaDiagram } from './types/EaDiagram';
+import type { EaPackage } from './types/EaPackage';
 import { resolveConnectorDirection } from './utils/connectorDirectionResolver';
 
-export function loadDiagrams(reader: MDBReader, elementConnectors: EaConnector[]): EaDiagram[] {
+export function loadDiagrams(reader: MDBReader, elementConnectors: EaConnector[], packages: EaPackage[]): EaDiagram[] {
   const diagrams = reader.getTable(EaTable.Diagram).getData();
 
-  const eaDiagrams = diagrams.map(item => <EaDiagram>{
-    id: <number>item.Diagram_ID,
-    packageId: <number>item.Package_ID,
-    name: <string>item.Name,
-    guid: <string>item.ea_guid,
-  });
+  const eaDiagrams = diagrams.map(item => new EaDiagram(
+    <number>item.Diagram_ID,
+    <string>item.ea_guid,
+    <string>item.Name,
+    <number>item.Package_ID,
+  ));
+
+  eaDiagrams.forEach(diagram => setPath(diagram, packages));
 
   loadDiagramObjects(reader, eaDiagrams);
   loadDiagramConnectors(reader, eaDiagrams, elementConnectors);
@@ -80,4 +83,18 @@ function loadDiagramConnectors(reader: MDBReader, diagrams: EaDiagram[], element
       [...diagram.connectorsIds, <number>diagramConnector.ConnectorID] :
       [<number>diagramConnector.ConnectorID];
   });
+}
+
+function setPath(diagram: EaDiagram, packages: EaPackage[]): void {
+  const diagramPackage = packages.find(x => x.packageId === diagram.packageId);
+  let path: string;
+
+  if (!diagramPackage) {
+    // Log error
+    path = diagram.name;
+  } else {
+    path = `${diagramPackage.path()}:${diagram.name}`;
+  }
+
+  diagram.setPath(path);
 }

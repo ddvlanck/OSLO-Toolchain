@@ -1,11 +1,12 @@
 import alasql from 'alasql';
 import type MDBReader from 'mdb-reader';
 import { EaTable } from './DataExtractor';
-import type { EaConnector } from './types/EaConnector';
+import { EaConnector } from './types/EaConnector';
+import type { EaElement } from './types/EaElement';
 import { convertToConnectorDirection } from './utils/connectorDirectionResolver';
 import { addEaTagsToElements, addRoleTagsToElements } from './utils/tag';
 
-export function loadElementConnectors(reader: MDBReader): EaConnector[] {
+export function loadElementConnectors(reader: MDBReader, elements: EaElement[]): EaConnector[] {
   const connectors = reader.getTable(EaTable.Connector).getData();
   const objects = reader.getTable(EaTable.Object).getData();
 
@@ -29,20 +30,22 @@ export function loadElementConnectors(reader: MDBReader): EaConnector[] {
     WHERE source.Object_Type in ('Class', 'DataType', 'Enumeration')
       AND destination.Object_Type in ('Class', 'DataType', 'Enumeration')`;
 
-  const eaConnectors = (<any[]>alasql(query, [connectors, objects, objects])).map(item => <EaConnector>{
-    id: <number>item.Connector_ID,
-    name: <string>item.Name ? <string>item.Name : undefined,
-    type: <string>item.Connector_Type,
-    direction: convertToConnectorDirection(<string>item.Direction),
-    sourceObjectId: <number>item.Start_Object_ID,
-    destinationObjectId: <number>item.End_Object_ID,
-    sourceCardinality: <string>item.SourceCard,
-    destinationCardinality: <string>item.DestCard,
-    sourceRole: <string>item.SourceRole,
-    destinationRole: <string>item.DestRole,
-    guid: <string>item.ea_guid,
-    associationClassId: Number.parseInt(<string>item.PDATA1, 10) || null,
-  });
+  const eaConnectors = (<any[]>alasql(query, [connectors, objects, objects])).map(item => new EaConnector(
+    <number>item.Connector_ID,
+    <string>item.ea_guid,
+    <string>item.Name,
+    <string>item.Connector_Type,
+    <number>item.Start_Object_ID,
+    <number>item.End_Object_ID,
+    <string>item.SourceCard,
+    <string>item.DestCard,
+    <string>item.SourceRole,
+    <string>item.DestRole,
+    Number.parseInt(<string>item.PDATA1, 10) || null,
+    convertToConnectorDirection(<string>item.Direction),
+  ));
+
+  eaConnectors.forEach(connector => setPath(connector, elements));
 
   const connectorTags = reader.getTable(EaTable.ConnectorTag).getData();
   addEaTagsToElements(connectorTags, eaConnectors, 'ElementID', 'VALUE');
@@ -51,4 +54,29 @@ export function loadElementConnectors(reader: MDBReader): EaConnector[] {
   addRoleTagsToElements(roleTags, eaConnectors);
 
   return eaConnectors;
+}
+
+function setPath(connector: EaConnector, elements: EaElement[]): void {
+  let path: string;
+  const sourceObject = elements.find(x => x.id === connector.sourceObjectId);
+
+  if (!sourceObject) {
+    // Log error
+    return;
+  }
+
+  if (connector.name) {
+    path = `${sourceObject.path()}:${connector.name}`;
+  } else {
+    const destinationObject = elements.find(x => x.id === connector.destinationObjectId);
+
+    if (!destinationObject) {
+      // Log error
+      return;
+    }
+
+    path = `${sourceObject.path()}:(${sourceObject.name} -> ${destinationObject.name})`;
+  }
+
+  connector.setPath(path);
 }
