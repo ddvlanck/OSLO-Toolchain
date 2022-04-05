@@ -7,6 +7,6 @@ import type { Tag } from './Tag';
 export interface EaObject {
   id: number;
   guid: string;
-  name?: string;
+  name: string;
   tags?: Tag[];
 }

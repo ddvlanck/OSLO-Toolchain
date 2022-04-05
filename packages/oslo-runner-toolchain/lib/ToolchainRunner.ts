@@ -1,4 +1,4 @@
-import type { Converter } from '@oslo-flanders/types';
+import type { Converter } from '@oslo-flanders/core';
 
 export class ToolchainRunner {
   private readonly converter: Converter;

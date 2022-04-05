@@ -9,4 +9,6 @@ export enum TagName {
   AssociationSourceRevPrefix = 'source-rev-',
   AssociationDestPrefix = 'target-',
   AssociationDestRevPrefix = 'target-rev-',
+  LabelNl = 'label-nl',
+  ApLabelNl = 'ap-label-nl'
 }

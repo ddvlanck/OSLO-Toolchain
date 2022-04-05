@@ -1,4 +1,4 @@
-import { getLoggerFor } from '@oslo-flanders/types';
+import { getLoggerFor } from '@oslo-flanders/core';
 import type { EaAttribute } from './EaAttribute';
 import type { EaConnector } from './EaConnector';
 import type { EaDiagram } from './EaDiagram';

@@ -1,9 +1,10 @@
-import type { EaAttribute, EaConnector, EaDiagram, EaElement, EaPackage } from '@oslo-flanders/ea-data-extractor';
-import { ConnectorType, ElementType } from '@oslo-flanders/ea-data-extractor';
+import { getLoggerFor } from '@oslo-flanders/core';
+import type { EaAttribute, EaDiagram, EaElement, EaPackage } from '@oslo-flanders/ea-extractor';
+import { ConnectorType, ElementType } from '@oslo-flanders/ea-extractor';
+import type { NormalizedConnector } from './types/connectors/NormalizedConnector';
 
-import { getLoggerFor } from '@oslo-flanders/types';
 import { TagName } from './types/TagName';
-import { convertToCase, extractAssociationElement, extractUri, getTagValue } from './utils/utils';
+import { convertToCase, extractUri, getTagValue } from './utils/utils';
 
 const backupBaseUri = 'https://fixme.com#';
 
@@ -28,7 +29,8 @@ export class UriAssigner {
   private readonly elementNameToElementMap: Map<string, EaElement[]>;
 
   // Connector id mapped to a URI
-  private readonly connectorIdUriMap: Map<number, string>;
+  // FIXME, cant use id because multiple connectors can share the same id
+  private readonly connectorIdUriMap: Map<string, string>;
 
   public constructor() {
     this.packageIdUriMap = new Map();
@@ -45,16 +47,16 @@ export class UriAssigner {
     packages: EaPackage[],
     elements: EaElement[],
     attributes: EaAttribute[],
-    connectors: EaConnector[],
+    connectors: NormalizedConnector[],
   ): void {
     packages.forEach(_package =>
       this.packageNameToPackageMap
-        .set(_package.name!, [...this.packageNameToPackageMap.get(_package.name!) || [], _package]));
+        .set(_package.name, [...this.packageNameToPackageMap.get(_package.name) || [], _package]));
 
     this.assignUrisToPackages(packages);
     this.assignUrisToElements(elements);
     this.assignUrisToAttributes(attributes, elements);
-    this.assignConnectorUris(diagram, connectors);
+    this.assignConnectorUris(diagram, connectors, elements);
   }
 
   public assignUrisToPackages(packages: EaPackage[]): void {
@@ -77,17 +79,15 @@ export class UriAssigner {
         return;
       }
 
-      const packageName = getTagValue(element, TagName.DefiningPackage, null);
+      const packageNameTag = getTagValue(element, TagName.DefiningPackage, null);
       let elementPackageUri = packageUri;
 
-      if (packageName) {
-        elementPackageUri = this.getDefininingPackageUri(packageName, elementPackageUri);
+      if (packageNameTag) {
+        elementPackageUri = this.getDefininingPackageUri(packageNameTag, elementPackageUri);
       }
 
       const extractedUri = extractUri(element, elementPackageUri, false);
       this.elementIdUriMap.set(element.id, extractedUri);
-
-      // TODO: check if we already create an OSLO Element right here? (L213 - 214)
     });
   }
 
@@ -96,11 +96,11 @@ export class UriAssigner {
       // TODO: log errors if not found
       const _class = elements.find(x => x.id === attribute.classId)!;
       const packageUri = this.packageIdUriMap.get(_class.packageId)!;
-      const packageName = getTagValue(attribute, TagName.DefiningPackage, null);
+      const packageNameTag = getTagValue(attribute, TagName.DefiningPackage, null);
       let attributePackageUri = packageUri;
 
-      if (packageName) {
-        attributePackageUri = this.getDefininingPackageUri(packageName, attributePackageUri);
+      if (packageNameTag) {
+        attributePackageUri = this.getDefininingPackageUri(packageNameTag, attributePackageUri);
       }
 
       if (_class.type === ElementType.Enumeration) {
@@ -111,7 +111,7 @@ export class UriAssigner {
         }
 
         let localName = getTagValue(_class, TagName.LocalName, _class.name);
-        localName = convertToCase(localName, true, attribute.guid);
+        localName = convertToCase(localName, true, attribute.id);
 
         const instanceNamespace = `${namespace}/${localName}/`;
         const attributeUri = extractUri(attribute, instanceNamespace, true);
@@ -125,25 +125,16 @@ export class UriAssigner {
     });
   }
 
-  public assignConnectorUris(diagram: EaDiagram, connectors: EaConnector[]): void {
-    const diagramConnectors: EaConnector[] = [];
+  public assignConnectorUris(diagram: EaDiagram, connectors: NormalizedConnector[], elements: EaElement[]): void {
+    const diagramConnectors: NormalizedConnector[] = [];
 
     diagram.connectorsIds.forEach(connectorId => {
-      const connector = connectors.find(x => x.id === connectorId)!;
-      diagramConnectors.push(connector);
+      const filteredConnectors = connectors.filter(x => x.innerConnectorId === connectorId)!;
+      diagramConnectors.push(...filteredConnectors);
     });
 
-    const normalizedConnectors: EaConnector[] = [];
     diagramConnectors.forEach(connector => {
-      const direction = connector.direction;
-      normalizedConnectors.push(
-        ...extractAssociationElement(connector, direction),
-      );
-    });
-
-    normalizedConnectors.forEach(connector => {
-      // TODO: check for ignore tags in source and destination
-      if (connector.type === ConnectorType.Generalization) {
+      if (connector.innerConnectorType === ConnectorType.Generalization) {
         return;
       }
 
@@ -152,38 +143,44 @@ export class UriAssigner {
       const connectorPackages = this.packageNameToPackageMap.get(packageName);
       let definingPackageUri: string | null = null;
 
+      // Here, we check the value of the 'package' tag.
+      // If there was no value, both source and destination should be defined in the same package.
+      // If there was a value, we check that the same package name is used for different packages 
+      // (otherwise we log a warning)
       if (!connectorPackages) {
-        const sourcePackageId = connector.sourceObjectId;
-        const destinationPackageId = connector.destinationObjectId;
+        const sourcePackageId = elements.find(x => x.id === connector.sourceObjectId)!.packageId;
+        const destinationPackageId = elements.find(x => x.id === connector.destinationObjectId)!.packageId;
 
         if (sourcePackageId === destinationPackageId) {
-          this.logger.info(`Assuming connector (${connector.guid}) belongs to package (${sourcePackageId}) based on source and target definition.`);
+          //this.logger.info(`Assuming connector (${connector.id}) belongs to package (${sourcePackageId}) based on source and target definition.`);
           definingPackageUri = this.packageIdUriMap.get(sourcePackageId)!;
         }
       } else if (connectorPackages.length >= 2) {
-        this.logger.warn(`Ambiguous package name specified for connector (${connector.guid})`);
+        //this.logger.warn(`Ambiguous package name specified for connector (${connector.id})`);
         definingPackageUri = this.packageIdUriMap.get(connectorPackages[0].packageId)!;
       } else if (connectorPackages.length === 1) {
-        definingPackageUri = this.packageIdOntologyUriMap.get(connectorPackages[0].packageId)!;
+        definingPackageUri = this.packageIdUriMap.get(connectorPackages[0].packageId)!;
       }
 
+      // If there is no value for the 'uri' tag
       if (!connectorUri) {
+        // Then the connector must have a value for the 'package' tag
         if (!definingPackageUri) {
-          this.logger.warn(`Ignoring connector (${connector.guid}) as it lacks a defining package or is defined on a non-existing package.`);
+          //this.logger.warn(`Ignoring connector (${connector.id}) as it lacks a defining package or is defined on a non-existing package.`);
           return;
         }
 
-        let localName = getTagValue(connector, TagName.LocalName, connector.name);
+        let localName = getTagValue(connector, TagName.LocalName, connector.innerConnectorName);
         if (!localName) {
-          this.logger.warn(`Connector (${connector.guid}) does not have a name and will be ignored.`);
+          //this.logger.warn(`Connector (${connector.id}) does not have a name and will be ignored.`);
           return;
         }
 
-        localName = convertToCase(localName, true, connector.guid);
+        localName = convertToCase(localName, true, connector.id);
         connectorUri = definingPackageUri + localName;
       }
 
-      this.logger.debug(`Connector (${connector.guid}) was assigned the following URI: '${connectorUri}'.`);
+      //this.logger.debug(`Connector (${connector.id}) was assigned the following URI: '${connectorUri}'.`);
       this.connectorIdUriMap.set(connector.id, connectorUri);
     });
   }

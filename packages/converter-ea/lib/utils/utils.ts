@@ -1,12 +1,8 @@
 // eslint-disable-next-line eslint-comments/disable-enable-pair
 /* eslint-disable no-unused-expressions */
-import type { EaConnector, EaObject } from '@oslo-flanders/ea-data-extractor';
-import { ConnectorDirection } from '@oslo-flanders/ea-data-extractor';
-import { getLoggerFor } from '@oslo-flanders/types';
-import { AssociationFreeConnector } from '../types/connectors/AssocationFreeConnector';
-import { AssociationClassConnectionPart } from '../types/connectors/AssociationClassConnectionPart';
-import { AssociationClassConnector } from '../types/connectors/AssociationClassConnector';
-import { RoleConnectionPart, RoleConnector } from '../types/connectors/RoleConnector';
+import { getLoggerFor } from '@oslo-flanders/core';
+import type { EaConnector, EaObject } from '@oslo-flanders/ea-extractor';
+import { NormalizedConnector, NormalizedConnectorType } from '../types/connectors/NormalizedConnector';
 import { TagName } from '../types/TagName';
 
 export function ignore(object: EaObject, _default: any): boolean {
@@ -14,9 +10,11 @@ export function ignore(object: EaObject, _default: any): boolean {
   return Boolean(ignoreObject);
 }
 
-export function getTagValue(object: EaObject, tagName: TagName, _default: any, silent = true): string {
+// TODO: see getTagValues function
+// TODO: fix any type for object
+export function getTagValue(object: any, tagName: TagName, _default: any, silent = true): string {
   const logger = getLoggerFor('GetTagValueFunction');
-  const tags = object.tags?.filter(x => x.tagName === tagName);
+  const tags = object.tags?.filter((x: any) => x.tagName === tagName);
 
   if (!tags || tags.length === 0) {
     silent || logger.warn(`Missing tag '${tagName}' for object with ea_guid ${object.guid}.`);
@@ -38,7 +36,7 @@ export function extractUri(object: EaObject, packageUri: string, camelCase: bool
   }
 
   let localName = getTagValue(object, TagName.LocalName, object.name);
-  localName = convertToCase(localName, camelCase, object.guid);
+  localName = convertToCase(localName, camelCase, object.id);
 
   if (localName && localName !== '') {
     return packageUri + localName;
@@ -47,7 +45,7 @@ export function extractUri(object: EaObject, packageUri: string, camelCase: bool
   return `${packageUri}${object.name}`;
 }
 
-export function convertToCase(text: string, camelCase: boolean, objectGuid: string): string {
+export function convertToCase(text: string, camelCase: boolean, objectGuid: number | string): string {
   const logger = getLoggerFor('ConvertToCaseFunction');
 
   if (text === null || text === '') {
@@ -88,46 +86,7 @@ export function connectorHasOldAssociationClassTags(connector: EaConnector): boo
   return hasOldClassTags;
 }
 
-export function extractAssociationElement(connector: EaConnector, direction: ConnectorDirection): EaConnector[] {
-  const logger = getLoggerFor('ExtractAssociationElementFunction');
-  let result: EaConnector[] = [];
-
-  if (connectorHasOldAssociationClassTags(connector)) {
-    logger.debug(`Add connectors based on deprecated tags for connector with ea_guid ${connector.guid}`);
-    result = extractAssociationElementWithDeprecatedTags(connector, direction);
-  } else {
-    if ((!connector.destinationRole || connector.destinationRole === '') &&
-      (!connector.sourceRole || connector.sourceRole === '') &&
-      (direction !== ConnectorDirection.Unspecified)) {
-      logger.debug(`Add AssociationFree connector for ea_guid ${connector.guid}`);
-      result.push(new AssociationFreeConnector(connector));
-    }
-
-    if (connector.sourceRole && connector.sourceRole !== '') {
-      result.push(new RoleConnector(connector, RoleConnectionPart.DestToSource));
-      logger.debug(`Add RoleConnector for connector (${connector.guid})`);
-    }
-
-    if (connector.destinationRole && connector.destinationRole !== '') {
-      result.push(new RoleConnector(connector, RoleConnectionPart.SourceToDest));
-      logger.debug(`Add RoleConnector for connector (${connector.guid})`);
-    }
-
-    if ((connector.destinationRole && connector.destinationRole !== '') &&
-      (connector.sourceRole && connector.sourceRole !== '') &&
-      (direction === ConnectorDirection.Unspecified)) {
-      logger.debug(`Add RoleConnectors for connector (${connector.guid})`);
-      result.push(
-        new RoleConnector(connector, RoleConnectionPart.UnspecifiedSourceToDest),
-        new RoleConnector(connector, RoleConnectionPart.UnspecifiedDestToSource),
-      );
-    }
-  }
-
-  return result;
-}
-
-function extractAssociationElementWithDeprecatedTags(
+/*function extractAssociationElementWithDeprecatedTags(
   connector: EaConnector,
   direction: ConnectorDirection,
 ): EaConnector[] {
@@ -159,4 +118,81 @@ function extractAssociationElementWithDeprecatedTags(
   }
 
   return connectors;
+}*/
+
+export function normalize(connector: EaConnector, normalizedConnectors: NormalizedConnector[]): void {
+  if (connector.sourceRole && connector.sourceRole !== '') {
+    normalizedConnectors.push(new NormalizedConnector(
+      connector,
+      connector.sourceRole,
+      connector.destinationObjectId,
+      connector.sourceObjectId,
+      connector.sourceCardinality,
+      connector.sourceRoleTags || [],
+      NormalizedConnectorType.RegularConnector,
+    ));
+  }
+
+  if (connector.destinationRole && connector.destinationRole !== '') {
+    normalizedConnectors.push(new NormalizedConnector(
+      connector,
+      connector.destinationRole,
+      connector.sourceObjectId,
+      connector.destinationObjectId,
+      connector.destinationCardinality,
+      connector.destinationRoleTags || [],
+      NormalizedConnectorType.RegularConnector,
+    ));
+  }
+
+  if (connector.name && connector.name !== '') {
+    if (connector.sourceCardinality && connector.sourceCardinality !== '') {
+      normalizedConnectors.push(new NormalizedConnector(
+        connector,
+        connector.name,
+        connector.destinationObjectId,
+        connector.sourceObjectId,
+        connector.sourceCardinality,
+        connector.tags || [],
+        NormalizedConnectorType.RegularConnector,
+      ));
+    }
+
+    if (connector.destinationCardinality && connector.destinationCardinality !== '') {
+      normalizedConnectors.push(new NormalizedConnector(
+        connector,
+        connector.name,
+        connector.sourceObjectId,
+        connector.destinationObjectId,
+        connector.destinationCardinality,
+        connector.tags || [],
+        NormalizedConnectorType.RegularConnector,
+      ));
+    }
+  }
+
+  if (connector.associationClassId) {
+    normalizedConnectors.push(
+      new NormalizedConnector(
+        connector,
+        '',
+        connector.associationClassId,
+        connector.sourceObjectId,
+        '1',
+        connector.tags || [],
+        NormalizedConnectorType.AssociationClassConnector,
+      ),
+      new NormalizedConnector(
+        connector,
+        '',
+        connector.associationClassId,
+        connector.destinationObjectId,
+        '1',
+        connector.tags || [],
+        NormalizedConnectorType.AssociationClassConnector,
+      ),
+    );
+  }
+
+  // TODO: handle case where there are roles AND there is a name as well
 }

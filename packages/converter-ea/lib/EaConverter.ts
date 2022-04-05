@@ -1,15 +1,18 @@
+import { Converter, getLoggerFor } from '@oslo-flanders/core';
 import type { Configuration } from '@oslo-flanders/ea-converter-configuration';
-import type { EaConnector, EaDiagram, EaDocument } from '@oslo-flanders/ea-data-extractor';
-import { ConnectorDirection, DataExtractor } from '@oslo-flanders/ea-data-extractor';
-
-import { Converter, getLoggerFor } from '@oslo-flanders/types';
+import type { EaConnector, EaDiagram, EaDocument, EaElement } from '@oslo-flanders/ea-extractor';
+import { DataExtractor } from '@oslo-flanders/ea-extractor';
+import type { NormalizedConnector } from './types/connectors/NormalizedConnector';
+import { NormalizedConnectorType } from './types/connectors/NormalizedConnector';
 import { UriAssigner } from './UriAssigner';
-import { extractAssociationElement, ignore } from './utils/utils';
+
+import { ignore, normalize } from './utils/utils';
 
 export class EaConverter extends Converter {
   private readonly logger = getLoggerFor(this);
 
   private readonly extractor: DataExtractor;
+  // TODO: voc or ap parameter
   private readonly configuration: Configuration;
 
   // FIXME: outputhandler should be added as parameter as well
@@ -31,8 +34,7 @@ export class EaConverter extends Converter {
     const filteredPackages = eaDocument.eaPackages.filter(x => !ignore(x, false));
     const filteredElements = eaDocument.eaElements.filter(x => !ignore(x, false));
     const filteredAttributes = eaDocument.eaAttributes.filter(x => !ignore(x, false));
-
-    // This.connectorToDirectionMap(targetDiagram, eaDocument.eaConnectors);
+    const normalizedConnectors = this.normalizeConnectors(eaDocument.eaConnectors, filteredElements);
 
     const uriAssigner = new UriAssigner();
     uriAssigner.assignUris(
@@ -40,10 +42,21 @@ export class EaConverter extends Converter {
       filteredPackages,
       filteredElements,
       filteredAttributes,
-      eaDocument.eaConnectors,
+      normalizedConnectors,
     );
+    // TODO: convert packages
+
+    // TODO: convert elements
+
+    // TODO: convert connectors
+
+    // TODO: convert non-enum attributes
+
+    // TODO; convert enum values
   }
 
+  // TODO: Filter EaDocument immediatly (based on configured diagram name, in extractor)
+  // TODO: Test OSLO-Air-and-Water for extra packages
   private getTargetDiagram(eaDocument: EaDocument): EaDiagram | null {
     const filteredDiagram = eaDocument.eaDiagrams.filter(x => x.name === this.configuration.diagramName);
 
@@ -60,40 +73,24 @@ export class EaConverter extends Converter {
     return filteredDiagram[0];
   }
 
-  private connectorToDirectionMap(diagram: EaDiagram, connectors: EaConnector[]): Map<EaConnector, ConnectorDirection> {
-    const diagramConnectors: EaConnector[] = [];
-    const connectorToDirectionMap: Map<EaConnector, ConnectorDirection> = new Map();
+  private normalizeConnectors(connectors: EaConnector[], elements: EaElement[]): NormalizedConnector[] {
+    const normalizedConnectors: NormalizedConnector[] = [];
+    connectors.forEach(connector => normalize(connector, normalizedConnectors));
 
-    diagram.connectorsIds.forEach(connectorId => {
-      const connector = connectors.find(x => x.id === connectorId)!;
-      diagramConnectors.push(connector);
-    });
+    // Add names for the association class connectors
+    normalizedConnectors.forEach(connector => {
+      if (connector.type === NormalizedConnectorType.AssociationClassConnector) {
+        const classObject = elements.find(x => x.id === connector.destinationObjectId);
 
-    diagramConnectors.forEach(diagramConnector => {
-      let direction = diagramConnector.diagramGeometryDirection;
-
-      if (direction === ConnectorDirection.Unspecified) {
-        direction = diagramConnector.direction;
-      }
-
-      connectorToDirectionMap.set(diagramConnector, direction);
-
-      if (diagramConnector.associationClassId) {
-        const associationConnectors = extractAssociationElement(diagramConnector, direction);
-        associationConnectors.forEach(associationConnector =>
-          connectorToDirectionMap.set(associationConnector, associationConnector.direction));
-      } else if (direction === ConnectorDirection.Unspecified || direction === ConnectorDirection.Bidirectional) {
-        const associationConnectors = extractAssociationElement(diagramConnector, direction);
-        associationConnectors.forEach(associationConnector => {
-          if (connectorToDirectionMap.has(associationConnector)) {
-            this.logger.warn(`Connector (${associationConnector.guid}) without explicit direction already added to the set of directions`);
-          } else {
-            connectorToDirectionMap.set(associationConnector, associationConnector.direction);
-          }
-        });
+        if (!classObject) {
+          // TODO: Log warning
+          console.log(`Can't find object for id ${connector.destinationObjectId}`);
+        } else {
+          connector.addNameTag(classObject.name);
+        }
       }
     });
 
-    return connectorToDirectionMap;
+    return normalizedConnectors;
   }
 }
