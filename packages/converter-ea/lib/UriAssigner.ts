@@ -30,7 +30,7 @@ export class UriAssigner {
 
   // Connector id mapped to a URI
   // FIXME, cant use id because multiple connectors can share the same id
-  private readonly connectorIdUriMap: Map<string, string>;
+  private readonly connectorIdUriMap: Map<number, string>;
 
   public constructor() {
     this.packageIdUriMap = new Map();
@@ -42,6 +42,14 @@ export class UriAssigner {
     this.connectorIdUriMap = new Map();
   }
 
+  /**
+   * Assigns URIs to the Enterprise Architect elements
+   * @param diagram - The target diagram in Enterprise Architect
+   * @param packages - The Enterprise Architect packages in the UML diagram
+   * @param elements - The Enterprise Architect elements (classes, datatypes and enumeration) in the UML diagram
+   * @param attributes - The Enterprise Architect attributes in the UML diagram
+   * @param connectors - The Enterprise Architect connectors in the UML diagram
+   */
   public assignUris(
     diagram: EaDiagram,
     packages: EaPackage[],
@@ -53,9 +61,11 @@ export class UriAssigner {
       this.packageNameToPackageMap
         .set(_package.name, [...this.packageNameToPackageMap.get(_package.name) || [], _package]));
 
+    // TODO: make async and await Promise.all
     this.assignUrisToPackages(packages);
     this.assignUrisToElements(elements);
     this.assignUrisToAttributes(attributes, elements);
+    // FIXME: Association classes not correct
     this.assignConnectorUris(diagram, connectors, elements);
   }
 
@@ -75,7 +85,8 @@ export class UriAssigner {
       const packageUri = this.packageIdUriMap.get(element.packageId);
 
       if (!packageUri) {
-        this.logger.error(`No package URI found for element (${element.guid})`);
+        this.logger.error(`Unnable to find the package URI for element (${element.path()}) with package id: ${element.packageId}.`);
+        this.logger.info(`Element "${element.path()}" will be skipped.`);
         return;
       }
 
@@ -93,9 +104,22 @@ export class UriAssigner {
 
   public assignUrisToAttributes(attributes: EaAttribute[], elements: EaElement[]): void {
     attributes.forEach(attribute => {
-      // TODO: log errors if not found
-      const _class = elements.find(x => x.id === attribute.classId)!;
-      const packageUri = this.packageIdUriMap.get(_class.packageId)!;
+      const attributeClass = elements.find(x => x.id === attribute.classId);
+
+      if (!attributeClass) {
+        this.logger.error(`Unnable to find the class (id=${attribute.classId}) to which the attribute (${attribute.path()}) belongs.`);
+        this.logger.info(`Attribute "${attribute.path()}" will be skipped.`);
+        return;
+      }
+
+      const packageUri = this.packageIdUriMap.get(attributeClass.packageId);
+
+      if (!packageUri) {
+        this.logger.error(`Unnable to find the package URI for attribute (${attribute.path()}) with package id: ${attributeClass.packageId}.`);
+        this.logger.info(`Attribute "${attribute.path()}" will be skipped.`);
+        return;
+      }
+
       const packageNameTag = getTagValue(attribute, TagName.DefiningPackage, null);
       let attributePackageUri = packageUri;
 
@@ -103,14 +127,14 @@ export class UriAssigner {
         attributePackageUri = this.getDefininingPackageUri(packageNameTag, attributePackageUri);
       }
 
-      if (_class.type === ElementType.Enumeration) {
+      if (attributeClass.type === ElementType.Enumeration) {
         let namespace = attributePackageUri;
 
         if (namespace.endsWith('/') || namespace.endsWith('#')) {
           namespace = namespace.slice(0, Math.max(0, namespace.length - 1));
         }
 
-        let localName = getTagValue(_class, TagName.LocalName, _class.name);
+        let localName = getTagValue(attributeClass, TagName.LocalName, attributeClass.name);
         localName = convertToCase(localName, true, attribute.id);
 
         const instanceNamespace = `${namespace}/${localName}/`;
@@ -118,21 +142,22 @@ export class UriAssigner {
         this.attributeIdUriMap.set(attribute.id, attributeUri);
       } else {
         const uri = extractUri(attribute, attributePackageUri, true);
-
-        // TODO: check original because this differs (is put in other map) (L 253)
         this.attributeIdUriMap.set(attribute.id, uri);
       }
     });
   }
 
+  // FIXME: associations connectors don't have a package tag
+  // Which tags should be added to the association class?
   public assignConnectorUris(diagram: EaDiagram, connectors: NormalizedConnector[], elements: EaElement[]): void {
     const diagramConnectors: NormalizedConnector[] = [];
 
     diagram.connectorsIds.forEach(connectorId => {
-      const filteredConnectors = connectors.filter(x => x.innerConnectorId === connectorId)!;
+      const filteredConnectors = connectors.filter(x => x.innerConnectorId === connectorId) || [];
       diagramConnectors.push(...filteredConnectors);
     });
 
+    // Inheritance related connectors do not get an URI.
     diagramConnectors.forEach(connector => {
       if (connector.innerConnectorType === ConnectorType.Generalization) {
         return;
@@ -144,21 +169,21 @@ export class UriAssigner {
       let definingPackageUri: string | null = null;
 
       // Here, we check the value of the 'package' tag.
-      // If there was no value, both source and destination should be defined in the same package.
-      // If there was a value, we check that the same package name is used for different packages 
+      // If there was no value, both source and destination must be defined in the same package.
+      // If there was a value, we check that the same package name is used for different packages,
       // (otherwise we log a warning)
-      if (!connectorPackages) {
+      if (!connectorPackages || connectorPackages.length === 0) {
         const sourcePackageId = elements.find(x => x.id === connector.sourceObjectId)!.packageId;
         const destinationPackageId = elements.find(x => x.id === connector.destinationObjectId)!.packageId;
 
         if (sourcePackageId === destinationPackageId) {
-          //this.logger.info(`Assuming connector (${connector.id}) belongs to package (${sourcePackageId}) based on source and target definition.`);
+          this.logger.info(`Assuming connector (${connector.path()}) belongs to package (${sourcePackageId}) based on source and target definition.`);
           definingPackageUri = this.packageIdUriMap.get(sourcePackageId)!;
         }
-      } else if (connectorPackages.length >= 2) {
-        //this.logger.warn(`Ambiguous package name specified for connector (${connector.id})`);
-        definingPackageUri = this.packageIdUriMap.get(connectorPackages[0].packageId)!;
-      } else if (connectorPackages.length === 1) {
+      } else {
+        if (connectorPackages.length > 1) {
+          this.logger.warn(`Ambiguous package "${packageName}" name specified for connector (${connector.path()}).`);
+        }
         definingPackageUri = this.packageIdUriMap.get(connectorPackages[0].packageId)!;
       }
 
@@ -166,13 +191,13 @@ export class UriAssigner {
       if (!connectorUri) {
         // Then the connector must have a value for the 'package' tag
         if (!definingPackageUri) {
-          //this.logger.warn(`Ignoring connector (${connector.id}) as it lacks a defining package or is defined on a non-existing package.`);
+          this.logger.warn(`Ignoring connector (${connector.path()}) as it lacks a defining package or is defined on a non-existing package.`);
           return;
         }
 
-        let localName = getTagValue(connector, TagName.LocalName, connector.innerConnectorName);
+        let localName = getTagValue(connector, TagName.LocalName, connector.name);
         if (!localName) {
-          //this.logger.warn(`Connector (${connector.id}) does not have a name and will be ignored.`);
+          this.logger.warn(`Connector (${connector.path()}) does not have a name and will be ignored.`);
           return;
         }
 
@@ -180,25 +205,23 @@ export class UriAssigner {
         connectorUri = definingPackageUri + localName;
       }
 
-      //this.logger.debug(`Connector (${connector.id}) was assigned the following URI: '${connectorUri}'.`);
+      this.logger.info(`Connector (${connector.path()}) was assigned the following URI: '${connectorUri}'.`);
       this.connectorIdUriMap.set(connector.id, connectorUri);
     });
   }
 
   private getDefininingPackageUri(packageName: string, currentPackageUri: string): string {
-    const referencedPackages = this.packageNameToPackageMap.get(packageName);
+    const referencedPackages = this.packageNameToPackageMap.get(packageName) || [];
 
-    if (referencedPackages?.length === 0) {
-      // TODO: add element to log message
+    if (referencedPackages.length === 0) {
       this.logger.warn(`Specified package '${packageName}' was not found.`);
       return currentPackageUri;
     }
 
-    if (referencedPackages?.length === 1) {
-      return this.packageIdUriMap.get(referencedPackages[0].packageId)!;
+    if (referencedPackages.length > 1) {
+      this.logger.warn(`Ambiguous package name "${packageName}" found.`);
     }
 
-    this.logger.warn(`Ambiguous package name '${packageName}' was found`);
-    return this.packageIdUriMap.get(referencedPackages![0].packageId)!;
+    return this.packageIdUriMap.get(referencedPackages[0].packageId)!;
   }
 }

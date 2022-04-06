@@ -1,6 +1,5 @@
-import type { EaConnector, Tag } from '@oslo-flanders/ea-extractor';
-// eslint-disable-next-line import/no-commonjs
-const uniqid = require('uniqid');
+import type { Tag, EaConnector } from '@oslo-flanders/ea-extractor';
+
 
 export enum NormalizedConnectorType {
   AssociationClassConnector,
@@ -9,45 +8,55 @@ export enum NormalizedConnectorType {
 
 export class NormalizedConnector {
   private readonly innerConnector: EaConnector;
-  private readonly _id: string;
-  private readonly _sourceObjectId: number;
-  private readonly _destinationObjectId: number;
-  private readonly _cardinality: string;
-  private readonly _type: NormalizedConnectorType;
-  private _tags: Tag[];
+  private readonly _normalizedId: number;
+  private readonly _normalizedName: string;
+  private readonly _normalizedSourceObjectId: number;
+  private readonly _normalizedDestinationObjectId: number;
+  private readonly _normalizedCardinality: string;
+  private readonly _normalizedType: NormalizedConnectorType;
+  private _normalizedTags: Tag[];
 
   public constructor(
     innerConnector: EaConnector,
-    name: string | undefined,
+    name: string,
     sourceObjectId: number,
-    targetObjectId: number,
-    cardinality: string | undefined,
-    tags: Tag[],
-    type: NormalizedConnectorType,
+    destinationObjectId: number,
+    cardinality: string,
+    tags: Tag[] = [],
+    type: NormalizedConnectorType = NormalizedConnectorType.RegularConnector,
   ) {
     this.innerConnector = innerConnector;
-    this._id = uniqid();
-    this._sourceObjectId = sourceObjectId;
-    this._destinationObjectId = targetObjectId;
-    this._cardinality = cardinality || '';
-    this._type = type;
-    this._tags = tags;
+    this._normalizedId = Math.floor(Math.random() * Date.now());
+    this._normalizedName = name;
+    this._normalizedSourceObjectId = sourceObjectId;
+    this._normalizedDestinationObjectId = destinationObjectId;
+    this._normalizedCardinality = cardinality;
+    this._normalizedType = type;
+    this._normalizedTags = tags;
 
-    if (name) {
+    /*if (name) {
       this.addNameTag(name);
-    }
+    }*/
   }
 
-  public get id(): string {
-    return this._id;
+  public get name(): string {
+    return this._normalizedName;
+  }
+
+  public get innerConnectorName(): string {
+    return this.innerConnector.name;
   }
 
   public get innerConnectorId(): number {
     return this.innerConnector.id;
   }
 
+  public get id(): number {
+    return this._normalizedId;
+  }
+
   public get type(): NormalizedConnectorType {
-    return this._type;
+    return this._normalizedType;
   }
 
   public get innerConnectorType(): string {
@@ -55,27 +64,27 @@ export class NormalizedConnector {
   }
 
   public get sourceObjectId(): number {
-    return this._sourceObjectId;
+    return this._normalizedSourceObjectId;
   }
 
   public get destinationObjectId(): number {
-    return this._destinationObjectId;
+    return this._normalizedDestinationObjectId;
   }
 
   public get cardinality(): string {
-    return this._cardinality;
-  }
-
-  public get innerConnectorName(): string {
-    return this.innerConnector.name;
+    return this._normalizedCardinality;
   }
 
   public get tags(): Tag[] {
-    return this._tags;
+    return this._normalizedTags;
   }
 
   public set tags(value: Tag[]) {
-    this._tags = value;
+    this._normalizedTags = value;
+  }
+
+  public path(): string {
+    return this.innerConnector.path();
   }
 
   public addNameTag(name: string): void {
@@ -85,6 +94,10 @@ export class NormalizedConnector {
       tagValue: name,
     };
 
-    this.tags = [...this.tags, tag];
+    if (this._normalizedTags.some(x => x.tagName === 'name')) {
+      return;
+    }
+
+    this._normalizedTags = [...this._normalizedTags, tag];
   }
 }

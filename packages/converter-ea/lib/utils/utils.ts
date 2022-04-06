@@ -86,6 +86,7 @@ export function connectorHasOldAssociationClassTags(connector: EaConnector): boo
   return hasOldClassTags;
 }
 
+// TODO: check how 'name' tag is related to label-nl and ap-label-nl
 export function normalize(connector: EaConnector, normalizedConnectors: NormalizedConnector[]): void {
   if (connector.sourceRole && connector.sourceRole !== '') {
     normalizedConnectors.push(new NormalizedConnector(
@@ -94,8 +95,7 @@ export function normalize(connector: EaConnector, normalizedConnectors: Normaliz
       connector.destinationObjectId,
       connector.sourceObjectId,
       connector.sourceCardinality,
-      connector.sourceRoleTags || [],
-      NormalizedConnectorType.RegularConnector,
+      connector.sourceRoleTags,
     ));
   }
 
@@ -106,8 +106,7 @@ export function normalize(connector: EaConnector, normalizedConnectors: Normaliz
       connector.sourceObjectId,
       connector.destinationObjectId,
       connector.destinationCardinality,
-      connector.destinationRoleTags || [],
-      NormalizedConnectorType.RegularConnector,
+      connector.destinationRoleTags,
     ));
   }
 
@@ -119,8 +118,7 @@ export function normalize(connector: EaConnector, normalizedConnectors: Normaliz
         connector.destinationObjectId,
         connector.sourceObjectId,
         connector.sourceCardinality,
-        connector.tags || [],
-        NormalizedConnectorType.RegularConnector,
+        connector.tags,
       ));
     }
 
@@ -131,8 +129,7 @@ export function normalize(connector: EaConnector, normalizedConnectors: Normaliz
         connector.sourceObjectId,
         connector.destinationObjectId,
         connector.destinationCardinality,
-        connector.tags || [],
-        NormalizedConnectorType.RegularConnector,
+        connector.tags,
       ));
     }
   }
@@ -141,24 +138,22 @@ export function normalize(connector: EaConnector, normalizedConnectors: Normaliz
     normalizedConnectors.push(
       new NormalizedConnector(
         connector,
-        '',
+        'AssociationConnector',
         connector.associationClassId,
         connector.sourceObjectId,
         '1',
-        connector.tags || [],
+        connector.tags,
         NormalizedConnectorType.AssociationClassConnector,
       ),
       new NormalizedConnector(
         connector,
-        '',
+        'AssociationConnector',
         connector.associationClassId,
         connector.destinationObjectId,
         '1',
-        connector.tags || [],
+        connector.tags,
         NormalizedConnectorType.AssociationClassConnector,
       ),
     );
   }
-
-  // TODO: handle case where there are roles AND there is a name as well
 }

@@ -80,13 +80,13 @@ export class EaConverter extends Converter {
     // Add names for the association class connectors
     normalizedConnectors.forEach(connector => {
       if (connector.type === NormalizedConnectorType.AssociationClassConnector) {
-        const classObject = elements.find(x => x.id === connector.destinationObjectId);
+        const destinationClass = elements.find(x => x.id === connector.destinationObjectId);
 
-        if (!classObject) {
+        if (!destinationClass) {
           // TODO: Log warning
-          console.log(`Can't find object for id ${connector.destinationObjectId}`);
+          console.log(`Can't find object for id ${connector.destinationObjectId}.`);
         } else {
-          connector.addNameTag(classObject.name);
+          connector.addNameTag(destinationClass.name);
         }
       }
     });

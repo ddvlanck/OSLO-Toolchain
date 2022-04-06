@@ -31,9 +31,9 @@ export class EaConnector extends EaObject {
   public readonly destinationCardinality: string;
   public readonly sourceRole: string;
   public readonly destinationRole: string;
-  public readonly associationClassId?: number | null;
-  public sourceRoleTags?: Tag[];
-  public destinationRoleTags?: Tag[];
+  public readonly associationClassId: number | null;
+  public sourceRoleTags: Tag[] = [];
+  public destinationRoleTags: Tag[] = [];
   public readonly direction: ConnectorDirection;
   private _path: string | undefined;
 
