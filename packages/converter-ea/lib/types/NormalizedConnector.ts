@@ -1,6 +1,5 @@
 import type { Tag, EaConnector } from '@oslo-flanders/ea-extractor';
 
-
 export enum NormalizedConnectorType {
   AssociationClassConnector,
   RegularConnector
@@ -34,9 +33,9 @@ export class NormalizedConnector {
     this._normalizedType = type;
     this._normalizedTags = tags;
 
-    /*if (name) {
+    if (name) {
       this.addNameTag(name);
-    }*/
+    }
   }
 
   public get name(): string {

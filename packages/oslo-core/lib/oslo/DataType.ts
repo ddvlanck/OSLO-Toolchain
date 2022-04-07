@@ -5,7 +5,8 @@ export interface DataType {
   definition: string;
   // TODO: change to Language string
   label: string;
-  scope: Scope;
+  // FIXME: not yet available
+  scope?: Scope;
   // TODO: check if we can use type 'URL'
   uri: string;
   // TODO: change to Language string

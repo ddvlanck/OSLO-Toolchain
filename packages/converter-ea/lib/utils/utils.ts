@@ -1,8 +1,8 @@
 // eslint-disable-next-line eslint-comments/disable-enable-pair
 /* eslint-disable no-unused-expressions */
 import { getLoggerFor } from '@oslo-flanders/core';
-import type { EaConnector, EaObject } from '@oslo-flanders/ea-extractor';
-import { NormalizedConnector, NormalizedConnectorType } from '../types/connectors/NormalizedConnector';
+import { ConnectorType, EaConnector, EaElement, EaObject, Tag } from '@oslo-flanders/ea-extractor';
+import { NormalizedConnector, NormalizedConnectorType } from '../types/NormalizedConnector';
 import { TagName } from '../types/TagName';
 
 export function ignore(object: EaObject, _default: any): boolean {
@@ -86,10 +86,15 @@ export function connectorHasOldAssociationClassTags(connector: EaConnector): boo
   return hasOldClassTags;
 }
 
-// TODO: check how 'name' tag is related to label-nl and ap-label-nl
-export function normalize(connector: EaConnector, normalizedConnectors: NormalizedConnector[]): void {
+export function normalize(connector: EaConnector, elements: EaElement[]): NormalizedConnector[] {
+  const normalizedConnectors: NormalizedConnector[] = [];
+
+  if (connector.type === ConnectorType.Generalization) {
+    return [];
+  }
+
   if (connector.sourceRole && connector.sourceRole !== '') {
-    normalizedConnectors.push(new NormalizedConnector(
+    normalizedConnectors.push(createNormalizedConnector(
       connector,
       connector.sourceRole,
       connector.destinationObjectId,
@@ -100,7 +105,7 @@ export function normalize(connector: EaConnector, normalizedConnectors: Normaliz
   }
 
   if (connector.destinationRole && connector.destinationRole !== '') {
-    normalizedConnectors.push(new NormalizedConnector(
+    normalizedConnectors.push(createNormalizedConnector(
       connector,
       connector.destinationRole,
       connector.sourceObjectId,
@@ -112,7 +117,7 @@ export function normalize(connector: EaConnector, normalizedConnectors: Normaliz
 
   if (connector.name && connector.name !== '') {
     if (connector.sourceCardinality && connector.sourceCardinality !== '') {
-      normalizedConnectors.push(new NormalizedConnector(
+      normalizedConnectors.push(createNormalizedConnector(
         connector,
         connector.name,
         connector.destinationObjectId,
@@ -123,7 +128,7 @@ export function normalize(connector: EaConnector, normalizedConnectors: Normaliz
     }
 
     if (connector.destinationCardinality && connector.destinationCardinality !== '') {
-      normalizedConnectors.push(new NormalizedConnector(
+      normalizedConnectors.push(createNormalizedConnector(
         connector,
         connector.name,
         connector.sourceObjectId,
@@ -135,25 +140,95 @@ export function normalize(connector: EaConnector, normalizedConnectors: Normaliz
   }
 
   if (connector.associationClassId) {
-    normalizedConnectors.push(
-      new NormalizedConnector(
-        connector,
-        'AssociationConnector',
-        connector.associationClassId,
-        connector.sourceObjectId,
-        '1',
-        connector.tags,
-        NormalizedConnectorType.AssociationClassConnector,
-      ),
-      new NormalizedConnector(
-        connector,
-        'AssociationConnector',
-        connector.associationClassId,
-        connector.destinationObjectId,
-        '1',
-        connector.tags,
-        NormalizedConnectorType.AssociationClassConnector,
-      ),
-    );
+    normalizedConnectors.push(...createNormalizedAssociationClassConnector(connector, elements));
   }
+
+  if (normalizedConnectors.length === 0) {
+    // Log error
+  }
+
+  return normalizedConnectors;
+}
+
+function createNormalizedConnector(
+  connector: EaConnector,
+  name: string,
+  sourceObjectId: number,
+  destinationObjectId: number,
+  cardinality: string,
+  tags: Tag[],
+): NormalizedConnector {
+  return new NormalizedConnector(
+    connector,
+    name,
+    sourceObjectId,
+    destinationObjectId,
+    cardinality,
+    tags,
+  );
+}
+
+function createNormalizedAssociationClassConnector(
+  connector: EaConnector,
+  elements: EaElement[],
+): NormalizedConnector[] {
+  const sourceObject = elements.find(x => x.id === connector.sourceObjectId);
+  const destinationObject = elements.find(x => x.id === connector.destinationObjectId);
+
+  if (!sourceObject || !destinationObject) {
+    // Log error
+    return [];
+  }
+
+  let sourceObjectName = sourceObject.name;
+  let destinationObjectName = destinationObject.name;
+
+  // In case of a self-association
+  if (connector.sourceObjectId === connector.destinationObjectId) {
+    sourceObjectName = `${sourceObjectName}.source`;
+    destinationObjectName = `${destinationObjectName}.target`;
+  }
+
+  // In case of an association class, we use the package tag of the association class
+  // TODO: verify this with the editors
+  // Other strategy could be to log an error if connector tags don't have a package tag
+  const assocationObject = elements.find(x => x.id === connector.associationClassId);
+
+  if (!assocationObject) {
+    // Log error
+    return [];
+  }
+  const packageName = getTagValue(assocationObject, TagName.DefiningPackage, null);
+
+  if (!packageName) {
+    // Log error
+    return [];
+  }
+
+  const tag: Tag = {
+    id: Date.now(),
+    tagName: 'package',
+    tagValue: packageName,
+  };
+
+  return [
+    new NormalizedConnector(
+      connector,
+      sourceObjectName,
+      connector.associationClassId!,
+      connector.sourceObjectId,
+      '1',
+      [tag],
+      NormalizedConnectorType.AssociationClassConnector,
+    ),
+    new NormalizedConnector(
+      connector,
+      destinationObjectName,
+      connector.associationClassId!,
+      connector.destinationObjectId,
+      '1',
+      [tag],
+      NormalizedConnectorType.AssociationClassConnector,
+    ),
+  ];
 }

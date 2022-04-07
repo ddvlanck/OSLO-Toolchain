@@ -1,7 +1,11 @@
 import { getLoggerFor } from '@oslo-flanders/core';
 import type { EaAttribute, EaDiagram, EaElement, EaPackage } from '@oslo-flanders/ea-extractor';
 import { ConnectorType, ElementType } from '@oslo-flanders/ea-extractor';
-import type { NormalizedConnector } from './types/connectors/NormalizedConnector';
+import type { AttributeConverterHandler } from './converter-handlers/AttributeConverterHandler';
+import type { ConnectorConverterHandler } from './converter-handlers/ConnectorConverterHandler';
+import type { ElementConverterHandler } from './converter-handlers/ElementConverterHandler';
+import type { PackageConverterHandler } from './converter-handlers/PackageConverterHandler';
+import type { NormalizedConnector } from './types/NormalizedConnector';
 
 import { TagName } from './types/TagName';
 import { convertToCase, extractUri, getTagValue } from './utils/utils';
@@ -9,28 +13,27 @@ import { convertToCase, extractUri, getTagValue } from './utils/utils';
 const backupBaseUri = 'https://fixme.com#';
 
 export class UriAssigner {
-  private readonly logger = getLoggerFor(this);
+  public readonly logger = getLoggerFor(this);
   // Package id mapped to a URI
-  private readonly packageIdUriMap: Map<number, string>;
+  public readonly packageIdUriMap: Map<number, string>;
 
   // Package id mapped to ontology URI
-  private readonly packageIdOntologyUriMap: Map<number, string>;
+  public readonly packageIdOntologyUriMap: Map<number, string>;
 
   // Element id mapped to a URI
-  private readonly elementIdUriMap: Map<number, string>;
+  public readonly elementIdUriMap: Map<number, string>;
 
   // Attribute id mapped to a URI
-  private readonly attributeIdUriMap: Map<number, string>;
+  public readonly attributeIdUriMap: Map<number, string>;
 
   // Package name mapped to package object
-  private readonly packageNameToPackageMap: Map<string, EaPackage[]>;
+  public readonly packageNameToPackageMap: Map<string, EaPackage[]>;
 
   // Element name mapped to element object
-  private readonly elementNameToElementMap: Map<string, EaElement[]>;
+  public readonly elementNameToElementMap: Map<string, EaElement[]>;
 
   // Connector id mapped to a URI
-  // FIXME, cant use id because multiple connectors can share the same id
-  private readonly connectorIdUriMap: Map<number, string>;
+  public readonly connectorIdUriMap: Map<number, string>;
 
   public constructor() {
     this.packageIdUriMap = new Map();
@@ -42,31 +45,23 @@ export class UriAssigner {
     this.connectorIdUriMap = new Map();
   }
 
-  /**
-   * Assigns URIs to the Enterprise Architect elements
-   * @param diagram - The target diagram in Enterprise Architect
-   * @param packages - The Enterprise Architect packages in the UML diagram
-   * @param elements - The Enterprise Architect elements (classes, datatypes and enumeration) in the UML diagram
-   * @param attributes - The Enterprise Architect attributes in the UML diagram
-   * @param connectors - The Enterprise Architect connectors in the UML diagram
-   */
   public assignUris(
     diagram: EaDiagram,
-    packages: EaPackage[],
-    elements: EaElement[],
-    attributes: EaAttribute[],
-    connectors: NormalizedConnector[],
+    packageHandler: PackageConverterHandler,
+    elementHandler: ElementConverterHandler,
+    attributeHandler: AttributeConverterHandler,
+    connectorConverterHandler: ConnectorConverterHandler,
   ): void {
-    packages.forEach(_package =>
+    packageHandler.objects.forEach(_package =>
       this.packageNameToPackageMap
         .set(_package.name, [...this.packageNameToPackageMap.get(_package.name) || [], _package]));
 
-    // TODO: make async and await Promise.all
-    this.assignUrisToPackages(packages);
+    const elements = elementHandler.objects;
+
+    this.assignUrisToPackages(<EaPackage[]>packageHandler.objects);
     this.assignUrisToElements(elements);
-    this.assignUrisToAttributes(attributes, elements);
-    // FIXME: Association classes not correct
-    this.assignConnectorUris(diagram, connectors, elements);
+    this.assignUrisToAttributes(<EaAttribute[]>attributeHandler.objects, elements);
+    this.assignConnectorUris(diagram, <NormalizedConnector[]>connectorConverterHandler.objects, elements);
   }
 
   public assignUrisToPackages(packages: EaPackage[]): void {
@@ -147,8 +142,6 @@ export class UriAssigner {
     });
   }
 
-  // FIXME: associations connectors don't have a package tag
-  // Which tags should be added to the association class?
   public assignConnectorUris(diagram: EaDiagram, connectors: NormalizedConnector[], elements: EaElement[]): void {
     const diagramConnectors: NormalizedConnector[] = [];
 
@@ -157,8 +150,8 @@ export class UriAssigner {
       diagramConnectors.push(...filteredConnectors);
     });
 
-    // Inheritance related connectors do not get an URI.
     diagramConnectors.forEach(connector => {
+      // Inheritance related connectors do not get an URI.
       if (connector.innerConnectorType === ConnectorType.Generalization) {
         return;
       }
@@ -205,7 +198,7 @@ export class UriAssigner {
         connectorUri = definingPackageUri + localName;
       }
 
-      this.logger.info(`Connector (${connector.path()}) was assigned the following URI: '${connectorUri}'.`);
+      // This.logger.info(`Connector (${connector.path()}) was assigned the following URI: '${connectorUri}'.`);
       this.connectorIdUriMap.set(connector.id, connectorUri);
     });
   }

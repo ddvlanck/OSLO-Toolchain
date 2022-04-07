@@ -1,58 +1,59 @@
+import type { OutputHandler } from '@oslo-flanders/core';
 import { Converter, getLoggerFor } from '@oslo-flanders/core';
 import type { Configuration } from '@oslo-flanders/ea-converter-configuration';
-import type { EaConnector, EaDiagram, EaDocument, EaElement } from '@oslo-flanders/ea-extractor';
+import type { EaDiagram, EaDocument } from '@oslo-flanders/ea-extractor';
 import { DataExtractor } from '@oslo-flanders/ea-extractor';
-import type { NormalizedConnector } from './types/connectors/NormalizedConnector';
-import { NormalizedConnectorType } from './types/connectors/NormalizedConnector';
-import { UriAssigner } from './UriAssigner';
 
-import { ignore, normalize } from './utils/utils';
+import { AttributeConverterHandler } from './converter-handlers/AttributeConverterHandler';
+import { ConnectorConverterHandler } from './converter-handlers/ConnectorConverterHandler';
+import { ElementConverterHandler } from './converter-handlers/ElementConverterHandler';
+import { PackageConverterHandler } from './converter-handlers/PackageConverterHandler';
+
+import type { ConverterHandler } from './types/ConverterHandler';
+import { UriAssigner } from './UriAssigner';
 
 export class EaConverter extends Converter {
   private readonly logger = getLoggerFor(this);
 
-  private readonly extractor: DataExtractor;
   // TODO: voc or ap parameter
   private readonly configuration: Configuration;
+  private readonly converterHandlers: ConverterHandler[];
 
-  // FIXME: outputhandler should be added as parameter as well
-  public constructor(configuration: Configuration) {
-    super(configuration.umlFile);
+  public constructor(configuration: Configuration, outputHandler: OutputHandler) {
+    super(configuration.umlFile, outputHandler);
 
     this.configuration = configuration;
-    this.extractor = new DataExtractor(this.configuration.umlFile);
+    this.converterHandlers = [
+      new PackageConverterHandler(),
+      new ElementConverterHandler(),
+      new AttributeConverterHandler(),
+      new ConnectorConverterHandler(),
+    ];
   }
 
-  public async convert(): Promise<any> {
-    const eaDocument = await this.extractor.extractData();
+  public async convert(): Promise<void> {
+    const extractor = new DataExtractor(this.configuration.umlFile);
+    const uriAssigner = new UriAssigner();
+
+    const eaDocument = await extractor.extractData();
     const targetDiagram = this.getTargetDiagram(eaDocument);
 
     if (!targetDiagram) {
       return;
     }
 
-    const filteredPackages = eaDocument.eaPackages.filter(x => !ignore(x, false));
-    const filteredElements = eaDocument.eaElements.filter(x => !ignore(x, false));
-    const filteredAttributes = eaDocument.eaAttributes.filter(x => !ignore(x, false));
-    const normalizedConnectors = this.normalizeConnectors(eaDocument.eaConnectors, filteredElements);
-
-    const uriAssigner = new UriAssigner();
+    this.converterHandlers.forEach(handler => handler.documentNotification(eaDocument));
     uriAssigner.assignUris(
       targetDiagram,
-      filteredPackages,
-      filteredElements,
-      filteredAttributes,
-      normalizedConnectors,
+      this.packageConverterHandler,
+      this.elementConverterHandler,
+      this.attributeConverterHandler,
+      this.connectorConverterHandler,
     );
-    // TODO: convert packages
 
-    // TODO: convert elements
+    this.converterHandlers.forEach(handler => handler.convertToOslo(uriAssigner, this.outputHandler));
 
-    // TODO: convert connectors
-
-    // TODO: convert non-enum attributes
-
-    // TODO; convert enum values
+    //await this.outputHandler.write();
   }
 
   // TODO: Filter EaDocument immediatly (based on configured diagram name, in extractor)
@@ -73,24 +74,23 @@ export class EaConverter extends Converter {
     return filteredDiagram[0];
   }
 
-  private normalizeConnectors(connectors: EaConnector[], elements: EaElement[]): NormalizedConnector[] {
-    const normalizedConnectors: NormalizedConnector[] = [];
-    connectors.forEach(connector => normalize(connector, normalizedConnectors));
+  private get packageConverterHandler(): PackageConverterHandler {
+    return <PackageConverterHandler>
+      this.converterHandlers.find(x => x.constructor.name === 'PackageConverterHandler')!;
+  }
 
-    // Add names for the association class connectors
-    normalizedConnectors.forEach(connector => {
-      if (connector.type === NormalizedConnectorType.AssociationClassConnector) {
-        const destinationClass = elements.find(x => x.id === connector.destinationObjectId);
+  private get elementConverterHandler(): ElementConverterHandler {
+    return <ElementConverterHandler>
+      this.converterHandlers.find(x => x.constructor.name === 'ElementConverterHandler')!;
+  }
 
-        if (!destinationClass) {
-          // TODO: Log warning
-          console.log(`Can't find object for id ${connector.destinationObjectId}.`);
-        } else {
-          connector.addNameTag(destinationClass.name);
-        }
-      }
-    });
+  private get attributeConverterHandler(): AttributeConverterHandler {
+    return <AttributeConverterHandler>
+      this.converterHandlers.find(x => x.constructor.name === 'AttributeConverterHandler')!;
+  }
 
-    return normalizedConnectors;
+  private get connectorConverterHandler(): ConnectorConverterHandler {
+    return <ConnectorConverterHandler>
+      this.converterHandlers.find(x => x.constructor.name === 'ConnectorConverterHandler')!;
   }
 }
