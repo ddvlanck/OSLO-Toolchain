@@ -1,7 +1,8 @@
 // eslint-disable-next-line eslint-comments/disable-enable-pair
 /* eslint-disable no-unused-expressions */
 import { getLoggerFor } from '@oslo-flanders/core';
-import { ConnectorType, EaConnector, EaElement, EaObject, Tag } from '@oslo-flanders/ea-extractor';
+import type { EaConnector, EaElement, EaObject, Tag } from '@oslo-flanders/ea-extractor';
+import { ConnectorType } from '@oslo-flanders/ea-extractor';
 import { NormalizedConnector, NormalizedConnectorType } from '../types/NormalizedConnector';
 import { TagName } from '../types/TagName';
 
@@ -14,10 +15,10 @@ export function ignore(object: EaObject, _default: any): boolean {
 // TODO: fix any type for object
 export function getTagValue(object: any, tagName: TagName, _default: any, silent = true): string {
   const logger = getLoggerFor('GetTagValueFunction');
-  const tags = object.tags?.filter((x: any) => x.tagName === tagName);
+  const tags = object.tags?.filter((x: Tag) => x.tagName === tagName);
 
   if (!tags || tags.length === 0) {
-    silent || logger.warn(`Missing tag '${tagName}' for object with ea_guid ${object.guid}.`);
+    silent || logger.warn(`Missing tag '${tagName}' for object (${object.path()}).`);
     return _default;
   }
 
@@ -26,6 +27,32 @@ export function getTagValue(object: any, tagName: TagName, _default: any, silent
   }
 
   return tags[0].tagValue;
+}
+
+export function getLanguageDependentTag(object: any, tagName: TagName): Map<string, string> {
+  const logger = getLoggerFor('GetLanguageDependentTagFunction');
+  const tags = object.tags?.filter((x: Tag) => x.tagName.startsWith(tagName));
+
+  const languageToTagValueMap = new Map<string, string>();
+
+  if (!tags || tags.length === 0) {
+    //logger.warn(`Missing tag ${tagName} for object (${object.path()})`);
+    return languageToTagValueMap;
+  }
+
+  tags.forEach((tag: Tag) => {
+    const parts = tag.tagName.split('-');
+    const languageCode = parts[parts.length - 1];
+
+    if (languageToTagValueMap.has(languageCode)) {
+      // TODO: add option to log silently
+      //logger.warn(`Object (${object.path()}) contains multiple occurrcences of ${tag.tagName} and will be overridden.`);
+    }
+
+    languageToTagValueMap.set(languageCode, tag.tagValue);
+  });
+
+  return languageToTagValueMap;
 }
 
 export function extractUri(object: EaObject, packageUri: string, camelCase: boolean): string {
