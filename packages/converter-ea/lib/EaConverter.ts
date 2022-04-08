@@ -41,10 +41,7 @@ export class EaConverter extends Converter {
     this.converterHandlers.forEach(handler => handler.documentNotification(eaDocument));
     uriAssigner.assignUris(
       targetDiagram,
-      this.packageConverterHandler,
-      this.elementConverterHandler,
-      this.attributeConverterHandler,
-      this.connectorConverterHandler,
+      this.converterHandlers,
     );
 
     this.converterHandlers.forEach(handler => handler.convertToOslo(uriAssigner, this.outputHandler));
@@ -77,25 +74,5 @@ export class EaConverter extends Converter {
       new AttributeConverterHandler(targetDiagram),
       new ConnectorConverterHandler(targetDiagram),
     ];
-  }
-
-  private get packageConverterHandler(): PackageConverterHandler {
-    return <PackageConverterHandler>
-      this.converterHandlers.find(x => x.constructor.name === 'PackageConverterHandler')!;
-  }
-
-  private get elementConverterHandler(): ElementConverterHandler {
-    return <ElementConverterHandler>
-      this.converterHandlers.find(x => x.constructor.name === 'ElementConverterHandler')!;
-  }
-
-  private get attributeConverterHandler(): AttributeConverterHandler {
-    return <AttributeConverterHandler>
-      this.converterHandlers.find(x => x.constructor.name === 'AttributeConverterHandler')!;
-  }
-
-  private get connectorConverterHandler(): ConnectorConverterHandler {
-    return <ConnectorConverterHandler>
-      this.converterHandlers.find(x => x.constructor.name === 'ConnectorConverterHandler')!;
   }
 }

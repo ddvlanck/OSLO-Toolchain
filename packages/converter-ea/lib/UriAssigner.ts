@@ -5,6 +5,7 @@ import type { AttributeConverterHandler } from './converter-handlers/AttributeCo
 import type { ConnectorConverterHandler } from './converter-handlers/ConnectorConverterHandler';
 import type { ElementConverterHandler } from './converter-handlers/ElementConverterHandler';
 import type { PackageConverterHandler } from './converter-handlers/PackageConverterHandler';
+import { ConverterHandler } from './types/ConverterHandler';
 import type { NormalizedConnector } from './types/NormalizedConnector';
 
 import { TagName } from './types/TagName';
@@ -47,11 +48,13 @@ export class UriAssigner {
 
   public assignUris(
     diagram: EaDiagram,
-    packageHandler: PackageConverterHandler,
-    elementHandler: ElementConverterHandler,
-    attributeHandler: AttributeConverterHandler,
-    connectorConverterHandler: ConnectorConverterHandler,
+    handlers: ConverterHandler[],
   ): void {
+    const packageHandler = <PackageConverterHandler>handlers.find(x => x.name === 'PackageConverterHandler')!;
+    const elementHandler = <ElementConverterHandler>handlers.find(x => x.name === 'ElementConverterHandler')!;
+    const attributeHandler = <AttributeConverterHandler>handlers.find(x => x.name === 'AttributeConverterHandler')!;
+    const connectorHandler = <ConnectorConverterHandler>handlers.find(x => x.name === 'ConnectorConverterHandler')!;
+
     packageHandler.objects.forEach(_package =>
       this.packageNameToPackageMap
         .set(_package.name, [...this.packageNameToPackageMap.get(_package.name) || [], _package]));
@@ -61,7 +64,7 @@ export class UriAssigner {
     this.assignUrisToPackages(<EaPackage[]>packageHandler.objects);
     this.assignUrisToElements(elements);
     this.assignUrisToAttributes(<EaAttribute[]>attributeHandler.objects, elements);
-    this.assignConnectorUris(diagram, <NormalizedConnector[]>connectorConverterHandler.objects, elements);
+    this.assignConnectorUris(diagram, <NormalizedConnector[]>connectorHandler.objects, elements);
   }
 
   public assignUrisToPackages(packages: EaPackage[]): void {

@@ -39,6 +39,7 @@
     "@oslo-flanders/core": "^0.0.0",
     "@oslo-flanders/ea-converter-configuration": "^0.0.0",
     "@oslo-flanders/ea-extractor": "^0.0.0",
+    "@oslo-flanders/stakeholder-extractor": "^0.0.0",
     "uniqid": "^5.4.0"
   }
 }

@@ -11,6 +11,10 @@ export abstract class ConverterHandler {
     this.targetDiagram = targetDiagram;
   }
 
+  public get name(): string {
+    return this.constructor.name;
+  }
+
   public abstract documentNotification(document: EaDocument): void;
   public abstract convertToOslo(uriAssigner: UriAssigner, outputHandler: OutputHandler): void;
 }
