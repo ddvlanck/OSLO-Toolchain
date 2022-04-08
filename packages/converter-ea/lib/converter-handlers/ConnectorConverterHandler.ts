@@ -8,8 +8,9 @@ import { ignore, normalize } from '../utils/utils';
 
 export class ConnectorConverterHandler extends ConverterHandler {
   public documentNotification(document: EaDocument): void {
-    const filteredConnectors = document.eaElements.filter(x => !ignore(x, false));
-    this.objects = this.normalizeConnectors(document.eaConnectors, filteredConnectors);
+    const diagramConnectors = document.eaConnectors.filter(x => this.targetDiagram.connectorsIds.includes(x.id));
+    const filteredConnectors = diagramConnectors.filter(x => !ignore(x, false));
+    this.objects = this.normalizeConnectors(filteredConnectors, document.eaElements);
   }
 
   public convertToOslo(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {

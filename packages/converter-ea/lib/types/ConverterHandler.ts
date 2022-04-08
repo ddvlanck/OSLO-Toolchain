@@ -1,12 +1,14 @@
 import type { OutputHandler } from '@oslo-flanders/core';
-import type { EaDocument } from '@oslo-flanders/ea-extractor';
+import type { EaDiagram, EaDocument } from '@oslo-flanders/ea-extractor';
 import type { UriAssigner } from '../UriAssigner';
 
 export abstract class ConverterHandler {
   public objects: any[];
+  public readonly targetDiagram: EaDiagram;
 
-  public constructor() {
+  public constructor(targetDiagram: EaDiagram) {
     this.objects = [];
+    this.targetDiagram = targetDiagram;
   }
 
   public abstract documentNotification(document: EaDocument): void;

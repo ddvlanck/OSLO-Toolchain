@@ -17,18 +17,13 @@ export class EaConverter extends Converter {
 
   // TODO: voc or ap parameter
   private readonly configuration: Configuration;
-  private readonly converterHandlers: ConverterHandler[];
+  private converterHandlers: ConverterHandler[];
 
   public constructor(configuration: Configuration, outputHandler: OutputHandler) {
     super(configuration.umlFile, outputHandler);
 
     this.configuration = configuration;
-    this.converterHandlers = [
-      new PackageConverterHandler(),
-      new ElementConverterHandler(),
-      new AttributeConverterHandler(),
-      new ConnectorConverterHandler(),
-    ];
+    this.converterHandlers = [];
   }
 
   public async convert(): Promise<void> {
@@ -42,6 +37,7 @@ export class EaConverter extends Converter {
       return;
     }
 
+    this.attachHandlers(targetDiagram);
     this.converterHandlers.forEach(handler => handler.documentNotification(eaDocument));
     uriAssigner.assignUris(
       targetDiagram,
@@ -53,7 +49,7 @@ export class EaConverter extends Converter {
 
     this.converterHandlers.forEach(handler => handler.convertToOslo(uriAssigner, this.outputHandler));
 
-    //await this.outputHandler.write();
+    await this.outputHandler.write();
   }
 
   // TODO: Filter EaDocument immediatly (based on configured diagram name, in extractor)
@@ -72,6 +68,15 @@ export class EaConverter extends Converter {
     }
 
     return filteredDiagram[0];
+  }
+
+  private attachHandlers(targetDiagram: EaDiagram): void {
+    this.converterHandlers = [
+      new PackageConverterHandler(targetDiagram),
+      new ElementConverterHandler(targetDiagram),
+      new AttributeConverterHandler(targetDiagram),
+      new ConnectorConverterHandler(targetDiagram),
+    ];
   }
 
   private get packageConverterHandler(): PackageConverterHandler {
