@@ -1,9 +1,8 @@
 import type { OutputHandler } from '@oslo-flanders/core';
 import type { EaAttribute, EaDocument } from '@oslo-flanders/ea-extractor';
 import { ConverterHandler } from '../types/ConverterHandler';
-import { TagName } from '../types/TagName';
 import type { UriAssigner } from '../UriAssigner';
-import { getLanguageDependentTag, ignore } from '../utils/utils';
+import { ignore } from '../utils/utils';
 
 export class AttributeConverterHandler extends ConverterHandler {
   public documentNotification(document: EaDocument): void {
@@ -26,9 +25,9 @@ export class AttributeConverterHandler extends ConverterHandler {
       }
 
       // TODO: derived and scope not yet available
-      const definition = getLanguageDependentTag(attribute, TagName.Definition);
-      const label = getLanguageDependentTag(attribute, TagName.Label);
-      const usageNote = getLanguageDependentTag(attribute, TagName.UsageNote);
+      const definition = this.getDefinition(attribute);
+      const label = this.getLabel(attribute);
+      const usageNote = this.getUsageNote(attribute);
       const domain = elementUriMap.get(attribute.classId)!;
 
       const osloAttribute = {

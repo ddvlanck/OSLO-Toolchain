@@ -69,10 +69,10 @@ export class EaConverter extends Converter {
 
   private attachHandlers(targetDiagram: EaDiagram): void {
     this.converterHandlers = [
-      new PackageConverterHandler(targetDiagram),
-      new ElementConverterHandler(targetDiagram),
-      new AttributeConverterHandler(targetDiagram),
-      new ConnectorConverterHandler(targetDiagram),
+      new PackageConverterHandler(targetDiagram, this.configuration.specificationType),
+      new ElementConverterHandler(targetDiagram, this.configuration.specificationType),
+      new AttributeConverterHandler(targetDiagram, this.configuration.specificationType),
+      new ConnectorConverterHandler(targetDiagram, this.configuration.specificationType),
     ];
   }
 }

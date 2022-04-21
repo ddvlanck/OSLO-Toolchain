@@ -29,32 +29,6 @@ export function getTagValue(object: any, tagName: TagName, _default: any, silent
   return tags[0].tagValue;
 }
 
-export function getLanguageDependentTag(object: any, tagName: TagName): Map<string, string> {
-  const logger = getLoggerFor('GetLanguageDependentTagFunction');
-  const tags = object.tags?.filter((x: Tag) => x.tagName.startsWith(tagName));
-
-  const languageToTagValueMap = new Map<string, string>();
-
-  if (!tags || tags.length === 0) {
-    //logger.warn(`Missing tag ${tagName} for object (${object.path()})`);
-    return languageToTagValueMap;
-  }
-
-  tags.forEach((tag: Tag) => {
-    const parts = tag.tagName.split('-');
-    const languageCode = parts[parts.length - 1];
-
-    if (languageToTagValueMap.has(languageCode)) {
-      // TODO: add option to log silently
-      //logger.warn(`Object (${object.path()}) contains multiple occurrcences of ${tag.tagName} and will be overridden.`);
-    }
-
-    languageToTagValueMap.set(languageCode, tag.tagValue);
-  });
-
-  return languageToTagValueMap;
-}
-
 export function extractUri(object: EaObject, packageUri: string, camelCase: boolean): string {
   const uri = getTagValue(object, TagName.Externaluri, null);
 

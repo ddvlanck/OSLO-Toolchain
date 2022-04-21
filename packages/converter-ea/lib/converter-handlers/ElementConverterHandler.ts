@@ -5,15 +5,14 @@ import type { EaConnector, EaDiagram, EaDocument, EaElement } from '@oslo-flande
 import { ElementType, ConnectorType } from '@oslo-flanders/ea-extractor';
 
 import { ConverterHandler } from '../types/ConverterHandler';
-import { TagName } from '../types/TagName';
 import type { UriAssigner } from '../UriAssigner';
-import { getLanguageDependentTag, ignore } from '../utils/utils';
+import { ignore } from '../utils/utils';
 
 export class ElementConverterHandler extends ConverterHandler {
   public generalizationConnectors: EaConnector[];
 
-  public constructor(targetDiagram: EaDiagram) {
-    super(targetDiagram);
+  public constructor(targetDiagram: EaDiagram, specificationType: string) {
+    super(targetDiagram, specificationType);
     this.generalizationConnectors = [];
   }
 
@@ -64,9 +63,9 @@ export class ElementConverterHandler extends ConverterHandler {
       return null;
     }
 
-    const definition = getLanguageDependentTag(dataType, TagName.Definition);
-    const label = getLanguageDependentTag(dataType, TagName.Label);
-    const usageNote = getLanguageDependentTag(dataType, TagName.UsageNote);
+    const definition = this.getDefinition(dataType);
+    const label = this.getLabel(dataType);
+    const usageNote = this.getUsageNote(dataType);
 
     return {
       uri: dataTypeUri,
@@ -94,9 +93,9 @@ export class ElementConverterHandler extends ConverterHandler {
       return null;
     }
 
-    const definition = getLanguageDependentTag(_class, TagName.Definition);
-    const label = getLanguageDependentTag(_class, TagName.Label);
-    const usageNote = getLanguageDependentTag(_class, TagName.UsageNote);
+    const definition = this.getDefinition(_class);
+    const label = this.getLabel(_class);
+    const usageNote = this.getUsageNote(_class);
 
     const parentClass = this.generalizationConnectors.find(x => x.sourceObjectId === _class.id);
     let parentUri;
