@@ -1,5 +1,6 @@
+// TODO: should be URIs
 export enum Scope {
-  InPackage,
-  InPublicationEnvironment,
-  External,
+  InPackage = 'InPackage',
+  InPublicationEnvironment = 'InPublicationEnvironment',
+  External = 'External',
 }

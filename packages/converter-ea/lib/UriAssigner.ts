@@ -5,11 +5,12 @@ import type { AttributeConverterHandler } from './converter-handlers/AttributeCo
 import type { ConnectorConverterHandler } from './converter-handlers/ConnectorConverterHandler';
 import type { ElementConverterHandler } from './converter-handlers/ElementConverterHandler';
 import type { PackageConverterHandler } from './converter-handlers/PackageConverterHandler';
-import { ConverterHandler } from './types/ConverterHandler';
+import type { ConverterHandler } from './types/ConverterHandler';
 import type { NormalizedConnector } from './types/NormalizedConnector';
+import { NormalizedConnectorType } from './types/NormalizedConnector';
 
 import { TagName } from './types/TagName';
-import { convertToCase, extractUri, getTagValue } from './utils/utils';
+import { CasingType, convertToCase, extractUri, getTagValue } from './utils/utils';
 
 const backupBaseUri = 'https://fixme.com#';
 
@@ -95,8 +96,12 @@ export class UriAssigner {
         elementPackageUri = this.getDefininingPackageUri(packageNameTag, elementPackageUri);
       }
 
-      const extractedUri = extractUri(element, elementPackageUri, false);
+      const extractedUri = extractUri(element, elementPackageUri, CasingType.PascalCase);
       this.elementIdUriMap.set(element.id, extractedUri);
+      this.elementNameToElementMap.set(
+        element.name,
+        [...this.elementNameToElementMap.get(element.name) || [], element],
+      );
     });
   }
 
@@ -133,13 +138,13 @@ export class UriAssigner {
         }
 
         let localName = getTagValue(attributeClass, TagName.LocalName, attributeClass.name);
-        localName = convertToCase(localName, true, attribute.id);
+        localName = convertToCase(localName, CasingType.CamelCase, attribute.id);
 
         const instanceNamespace = `${namespace}/${localName}/`;
-        const attributeUri = extractUri(attribute, instanceNamespace, true);
+        const attributeUri = extractUri(attribute, instanceNamespace, CasingType.CamelCase);
         this.attributeIdUriMap.set(attribute.id, attributeUri);
       } else {
-        const uri = extractUri(attribute, attributePackageUri, true);
+        const uri = extractUri(attribute, attributePackageUri, CasingType.CamelCase);
         this.attributeIdUriMap.set(attribute.id, uri);
       }
     });
@@ -185,7 +190,7 @@ export class UriAssigner {
 
       // If there is no value for the 'uri' tag
       if (!connectorUri) {
-        // Then the connector must have a value for the 'package' tag
+        // Then the connector must somehow receive a value through the 'package' tag
         if (!definingPackageUri) {
           this.logger.warn(`Ignoring connector (${connector.path()}) as it lacks a defining package or is defined on a non-existing package.`);
           return;
@@ -197,7 +202,9 @@ export class UriAssigner {
           return;
         }
 
-        localName = convertToCase(localName, true, connector.id);
+        localName = connector.type === NormalizedConnectorType.RegularConnector ?
+          convertToCase(localName, CasingType.CamelCase, connector.id) :
+          convertToCase(localName, CasingType.AssociationClassCase, connector.id);
         connectorUri = definingPackageUri + localName;
       }
 

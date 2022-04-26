@@ -9,7 +9,6 @@ export enum ElementType {
   Enumeration
 }
 
-// TODO: make it a class
 /**
  * Represents an element in Enterprise Architect
  * @see ElementType for possible types of an EaElement

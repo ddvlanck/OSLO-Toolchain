@@ -10,10 +10,12 @@ export enum TagName {
   Definition = 'definition',
   Externaluri = 'uri',
   Ignore = 'ignore',
+  IsLiteral = 'literal',
   Label = 'label',
   LocalName = 'name',
   PackageBaseUri = 'baseURI',
   PackageOntologyUri = 'ontologyURI',
   PackageBaseUriAbbreviation = 'baseURIabbrev',
+  Range = 'range',
   UsageNote = 'usageNote'
 }

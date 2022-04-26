@@ -17,32 +17,37 @@ export class ElementConverterHandler extends ConverterHandler {
   }
 
   public documentNotification(document: EaDocument): void {
-    const diagramElements = document.eaElements.filter(x => this.targetDiagram.elementIds.includes(x.id));
-    this.objects = diagramElements.filter(x => !ignore(x, false));
+    this.objects = document.eaElements.filter(x => !ignore(x, false));
     this.generalizationConnectors = document.eaConnectors.filter(x => x.type === ConnectorType.Generalization);
   }
 
+  // All elements will be processed and receive a URI, but only elements on the target diagram
+  // will be passed to the OutputHandler. This flow is necessary because element types could be
+  // in other packages and their URIs are needed to refer to in the output file.If filtering
+  // would be applied in documentNotification, external types would not have an URI.
   public convertToOslo(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
     const elementUriMap = uriAssigner.elementIdUriMap;
+    const packageUri = uriAssigner.packageIdUriMap.get(this.targetDiagram.packageId)!;
+    const diagramElements = this.objects.filter(x => this.targetDiagram.elementIds.includes(x.id));
 
-    this.objects.forEach(element => {
+    diagramElements.forEach(element => {
       const eaElement = <EaElement>element;
 
       switch (eaElement.type) {
         case ElementType.Class: {
-          const osloClass = this.convertToOsloClass(eaElement, elementUriMap)!;
+          const osloClass = this.convertToOsloClass(eaElement, elementUriMap, packageUri)!;
           outputHandler.addClass(osloClass);
           break;
         }
 
         case ElementType.DataType: {
-          const osloDatatype = this.convertToOsloDataType(eaElement, elementUriMap)!;
+          const osloDatatype = this.convertToOsloDataType(eaElement, elementUriMap, packageUri)!;
           outputHandler.addDataType(osloDatatype);
           break;
         }
 
         case ElementType.Enumeration: {
-          this.convertToOsloEnumeration(eaElement, elementUriMap);
+          this.convertToOsloEnumeration(eaElement, elementUriMap, packageUri);
           break;
         }
 
@@ -55,6 +60,7 @@ export class ElementConverterHandler extends ConverterHandler {
   private convertToOsloDataType(
     dataType: EaElement,
     elementUriMap: Map<number, string>,
+    packageUri: string,
   ): DataType | null {
     const dataTypeUri = elementUriMap.get(dataType.id);
 
@@ -66,18 +72,21 @@ export class ElementConverterHandler extends ConverterHandler {
     const definition = this.getDefinition(dataType);
     const label = this.getLabel(dataType);
     const usageNote = this.getUsageNote(dataType);
+    const scope = this.getScope(dataType, packageUri, elementUriMap);
 
     return {
       uri: dataTypeUri,
       definition,
       label,
       usageNote,
+      scope,
     };
   }
 
   private convertToOsloEnumeration(
     enumeration: EaElement,
     elementUriMap: Map<number, string>,
+    packageUri: string,
   ): void {
     // TODO
   }
@@ -85,6 +94,7 @@ export class ElementConverterHandler extends ConverterHandler {
   private convertToOsloClass(
     _class: EaElement,
     elementUriMap: Map<number, string>,
+    packageUri: string,
   ): Class | null {
     const classUri = elementUriMap.get(_class.id);
 
@@ -96,6 +106,7 @@ export class ElementConverterHandler extends ConverterHandler {
     const definition = this.getDefinition(_class);
     const label = this.getLabel(_class);
     const usageNote = this.getUsageNote(_class);
+    const scope = this.getScope(_class, packageUri, elementUriMap);
 
     const parentClass = this.generalizationConnectors.find(x => x.sourceObjectId === _class.id);
     let parentUri;
@@ -108,12 +119,12 @@ export class ElementConverterHandler extends ConverterHandler {
       }
     }
 
-    // TODO: scope not yet available
     const osloClass = {
       uri: classUri,
       definition,
       label,
       usageNote,
+      scope,
       parent: parentUri,
     };
 

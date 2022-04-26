@@ -6,6 +6,12 @@ import { ConnectorType } from '@oslo-flanders/ea-extractor';
 import { NormalizedConnector, NormalizedConnectorType } from '../types/NormalizedConnector';
 import { TagName } from '../types/TagName';
 
+export enum CasingType {
+  CamelCase,
+  PascalCase,
+  AssociationClassCase
+}
+
 export function ignore(object: EaObject, _default: any): boolean {
   const ignoreObject = getTagValue(object, TagName.Ignore, false, true);
   return Boolean(ignoreObject);
@@ -29,7 +35,7 @@ export function getTagValue(object: any, tagName: TagName, _default: any, silent
   return tags[0].tagValue;
 }
 
-export function extractUri(object: EaObject, packageUri: string, camelCase: boolean): string {
+export function extractUri(object: EaObject, packageUri: string, casing: CasingType): string {
   const uri = getTagValue(object, TagName.Externaluri, null);
 
   if (uri) {
@@ -37,7 +43,7 @@ export function extractUri(object: EaObject, packageUri: string, camelCase: bool
   }
 
   let localName = getTagValue(object, TagName.LocalName, object.name);
-  localName = convertToCase(localName, camelCase, object.id);
+  localName = convertToCase(localName, casing, object.id);
 
   if (localName && localName !== '') {
     return packageUri + localName;
@@ -46,7 +52,7 @@ export function extractUri(object: EaObject, packageUri: string, camelCase: bool
   return `${packageUri}${object.name}`;
 }
 
-export function convertToCase(text: string, camelCase: boolean, objectGuid: number | string): string {
+export function convertToCase(text: string, casing: CasingType, objectGuid: number | string): string {
   const logger = getLoggerFor('ConvertToCaseFunction');
 
   if (text === null || text === '') {
@@ -54,11 +60,22 @@ export function convertToCase(text: string, camelCase: boolean, objectGuid: numb
     return '';
   }
 
-  if (camelCase) {
+  if (casing === CasingType.CamelCase) {
     return toCamelCase(text);
   }
 
-  return toPascalCase(text);
+  if (casing === CasingType.PascalCase) {
+    return toPascalCase(text);
+  }
+
+  const parts = text.split('.');
+  let associationClassCasedText = parts[0];
+
+  parts.slice(1).forEach(part => {
+    associationClassCasedText += `.${toCamelCase(part)}`;
+  });
+
+  return associationClassCasedText;
 }
 
 function toPascalCase(text: string): string {
@@ -181,15 +198,6 @@ function createNormalizedAssociationClassConnector(
     return [];
   }
 
-  let sourceObjectName = sourceObject.name;
-  let destinationObjectName = destinationObject.name;
-
-  // In case of a self-association
-  if (connector.sourceObjectId === connector.destinationObjectId) {
-    sourceObjectName = `${sourceObjectName}.source`;
-    destinationObjectName = `${destinationObjectName}.target`;
-  }
-
   // In case of an association class, we use the package tag of the association class
   // TODO: verify this with the editors
   // Other strategy could be to log an error if connector tags don't have a package tag
@@ -199,17 +207,33 @@ function createNormalizedAssociationClassConnector(
     // Log error
     return [];
   }
-  const packageName = getTagValue(assocationObject, TagName.DefiningPackage, null);
 
-  if (!packageName) {
-    // Log error
-    return [];
+  let sourceObjectName = `${assocationObject.name}.${sourceObject.name}`;
+  let destinationObjectName = `${assocationObject.name}.${destinationObject.name}`;
+  let sourceLabel = sourceObject.name;
+  let destinationLabel = destinationObject.name;
+
+  // In case of a self-association
+  if (connector.sourceObjectId === connector.destinationObjectId) {
+    sourceObjectName = `${sourceObjectName}.source`;
+    destinationObjectName = `${destinationObjectName}.target`;
+    sourceLabel = `${sourceLabel} (source)`;
+    destinationLabel = `${destinationLabel} (target)`;
   }
 
-  const tag: Tag = {
+  // FIXME: classes should have a package tag defined
+  // FIXME: is adding a package tag still necessary?
+
+  const sourceLabelTag: Tag = {
     id: Date.now(),
-    tagName: 'package',
-    tagValue: packageName,
+    tagName: 'label',
+    tagValue: sourceLabel,
+  };
+
+  const destinationLabelTag: Tag = {
+    id: Date.now(),
+    tagName: 'label',
+    tagValue: destinationLabel,
   };
 
   return [
@@ -219,7 +243,7 @@ function createNormalizedAssociationClassConnector(
       connector.associationClassId!,
       connector.sourceObjectId,
       '1',
-      [tag],
+      [sourceLabelTag],
       NormalizedConnectorType.AssociationClassConnector,
     ),
     new NormalizedConnector(
@@ -228,7 +252,7 @@ function createNormalizedAssociationClassConnector(
       connector.associationClassId!,
       connector.destinationObjectId,
       '1',
-      [tag],
+      [destinationLabelTag],
       NormalizedConnectorType.AssociationClassConnector,
     ),
   ];

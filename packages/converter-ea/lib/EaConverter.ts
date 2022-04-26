@@ -15,7 +15,6 @@ import { UriAssigner } from './UriAssigner';
 export class EaConverter extends Converter {
   private readonly logger = getLoggerFor(this);
 
-  // TODO: voc or ap parameter
   private readonly configuration: Configuration;
   private converterHandlers: ConverterHandler[];
 
@@ -49,8 +48,6 @@ export class EaConverter extends Converter {
     await this.outputHandler.write();
   }
 
-  // TODO: Filter EaDocument immediatly (based on configured diagram name, in extractor)
-  // TODO: Test OSLO-Air-and-Water for extra packages
   private getTargetDiagram(eaDocument: EaDocument): EaDiagram | null {
     const filteredDiagram = eaDocument.eaDiagrams.filter(x => x.name === this.configuration.diagramName);
 

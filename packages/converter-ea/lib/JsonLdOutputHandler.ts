@@ -1,5 +1,6 @@
 import { writeFile } from 'fs/promises';
-import { ContributorType, OutputHandler, Person } from '@oslo-flanders/core';
+import type { OutputHandler } from '@oslo-flanders/core';
+import { ContributorType } from '@oslo-flanders/core';
 import type { Class } from '@oslo-flanders/core/lib/oslo/Class';
 import type { DataType } from '@oslo-flanders/core/lib/oslo/DataType';
 import type { Package } from '@oslo-flanders/core/lib/oslo/Package';
@@ -10,6 +11,7 @@ export class JsonLdOutputHandler implements OutputHandler {
   private readonly jsonLdPackages: any[];
   private readonly jsonLdClasses: any[];
   private readonly jsonLdDataTypes: any[];
+  private readonly jsonLdAttributes: any[];
   private readonly contributors: any[];
   private readonly authors: any[];
   private readonly editors: any[];
@@ -18,6 +20,7 @@ export class JsonLdOutputHandler implements OutputHandler {
     this.jsonLdPackages = [];
     this.jsonLdClasses = [];
     this.jsonLdDataTypes = [];
+    this.jsonLdAttributes = [];
     this.contributors = [];
     this.authors = [];
     this.editors = [];
@@ -67,16 +70,35 @@ export class JsonLdOutputHandler implements OutputHandler {
   public addClass(_class: Class): void {
     this.jsonLdClasses.push({
       '@id': _class.uri,
-      '@type': 'Class',
+      '@type': 'http://www.w3.org/2002/07/owl#Class',
       definition: Array.from(_class.definition, ([language, value]) => ({ '@language': language, '@value': value })),
       label: Array.from(_class.label, ([language, value]) => ({ '@language': language, '@value': value })),
       usageNote: Array.from(_class.usageNote, ([language, value]) => ({ '@language': language, '@value': value })),
       parent: _class.parent,
+      scope: _class.scope,
     });
   }
 
   public addAttribute(attribute: Property): void {
-    // TODO
+    this.jsonLdAttributes.push({
+      '@id': attribute.uri,
+      '@type': attribute.type,
+      definition: Array.from(attribute.definition, ([language, value]) => ({ '@language': language, '@value': value })),
+      label: Array.from(attribute.label, ([language, value]) => ({ '@language': language, '@value': value })),
+      usageNote: Array.from(attribute.usageNote, ([language, value]) => ({ '@language': language, '@value': value })),
+      domain: {
+        '@id': attribute.domain,
+        '@type': 'http://www.w3.org/2002/07/owl#Class',
+        label: attribute.domainLabel,
+      },
+      range: {
+        '@id': attribute.range,
+        label: attribute.rangeLabel,
+      },
+      maxCard: attribute.maxCardinality,
+      minCard: attribute.minCardinality,
+      scope: attribute.scope,
+    });
   }
 
   public addDataType(datatype: DataType): void {
@@ -86,6 +108,7 @@ export class JsonLdOutputHandler implements OutputHandler {
       definition: Array.from(datatype.definition, ([language, value]) => ({ '@language': language, '@value': value })),
       label: Array.from(datatype.label, ([language, value]) => ({ '@language': language, '@value': value })),
       usageNote: Array.from(datatype.usageNote, ([language, value]) => ({ '@language': language, '@value': value })),
+      scope: datatype.scope,
     });
   }
 
@@ -93,6 +116,7 @@ export class JsonLdOutputHandler implements OutputHandler {
     return {
       packages: this.jsonLdPackages,
       classes: this.jsonLdClasses,
+      attributes: this.jsonLdAttributes,
       dataTypes: this.jsonLdDataTypes,
       contributors: this.contributors,
       editors: this.editors,

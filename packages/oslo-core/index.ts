@@ -5,3 +5,5 @@ export * from './lib/interfaces/Converter';
 export * from './lib/interfaces/Generator';
 export * from './lib/oslo/Person';
 export * from './lib/interfaces/OutputHandler';
+export * from './lib/oslo/Property';
+export * from './lib/oslo/Scope';
