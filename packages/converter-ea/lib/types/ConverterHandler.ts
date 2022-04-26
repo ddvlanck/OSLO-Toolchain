@@ -82,7 +82,13 @@ export abstract class ConverterHandler {
         // logger.warn(`Object (${object.path()}) contains multiple occurrcences of ${tag.tagName} and will be overridden.`);
       }
 
-      languageToTagValueMap.set(languageCode, tag.tagValue);
+      const tagValue = tag.tagValue.trim();
+      if (!tagValue) {
+        // Log warning for empty field?
+        return;
+      }
+
+      languageToTagValueMap.set(languageCode, tagValue);
     });
 
     return languageToTagValueMap;

@@ -47,7 +47,7 @@ export class ConnectorConverterHandler extends ConverterHandler {
       const [minCardinality, maxCardinality] = normalizedConnector.cardinality.split('..');
 
       const osloConnector: Property = {
-        uri: connectorUri,
+        uri: new URL(connectorUri),
         definition,
         label,
         usageNote,

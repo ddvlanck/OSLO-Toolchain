@@ -1,12 +1,13 @@
-import type { OutputHandler } from '@oslo-flanders/core';
+import { OutputHandler, Property, PropertyType, Scope } from '@oslo-flanders/core';
 import type { Class } from '@oslo-flanders/core/lib/oslo/Class';
 import type { DataType } from '@oslo-flanders/core/lib/oslo/DataType';
 import type { EaConnector, EaDiagram, EaDocument, EaElement } from '@oslo-flanders/ea-extractor';
 import { ElementType, ConnectorType } from '@oslo-flanders/ea-extractor';
 
 import { ConverterHandler } from '../types/ConverterHandler';
+import { TagName } from '../types/TagName';
 import type { UriAssigner } from '../UriAssigner';
-import { ignore } from '../utils/utils';
+import { getTagValue, ignore } from '../utils/utils';
 
 export class ElementConverterHandler extends ConverterHandler {
   public generalizationConnectors: EaConnector[];
@@ -47,7 +48,8 @@ export class ElementConverterHandler extends ConverterHandler {
         }
 
         case ElementType.Enumeration: {
-          this.convertToOsloEnumeration(eaElement, elementUriMap, packageUri);
+          const osloEnumeration = this.convertToOsloEnumeration(eaElement, elementUriMap, packageUri)!;
+          outputHandler.addClass(osloEnumeration);
           break;
         }
 
@@ -75,7 +77,7 @@ export class ElementConverterHandler extends ConverterHandler {
     const scope = this.getScope(dataType, packageUri, elementUriMap);
 
     return {
-      uri: dataTypeUri,
+      uri: new URL(dataTypeUri),
       definition,
       label,
       usageNote,
@@ -87,8 +89,29 @@ export class ElementConverterHandler extends ConverterHandler {
     enumeration: EaElement,
     elementUriMap: Map<number, string>,
     packageUri: string,
-  ): void {
-    // TODO
+  ): Class | null {
+    const enumerationUri = elementUriMap.get(enumeration.id);
+    if (!enumerationUri) {
+      return null;
+    }
+
+    const definition = this.getDefinition(enumeration);
+    // FIXME: this should be available through a tag
+    const label = new Map<string, string>([['nl', enumeration.name]]);
+    const usageNote = this.getUsageNote(enumeration);
+    const scope = Scope.External;
+    const codelist = getTagValue(enumeration, TagName.ApCodelist, null);
+
+    const osloEnumeration: Class = {
+      uri: new URL(enumerationUri),
+      definition,
+      label,
+      usageNote,
+      scope,
+      ...codelist && { codelist: new URL(codelist) },
+    };
+
+    return osloEnumeration;
   }
 
   private convertToOsloClass(
@@ -120,7 +143,7 @@ export class ElementConverterHandler extends ConverterHandler {
     }
 
     const osloClass = {
-      uri: classUri,
+      uri: new URL(classUri),
       definition,
       label,
       usageNote,

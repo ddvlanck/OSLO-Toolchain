@@ -7,3 +7,4 @@ export * from './lib/oslo/Person';
 export * from './lib/interfaces/OutputHandler';
 export * from './lib/oslo/Property';
 export * from './lib/oslo/Scope';
+export * from './lib/oslo/Package';

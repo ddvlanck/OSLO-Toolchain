@@ -4,7 +4,6 @@ export interface DataType {
   definition: Map<string, string>;
   label: Map<string, string>;
   scope: Scope;
-  // TODO: check if we can use type 'URL'
-  uri: string;
+  uri: URL;
   usageNote: Map<string, string>;
 }

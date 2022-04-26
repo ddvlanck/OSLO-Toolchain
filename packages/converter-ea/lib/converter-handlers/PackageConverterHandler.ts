@@ -1,4 +1,4 @@
-import type { OutputHandler } from '@oslo-flanders/core';
+import type { OutputHandler, Package } from '@oslo-flanders/core';
 import type { EaDocument } from '@oslo-flanders/ea-extractor';
 import { ConverterHandler } from '../types/ConverterHandler';
 import type { UriAssigner } from '../UriAssigner';
@@ -17,10 +17,10 @@ export class PackageConverterHandler extends ConverterHandler {
       const ontologyUri = ontologyUriMap.get(_package.packageId)!;
       const baseUri = baseUriMap.get(_package.packageId)!;
 
-      const osloPackage = {
+      const osloPackage: Package = {
         name: _package.name,
-        baseUri,
-        ontologyUri,
+        baseUri: new URL(baseUri),
+        ontologyUri: new URL(ontologyUri),
       };
 
       outputHandler.addPackage(osloPackage);

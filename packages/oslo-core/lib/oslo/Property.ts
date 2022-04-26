@@ -15,9 +15,8 @@ export interface Property {
   maxCardinality?: string;
   scope: Scope;
   // TODO: check if we can change type to 'URL'
-  uri: string;
+  uri: URL;
   usageNote: Map<string, string>;
-  // TODO: make type Class and include class as a whole?
   domain: string;
   domainLabel: string;
   // FIXME: not yet available: fetch parentURI tag (only in case of a Vocabulary)

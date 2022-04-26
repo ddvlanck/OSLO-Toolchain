@@ -78,7 +78,7 @@ export class AttributeConverterHandler extends ConverterHandler {
       const scope = this.getScope(eaAttribute, packageUri, attributeUriMap);
 
       const osloAttribute: Property = {
-        uri: attributeUri,
+        uri: new URL(attributeUri),
         definition,
         label,
         usageNote,
