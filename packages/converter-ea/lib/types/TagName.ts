@@ -1,6 +1,7 @@
 export enum TagName {
-  ApLabel = 'ap-label',
+  ApCodelist = 'ap-codelist',
   ApDefinition = 'ap-definition',
+  ApLabel = 'ap-label',
   ApUsageNote = 'ap-usageNote',
   AssociationDestPrefix = 'target-',
   AssociationDestRevPrefix = 'target-rev-',
