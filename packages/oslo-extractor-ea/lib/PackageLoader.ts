@@ -1,7 +1,7 @@
 import alasql from 'alasql';
 import type MDBReader from 'mdb-reader';
-import { EaTable } from './DataExtractor';
 import { EaPackage } from './types/EaPackage';
+import { EaTable } from './types/TableNames';
 
 export function loadPackages(eaReader: MDBReader): EaPackage[] {
   const packages = eaReader.getTable(EaTable.Package).getData();
@@ -12,7 +12,6 @@ export function loadPackages(eaReader: MDBReader): EaPackage[] {
     FROM ? package
     LEFT JOIN ? element ON package.ea_guid = element.ea_guid`;
 
-  // TODO: add stereotype and note
   const eaPackages = (<any[]>alasql(query, [packages, elements])).map(item => new EaPackage(
     <number>item.Object_ID,
     <string>item.ea_guid,

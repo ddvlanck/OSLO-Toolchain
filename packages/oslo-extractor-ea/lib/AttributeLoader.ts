@@ -1,7 +1,7 @@
 import type MDBReader from 'mdb-reader';
-import { EaTable } from './DataExtractor';
 import { EaAttribute } from './types/EaAttribute';
 import type { EaElement } from './types/EaElement';
+import { EaTable } from './types/TableNames';
 import { addEaTagsToElements } from './utils/tag';
 
 /**
