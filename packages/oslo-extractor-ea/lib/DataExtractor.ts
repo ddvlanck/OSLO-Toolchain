@@ -6,6 +6,7 @@ import { loadElementConnectors } from './ElementConnectorLoader';
 import { loadElements } from './ElementLoader';
 import { loadPackages } from './PackageLoader';
 import { EaDocument } from './types/EaDocument';
+import { EaTable } from './types/TableNames';
 import { addEaTagsToElements } from './utils/tag';
 
 // FIXME: what to do with imported packages (see ap Persoon)
