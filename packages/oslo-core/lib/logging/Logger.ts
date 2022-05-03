@@ -60,9 +60,13 @@ export class Logger {
       return msg;
     });
 
+    // TODO: this should not be here
+    const silent = process.env.NODE_ENV === 'test';
+
     return createLogger({
       transports: [
         new transports.Console({
+          silent,
           format: format.combine(
             format.colorize(),
             format.label({ label }),

@@ -31,7 +31,7 @@
   },
   "scripts": {
     "build:components": "componentsjs-generator -s .",
-    "test:integration": "node \"../../node_modules/jest/bin/jest.js\" --testPathPattern=\\.int\\.test\\.ts --silent"
+    "test:integration": "node \"../../node_modules/jest/bin/jest.js\" --testPathPattern=\\.int\\.test\\.ts"
   },
   "bugs": {
     "url": "https://github.com/ddvlanck/OSLO-Toolchain/issues"
