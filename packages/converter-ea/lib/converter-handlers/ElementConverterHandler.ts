@@ -1,4 +1,5 @@
-import { OutputHandler, Property, PropertyType, Scope } from '@oslo-flanders/core';
+import type { OutputHandler } from '@oslo-flanders/core';
+import { Scope } from '@oslo-flanders/core';
 import type { Class } from '@oslo-flanders/core/lib/oslo/Class';
 import type { DataType } from '@oslo-flanders/core/lib/oslo/DataType';
 import type { EaConnector, EaDiagram, EaDocument, EaElement } from '@oslo-flanders/ea-extractor';

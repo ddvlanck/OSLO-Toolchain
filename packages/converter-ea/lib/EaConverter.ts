@@ -45,7 +45,7 @@ export class EaConverter extends Converter {
 
     this.converterHandlers.forEach(handler => handler.convertToOslo(uriAssigner, this.outputHandler));
 
-    await this.outputHandler.write();
+    await this.outputHandler.write(this.configuration.outputFile);
   }
 
   private getTargetDiagram(eaDocument: EaDocument): EaDiagram | null {

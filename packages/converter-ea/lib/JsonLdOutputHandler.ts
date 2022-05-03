@@ -29,9 +29,9 @@ export class JsonLdOutputHandler implements OutputHandler {
   /**
    * Writes a JSON-LD document
    */
-  public async write(): Promise<void> {
+  public async write(path: string): Promise<void> {
     const report = this.createReport();
-    await writeFile('./test.jsonld', JSON.stringify(report, null, 4));
+    await writeFile(path, JSON.stringify(report, null, 4));
   }
 
   public async addStakeholders(stakeholdersFile: string): Promise<void> {

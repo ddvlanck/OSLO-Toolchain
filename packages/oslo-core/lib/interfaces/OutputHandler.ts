@@ -9,5 +9,5 @@ export interface OutputHandler {
   addAttribute: (attribute: Property) => void;
   addDataType: (datatype: DataType) => void;
   addStakeholders: (stakeholdersFile: string) => Promise<void>;
-  write: () => Promise<void>;
+  write: (path: string) => Promise<void>;
 }
