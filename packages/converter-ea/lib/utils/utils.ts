@@ -60,6 +60,8 @@ export function convertToCase(text: string, casing: CasingType, objectGuid: numb
     return '';
   }
 
+  text = removeCaret(text);
+
   if (casing === CasingType.CamelCase) {
     return toCamelCase(text);
   }
@@ -78,12 +80,16 @@ export function convertToCase(text: string, casing: CasingType, objectGuid: numb
   return associationClassCasedText;
 }
 
+function removeCaret(text: string): string {
+  return text.replace(/^\^/u, '');
+}
+
 function toPascalCase(text: string): string {
-  return text.replace(/(?:^\w|[A-Z]|\b\w)/gu, (word: string, index: number) => word.toUpperCase()).replace(/\s+/gu, '');
+  return text.replace(/(?:\w|[A-Z]|\b\w)/gu, (word: string, index: number) => word.toUpperCase()).replace(/\s+/gu, '');
 }
 
 function toCamelCase(text: string): string {
-  return text.replace(/(?:^\w|[A-Z]|\b\w)/gu, (word: string, index: number) =>
+  return text.replace(/(?:\w|[A-Z]|\b\w)/gu, (word: string, index: number) =>
     index === 0 ? word.toLowerCase() : word.toUpperCase()).replace(/\s+/gu, '');
 }
 
