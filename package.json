@@ -12,7 +12,8 @@
     "build-watch": "tsc --watch",
     "lint": "eslint . --ext .ts --cache",
     "lint:fix": "eslint . --ext .ts --cache --fix",
-    "test": "lerna run test",
+    "test:unit": "lerna run test:unit",
+    "test:integration": "lerna run test:integration",
     "doc": "typedoc"
   },
   "repository": {

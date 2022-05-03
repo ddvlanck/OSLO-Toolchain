@@ -18,7 +18,7 @@
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
-    "testRegex": "/test/.*.test.ts$",
+    "testRegex": "/test/.*.unit.test.ts$",
     "moduleFileExtensions": [
       "ts",
       "js"
@@ -43,8 +43,8 @@
     "url": "git+https://github.com/ddvlanck/OSLO-Toolchain.git"
   },
   "scripts": {
-    "test": "node \"../../node_modules/jest/bin/jest.js\"",
-    "test:verbose": "node \"../../node_modules/jest/bin/jest.js\" --verbose",
+    "test:unit": "node \"../../node_modules/jest/bin/jest.js\"",
+    "test:unit:verbose": "node \"../../node_modules/jest/bin/jest.js\" --verbose",
     "build:components": "componentsjs-generator -s ."
   },
   "bugs": {

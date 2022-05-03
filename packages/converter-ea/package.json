@@ -30,10 +30,23 @@
     "url": "git+https://github.com/ddvlanck/OSLO-Toolchain.git"
   },
   "scripts": {
-    "build:components": "componentsjs-generator -s ."
+    "build:components": "componentsjs-generator -s .",
+    "test:integration": "node \"../../node_modules/jest/bin/jest.js\" --testPathPattern=\\.int\\.test\\.ts --silent"
   },
   "bugs": {
     "url": "https://github.com/ddvlanck/OSLO-Toolchain/issues"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testRegex": "/test/.*.test.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "testEnvironment": "node",
+    "testTimeout": 30000
   },
   "dependencies": {
     "@oslo-flanders/core": "^0.0.0",
