@@ -1,0 +1,1104 @@
+{
+    "packages": [
+        {
+            "@id": "https://fixme.com/",
+            "@type": "Package",
+            "baseUri": "https://fixme.com/#"
+        },
+        {
+            "@id": "https://fixme.com/",
+            "@type": "Package",
+            "baseUri": "https://fixme.com/#"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein",
+            "@type": "Package",
+            "baseUri": "https://data.vlaanderen.be/ns/mijndomein#"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein",
+            "@type": "Package",
+            "baseUri": "https://data.vlaanderen.be/ns/mijndomein#"
+        }
+    ],
+    "classes": [
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#L07B",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie L07B etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "L 07B"
+                }
+            ],
+            "usageNote": [],
+            "parent": "https://data.vlaanderen.be/ns/mijndomein#K07B",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#L06A",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie L06A etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "L 06A"
+                }
+            ],
+            "usageNote": [],
+            "parent": "https://data.vlaanderen.be/ns/mijndomein#K06A",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#M07B",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie M07B etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "M 07B"
+                }
+            ],
+            "usageNote": [],
+            "parent": "https://data.vlaanderen.be/ns/mijndomein#K07B",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#L07A",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie L07A etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "L 07A"
+                }
+            ],
+            "usageNote": [],
+            "parent": "https://data.vlaanderen.be/ns/mijndomein#K07A",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K03A",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie K03A etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "K 03A"
+                }
+            ],
+            "usageNote": [],
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K06B",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie K06B etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "K 06B"
+                }
+            ],
+            "usageNote": [],
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K06A",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie K06A etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "K 06A"
+                }
+            ],
+            "usageNote": [],
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT06",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "AP Definitie Heeft06 (associatieklasse,tweede afdaling) etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "Heeft 06 (2)"
+                }
+            ],
+            "usageNote": [],
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K02B",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie K02B etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "K 02B"
+                }
+            ],
+            "usageNote": [],
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#L06B",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie L06B etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "L 06B"
+                }
+            ],
+            "usageNote": [],
+            "parent": "https://data.vlaanderen.be/ns/mijndomein#K06B",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#M06B",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie M06B etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "M 06B"
+                }
+            ],
+            "usageNote": [],
+            "parent": "https://data.vlaanderen.be/ns/mijndomein#K06B",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K07B",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie K07B etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "K 07B"
+                }
+            ],
+            "usageNote": [],
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "AP Definitie Heeft07 (associatieklasse,eerste afdaling) etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "Heeft 07 (1)"
+                }
+            ],
+            "usageNote": [],
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#M06A",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie M06A etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "M 06A"
+                }
+            ],
+            "usageNote": [],
+            "parent": "https://data.vlaanderen.be/ns/mijndomein#K06A",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#L02B",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie L02B etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "L 02B"
+                }
+            ],
+            "usageNote": [],
+            "parent": "https://data.vlaanderen.be/ns/mijndomein#K02B",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#L02A",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie L02A etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "L 02A"
+                }
+            ],
+            "usageNote": [],
+            "parent": "https://data.vlaanderen.be/ns/mijndomein#K02A",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "AP Definitie Heeft07 (associatieklasse,tweede afdaling) etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "Heeft 07 (2)"
+                }
+            ],
+            "usageNote": [],
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K02A",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie K02A etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "K 02A"
+                }
+            ],
+            "usageNote": [],
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K07A",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie K07A etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "K 07A"
+                }
+            ],
+            "usageNote": [],
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#L03B",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie L03B etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "L 03B"
+                }
+            ],
+            "usageNote": [],
+            "parent": "https://data.vlaanderen.be/ns/mijndomein#K03B",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT06",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "AP Definitie Heeft06 (associatieklasse,eerste afdaling) etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "Heeft 06 (1)"
+                }
+            ],
+            "usageNote": [],
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#L03A",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie L03A etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "L 03A"
+                }
+            ],
+            "usageNote": [],
+            "parent": "https://data.vlaanderen.be/ns/mijndomein#K03A",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K03B",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie K03B etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "K 03B"
+                }
+            ],
+            "usageNote": [],
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#M07A",
+            "@type": "http://www.w3.org/2002/07/owl#Class",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie M07A etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "M 07A"
+                }
+            ],
+            "usageNote": [],
+            "parent": "https://data.vlaanderen.be/ns/mijndomein#K07A",
+            "scope": "InPackage"
+        }
+    ],
+    "attributes": [
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#a06",
+            "@type": "http://www.w3.org/2002/07/owl#DatatypeProperty",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie a06 etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "a 06"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT06",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "Heeft06_2"
+            },
+            "range": {
+                "@id": "http://www.w3.org/2001/XMLSchema#string",
+                "label": "String"
+            },
+            "maxCard": "1",
+            "minCard": "1",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#a07",
+            "@type": "http://www.w3.org/2002/07/owl#DatatypeProperty",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie a07 etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "a 07"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "Heeft07_1"
+            },
+            "range": {
+                "@id": "http://www.w3.org/2001/XMLSchema#string",
+                "label": "String"
+            },
+            "maxCard": "1",
+            "minCard": "1",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#a07",
+            "@type": "http://www.w3.org/2002/07/owl#DatatypeProperty",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie a07 etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "a 07"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "Heeft07_2"
+            },
+            "range": {
+                "@id": "http://www.w3.org/2001/XMLSchema#string",
+                "label": "String"
+            },
+            "maxCard": "1",
+            "minCard": "1",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#a06",
+            "@type": "http://www.w3.org/2002/07/owl#DatatypeProperty",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "Definitie a06 etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "a 06"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT06",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "Heeft06_1"
+            },
+            "range": {
+                "@id": "http://www.w3.org/2001/XMLSchema#string",
+                "label": "String"
+            },
+            "maxCard": "1",
+            "minCard": "1",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k03A",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "AP Definitie k03A etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "k 03A"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L03B",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "L03B"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L03A"
+            },
+            "maxCard": "1",
+            "minCard": "0",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k03B",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "AP Definitie k03B etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "k 03B"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L03A",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "L03A"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L03B"
+            },
+            "maxCard": "*",
+            "minCard": "1",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k02B.HEEFT02",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "AP Definitie K02B.heeft02 etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "heeft 02"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L02B",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "L02B"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L02A"
+            },
+            "maxCard": "1",
+            "minCard": "0",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k02A.HEEFT02",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "AP Definitie K02A.heeft02 etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "heeft 02"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L02A",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "L02A"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L02B"
+            },
+            "maxCard": "*",
+            "minCard": "1",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k06B.HEEFT06",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "AP Definitie K06B.heeft06 (tweede afdaling) etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "heeft 06"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#M06B",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "M06B"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#M06A"
+            },
+            "maxCard": "1",
+            "minCard": "0",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k06A.HEEFT06",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "AP Definitie K06A.heeft06 (tweede afdaling) etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "heeft 06"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#M06A",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "M06A"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#M06B"
+            },
+            "maxCard": "*",
+            "minCard": "1",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft06_2.m06A",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [],
+            "label": [
+                {
+                    "@language": "label",
+                    "@value": "M06A"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT06",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "Heeft06_2"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#M06A"
+            },
+            "minCard": "1",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft06_2.m06B",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [],
+            "label": [
+                {
+                    "@language": "label",
+                    "@value": "M06B"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT06",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "Heeft06_2"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#M06B"
+            },
+            "minCard": "1",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k07AROL",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "AP Definitie k07Arol (tweede afdaling) etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "k 07A rol"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#M07B",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "M07B"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#M07A"
+            },
+            "maxCard": "1",
+            "minCard": "0",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k07BROL",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "AP Definitie k07Brol (tweede afdaling) etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "k 07B rol"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#M07A",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "M07A"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#M07B"
+            },
+            "maxCard": "*",
+            "minCard": "1",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft07_2.m07A",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [],
+            "label": [
+                {
+                    "@language": "label",
+                    "@value": "M07A"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "Heeft07_2"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#M07A"
+            },
+            "minCard": "1",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft07_2.m07B",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [],
+            "label": [
+                {
+                    "@language": "label",
+                    "@value": "M07B"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "Heeft07_2"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#M07B"
+            },
+            "minCard": "1",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k06B.HEEFT06",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "AP Definitie K06B.heeft06 (eerste afdaling)  etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "heeft 06"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L06B",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "L06B"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L06A"
+            },
+            "maxCard": "1",
+            "minCard": "0",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k06A.HEEFT06",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "AP Definitie K06A.heeft06 (eerste afdaling) etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "heeft 06"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L06A",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "L06A"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L06B"
+            },
+            "maxCard": "*",
+            "minCard": "1",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft06_1.l06A",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [],
+            "label": [
+                {
+                    "@language": "label",
+                    "@value": "L06A"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT06",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "Heeft06_1"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L06A"
+            },
+            "minCard": "1",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft06_1.l06B",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [],
+            "label": [
+                {
+                    "@language": "label",
+                    "@value": "L06B"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT06",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "Heeft06_1"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L06B"
+            },
+            "minCard": "1",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k07AROL",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "AP Definitie k07Arol (eerste afdaling) etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "k 07A rol"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L07B",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "L07B"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L07A"
+            },
+            "maxCard": "1",
+            "minCard": "0",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k07BROL",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [
+                {
+                    "@language": "nl",
+                    "@value": "AP Definitie k07Brol (eerste afdaling) etc."
+                }
+            ],
+            "label": [
+                {
+                    "@language": "nl",
+                    "@value": "k 07B rol"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L07A",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "L07A"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L07B"
+            },
+            "maxCard": "*",
+            "minCard": "1",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft07_1.l07A",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [],
+            "label": [
+                {
+                    "@language": "label",
+                    "@value": "L07A"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "Heeft07_1"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L07A"
+            },
+            "minCard": "1",
+            "scope": "InPackage"
+        },
+        {
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft07_1.l07B",
+            "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+            "definition": [],
+            "label": [
+                {
+                    "@language": "label",
+                    "@value": "L07B"
+                }
+            ],
+            "usageNote": [],
+            "domain": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07",
+                "@type": "http://www.w3.org/2002/07/owl#Class",
+                "label": "Heeft07_1"
+            },
+            "range": {
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#L07B"
+            },
+            "minCard": "1",
+            "scope": "InPackage"
+        }
+    ],
+    "dataTypes": [],
+    "contributors": [],
+    "editors": [],
+    "authors": []
+}
