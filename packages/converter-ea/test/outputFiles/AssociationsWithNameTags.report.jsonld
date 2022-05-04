@@ -18,7 +18,7 @@
     ],
     "classes": [
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K26_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K26_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -41,7 +41,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K03B_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K03B_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -64,7 +64,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K05A_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K05A_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -87,7 +87,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K07A_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K07A_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -110,7 +110,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT06_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft06_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -133,7 +133,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K05B_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K05B_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -156,7 +156,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT26_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft26_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -179,7 +179,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT27B_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27b_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -202,7 +202,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -225,7 +225,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT05_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft05_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -248,7 +248,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K06B_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K06B_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -271,7 +271,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K06A_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K06A_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -294,7 +294,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K25_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K25_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -317,7 +317,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K01A_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K01A_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -340,7 +340,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K01B_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K01B_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -363,7 +363,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K07B_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K07B_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -386,7 +386,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft07_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -409,7 +409,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07B_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft07b_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -432,7 +432,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT25_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft25_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -455,7 +455,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K21_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K21_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -478,7 +478,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K02A_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K02A_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -501,7 +501,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K22_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K22_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -524,7 +524,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K03A_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K03A_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -547,7 +547,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -570,7 +570,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT27_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -593,7 +593,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K02B_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K02B_naam",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -639,7 +639,7 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT06_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft06_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft06"
             },
@@ -673,7 +673,7 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT26_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft26_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft26"
             },
@@ -686,7 +686,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#a27B",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#a27b",
             "@type": "http://www.w3.org/2002/07/owl#DatatypeProperty",
             "definition": [
                 {
@@ -707,7 +707,7 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT27B_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27b_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft27b"
             },
@@ -741,7 +741,7 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT05_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft05_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft05"
             },
@@ -775,7 +775,7 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft07_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft07"
             },
@@ -788,7 +788,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#a07B",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#a07b",
             "@type": "http://www.w3.org/2002/07/owl#DatatypeProperty",
             "definition": [
                 {
@@ -809,7 +809,7 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07B_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft07b_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft07b"
             },
@@ -843,7 +843,7 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT25_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft25_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft25"
             },
@@ -877,7 +877,7 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT27_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft27"
             },
@@ -890,7 +890,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k23AROLTWEEDE_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k23ArolTweede_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -911,19 +911,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K23"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_naam"
             },
             "maxCard": "1",
             "minCard": "0",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k23BROLTWEEDE_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k23BrolTweede_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -944,19 +944,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K23"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_naam"
             },
             "maxCard": "*",
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k23AROL_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k23Arol_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -977,19 +977,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K23"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_naam"
             },
             "maxCard": "1",
             "minCard": "0",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k23BROL_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k23Brol_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1010,19 +1010,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K23"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K23_naam"
             },
             "maxCard": "*",
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#hEEFT22_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#heeft22_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1043,19 +1043,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K22_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K22_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K22"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K22_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K22_naam"
             },
             "maxCard": "1",
             "minCard": "0",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#hEEFT22_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#heeft22_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1076,19 +1076,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K22_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K22_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K22"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K22_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K22_naam"
             },
             "maxCard": "*",
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#hEEFT02_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#heeft02_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1109,19 +1109,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K02B_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K02B_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K02B"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K02A_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K02A_naam"
             },
             "maxCard": "1",
             "minCard": "0",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#hEEFT02_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#heeft02_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1142,19 +1142,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K02A_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K02A_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K02A"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K02B_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K02B_naam"
             },
             "maxCard": "*",
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#hEEFT21_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#heeft21_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1175,19 +1175,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K21_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K21_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K21"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K21_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K21_naam"
             },
             "maxCard": "*",
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#hEEFT01_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#heeft01_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1208,19 +1208,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K01A_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K01A_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K01A"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K01B_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K01B_naam"
             },
             "maxCard": "*",
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#hEEFT25_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#heeft25_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1241,19 +1241,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K25_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K25_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K25"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K25_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K25_naam"
             },
             "maxCard": "*",
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft25.k25.sOURCE",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft25.k25.source",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [],
             "label": [
@@ -1264,18 +1264,18 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT25_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft25_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft25"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K25_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K25_naam"
             },
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft25.k25.tARGET",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft25.k25.target",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [],
             "label": [
@@ -1286,18 +1286,18 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT25_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft25_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft25"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K25_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K25_naam"
             },
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#hEEFT06_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#heeft06_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1318,19 +1318,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K06B_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K06B_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K06B"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K06A_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K06A_naam"
             },
             "maxCard": "1",
             "minCard": "0",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#hEEFT06_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#heeft06_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1351,12 +1351,12 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K06A_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K06A_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K06A"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K06B_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K06B_naam"
             },
             "maxCard": "*",
             "minCard": "1",
@@ -1374,12 +1374,12 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT06_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft06_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft06"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K06A_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K06A_naam"
             },
             "minCard": "1",
             "scope": "InPackage"
@@ -1396,18 +1396,18 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT06_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft06_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft06"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K06B_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K06B_naam"
             },
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k27AROL_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k27Arol_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1428,19 +1428,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K27"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_naam"
             },
             "maxCard": "1",
             "minCard": "0",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k27BROL_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k27Brol_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1461,19 +1461,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K27"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_naam"
             },
             "maxCard": "*",
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27.k27.sOURCE",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27.k27.source",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [],
             "label": [
@@ -1484,18 +1484,18 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT27_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft27"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_naam"
             },
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27.k27.tARGET",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27.k27.target",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [],
             "label": [
@@ -1506,18 +1506,18 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT27_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft27"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_naam"
             },
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k27BROLTWEEDE_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k27BrolTweede_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1538,19 +1538,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K27"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_naam"
             },
             "maxCard": "*",
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27b.k27.sOURCE",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27b.k27.source",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [],
             "label": [
@@ -1561,18 +1561,18 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT27B_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27b_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft27b"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_naam"
             },
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27b.k27.tARGET",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27b.k27.target",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [],
             "label": [
@@ -1583,18 +1583,18 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT27B_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27b_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft27b"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K27_naam"
             },
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k07AROL_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k07Arol_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1615,19 +1615,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07B_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07B_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K07B"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07A_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07A_naam"
             },
             "maxCard": "1",
             "minCard": "0",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k07BROL_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k07Brol_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1648,12 +1648,12 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07A_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07A_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K07A"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07B_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07B_naam"
             },
             "maxCard": "*",
             "minCard": "1",
@@ -1671,12 +1671,12 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft07_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft07"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07A_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07A_naam"
             },
             "minCard": "1",
             "scope": "InPackage"
@@ -1693,18 +1693,18 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft07_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft07"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07B_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07B_naam"
             },
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k07BROLTWEEDE_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k07BrolTweede_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1725,12 +1725,12 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07A_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07A_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K07A"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07B_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07B_naam"
             },
             "maxCard": "*",
             "minCard": "1",
@@ -1748,12 +1748,12 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07B_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft07b_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft07b"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07A_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07A_naam"
             },
             "minCard": "1",
             "scope": "InPackage"
@@ -1770,18 +1770,18 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07B_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft07b_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft07b"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07B_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K07B_naam"
             },
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#hEEFT05_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#heeft05_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1802,12 +1802,12 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K05A_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K05A_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K05A"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K05B_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K05B_naam"
             },
             "maxCard": "*",
             "minCard": "1",
@@ -1825,12 +1825,12 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT05_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft05_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft05"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K05A_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K05A_naam"
             },
             "minCard": "1",
             "scope": "InPackage"
@@ -1847,18 +1847,18 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT05_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft05_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft05"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K05B_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K05B_naam"
             },
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k03AROLTWEEDE_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k03ArolTweede_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1879,19 +1879,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K03B_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K03B_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K03B"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K03A_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K03A_naam"
             },
             "maxCard": "1",
             "minCard": "0",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k03BROLTWEEDE_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k03BrolTweede_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1912,19 +1912,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K03A_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K03A_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K03A"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K03B_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K03B_naam"
             },
             "maxCard": "*",
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k03AROL_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k03Arol_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1945,19 +1945,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K03B_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K03B_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K03B"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K03A_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K03A_naam"
             },
             "maxCard": "1",
             "minCard": "0",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k03BROL_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k03Brol_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -1978,19 +1978,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K03A_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K03A_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K03A"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K03B_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K03B_naam"
             },
             "maxCard": "*",
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#hEEFT26_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#heeft26_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -2011,19 +2011,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K26_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K26_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K26"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K26_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K26_naam"
             },
             "maxCard": "1",
             "minCard": "0",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#hEEFT26_NAAM",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#heeft26_naam",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -2044,19 +2044,19 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K26_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K26_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "K26"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K26_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K26_naam"
             },
             "maxCard": "*",
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft26.k26.sOURCE",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft26.k26.source",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [],
             "label": [
@@ -2067,18 +2067,18 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT26_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft26_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft26"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K26_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K26_naam"
             },
             "minCard": "1",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft26.k26.tARGET",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft26.k26.target",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [],
             "label": [
@@ -2089,12 +2089,12 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT26_NAAM",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft26_naam",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft26"
             },
             "range": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#K26_NAAM"
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#K26_naam"
             },
             "minCard": "1",
             "scope": "InPackage"

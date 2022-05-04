@@ -43,11 +43,11 @@
                     "@value": "Gebruik K07A etc."
                 }
             ],
-            "parent": "https://data.vlaanderen.be/ns/mijndomein#K07ABASE",
+            "parent": "https://data.vlaanderen.be/ns/mijndomein#K07Abase",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K27BASE",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K27base",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -90,11 +90,11 @@
                     "@value": "Gebruik K27 etc."
                 }
             ],
-            "parent": "https://data.vlaanderen.be/ns/mijndomein#K27BASE",
+            "parent": "https://data.vlaanderen.be/ns/mijndomein#K27base",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K07BBASE",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K07Bbase",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -137,11 +137,11 @@
                     "@value": "Gebruik K07B etc."
                 }
             ],
-            "parent": "https://data.vlaanderen.be/ns/mijndomein#K07BBASE",
+            "parent": "https://data.vlaanderen.be/ns/mijndomein#K07Bbase",
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07BASE",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft07base",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -164,7 +164,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#K07ABASE",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#K07Abase",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -187,7 +187,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT27BASE",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27base",
             "@type": "http://www.w3.org/2002/07/owl#Class",
             "definition": [
                 {
@@ -233,7 +233,7 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07BASE",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft07base",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft07base"
             },
@@ -267,7 +267,7 @@
                 }
             ],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT27BASE",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27base",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft27base"
             },
@@ -280,7 +280,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k27ABASEROL",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k27AbaseRol",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -313,7 +313,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k27BBASEROL",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k27BbaseRol",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -346,7 +346,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27base.k27.sOURCE",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27base.k27.source",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [],
             "label": [
@@ -357,7 +357,7 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT27BASE",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27base",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft27base"
             },
@@ -368,7 +368,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27base.k27.tARGET",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27base.k27.target",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [],
             "label": [
@@ -379,7 +379,7 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT27BASE",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft27base",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft27base"
             },
@@ -390,7 +390,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k07ABASEROL",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k07AbaseRol",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -423,7 +423,7 @@
             "scope": "InPackage"
         },
         {
-            "@id": "https://data.vlaanderen.be/ns/mijndomein#k07BBASEROL",
+            "@id": "https://data.vlaanderen.be/ns/mijndomein#k07BbaseRol",
             "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
             "definition": [
                 {
@@ -467,7 +467,7 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07BASE",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft07base",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft07base"
             },
@@ -489,7 +489,7 @@
             ],
             "usageNote": [],
             "domain": {
-                "@id": "https://data.vlaanderen.be/ns/mijndomein#HEEFT07BASE",
+                "@id": "https://data.vlaanderen.be/ns/mijndomein#Heeft07base",
                 "@type": "http://www.w3.org/2002/07/owl#Class",
                 "label": "Heeft07base"
             },
