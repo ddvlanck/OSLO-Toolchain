@@ -7,7 +7,6 @@ import type { ElementConverterHandler } from './converter-handlers/ElementConver
 import type { PackageConverterHandler } from './converter-handlers/PackageConverterHandler';
 import type { ConverterHandler } from './types/ConverterHandler';
 import type { NormalizedConnector } from './types/NormalizedConnector';
-import { NormalizedConnectorType } from './types/NormalizedConnector';
 
 import { TagName } from './types/TagName';
 import { CasingType, convertToCase, extractUri, getTagValue } from './utils/utils';
@@ -138,7 +137,7 @@ export class UriAssigner {
         }
 
         let localName = getTagValue(attributeClass, TagName.LocalName, attributeClass.name);
-        localName = convertToCase(localName, CasingType.CamelCase, attribute.id);
+        localName = convertToCase(localName);
 
         const instanceNamespace = `${namespace}/${localName}/`;
         const attributeUri = extractUri(attribute, instanceNamespace, CasingType.CamelCase);
@@ -164,7 +163,7 @@ export class UriAssigner {
         return;
       }
 
-      let connectorUri = getTagValue(connector, TagName.Externaluri, null);
+      let connectorUri = getTagValue(connector, TagName.ExternalUri, null);
       const packageName = getTagValue(connector, TagName.DefiningPackage, null);
       const connectorPackages = this.packageNameToPackageMap.get(packageName);
       let definingPackageUri: string | null = null;
@@ -196,15 +195,14 @@ export class UriAssigner {
           return;
         }
 
-        let localName = getTagValue(connector, TagName.LocalName, connector.name);
+        let localName = getTagValue(connector, TagName.LocalName, null);
+
         if (!localName) {
           this.logger.warn(`Connector (${connector.path()}) does not have a name and will be ignored.`);
           return;
         }
 
-        localName = connector.type === NormalizedConnectorType.RegularConnector ?
-          convertToCase(localName, CasingType.CamelCase, connector.id) :
-          convertToCase(localName, CasingType.AssociationClassCase, connector.id);
+        localName = convertToCase(localName);
         connectorUri = definingPackageUri + localName;
       }
 

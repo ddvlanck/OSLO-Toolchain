@@ -9,7 +9,7 @@ export enum TagName {
   AssociationSourceRevPrefix = 'source-rev-',
   DefiningPackage = 'package',
   Definition = 'definition',
-  Externaluri = 'uri',
+  ExternalUri = 'uri',
   Ignore = 'ignore',
   IsLiteral = 'literal',
   Label = 'label',

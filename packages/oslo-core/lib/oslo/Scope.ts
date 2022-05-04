@@ -3,4 +3,5 @@ export enum Scope {
   InPackage = 'InPackage',
   InPublicationEnvironment = 'InPublicationEnvironment',
   External = 'External',
+  Undefined = 'Undefined'
 }

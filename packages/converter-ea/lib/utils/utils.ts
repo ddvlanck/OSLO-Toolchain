@@ -35,15 +35,21 @@ export function getTagValue(object: any, tagName: TagName, _default: any, silent
   return tags[0].tagValue;
 }
 
-export function extractUri(object: EaObject, packageUri: string, casing: CasingType): string {
-  const uri = getTagValue(object, TagName.Externaluri, null);
+export function extractUri(object: EaObject, packageUri: string, casing?: CasingType): string {
+  const uri = getTagValue(object, TagName.ExternalUri, null);
 
   if (uri) {
     return uri;
   }
 
-  let localName = getTagValue(object, TagName.LocalName, object.name);
-  localName = convertToCase(localName, casing, object.id);
+  // TODO: If object.name is returned, then no casing should be applied?
+  let localName = getTagValue(object, TagName.LocalName, null);
+
+  if (!localName) {
+    localName = object.name;
+  } else {
+    localName = convertToCase(localName, casing);
+  }
 
   if (localName && localName !== '') {
     return packageUri + localName;
@@ -52,32 +58,33 @@ export function extractUri(object: EaObject, packageUri: string, casing: CasingT
   return `${packageUri}${object.name}`;
 }
 
-export function convertToCase(text: string, casing: CasingType, objectGuid: number | string): string {
+export function convertToCase(text: string, casing?: CasingType): string {
   const logger = getLoggerFor('ConvertToCaseFunction');
 
   if (text === null || text === '') {
-    logger.error(`Object with ea_guid ${objectGuid} does not have a name`);
+    // TODO: log error
     return '';
   }
 
   text = removeCaret(text);
 
-  if (casing === CasingType.CamelCase) {
-    return toCamelCase(text);
-  }
-
   if (casing === CasingType.PascalCase) {
     return toPascalCase(text);
   }
 
-  const parts = text.split('.');
-  let associationClassCasedText = parts[0];
+  let casedText = '';
+  if (text.includes('.')) {
+    const parts = text.split('.');
+    casedText = parts[0];
 
-  parts.slice(1).forEach(part => {
-    associationClassCasedText += `.${toCamelCase(part)}`;
-  });
+    parts.slice(1).forEach(part => {
+      casedText += `.${toCamelCase(part)}`;
+    });
+  } else {
+    return toCamelCase(text);
+  }
 
-  return associationClassCasedText;
+  return casedText;
 }
 
 function removeCaret(text: string): string {
@@ -85,11 +92,11 @@ function removeCaret(text: string): string {
 }
 
 function toPascalCase(text: string): string {
-  return text.replace(/(?:\w|[A-Z]|\b\w)/gu, (word: string, index: number) => word.toUpperCase()).replace(/\s+/gu, '');
+  return text.replace(/(?:^\w|[A-Z]|\b\w)/gu, (word: string, index: number) => word.toUpperCase()).replace(/\s+/gu, '');
 }
 
 function toCamelCase(text: string): string {
-  return text.replace(/(?:\w|[A-Z]|\b\w)/gu, (word: string, index: number) =>
+  return text.replace(/(?:^\w|[A-Z]|\b\w)/gu, (word: string, index: number) =>
     index === 0 ? word.toLowerCase() : word.toUpperCase()).replace(/\s+/gu, '');
 }
 
@@ -110,6 +117,7 @@ export function connectorHasOldAssociationClassTags(connector: EaConnector): boo
   return hasOldClassTags;
 }
 
+// TODO: for connector with multiple cardinalities, uri should be disambiguated with class name
 export function normalize(connector: EaConnector, elements: EaElement[]): NormalizedConnector[] {
   const normalizedConnectors: NormalizedConnector[] = [];
 
@@ -140,26 +148,52 @@ export function normalize(connector: EaConnector, elements: EaElement[]): Normal
   }
 
   if (connector.name && connector.name !== '') {
-    if (connector.sourceCardinality && connector.sourceCardinality !== '') {
+    if (connector.sourceCardinality &&
+      connector.sourceCardinality !== '' &&
+      connector.destinationCardinality &&
+      connector.destinationCardinality !== '') {
+      const sourceObjectName = elements.find(x => x.id === connector.sourceObjectId)!.name;
+      const destinationObjectName = elements.find(x => x.id === connector.destinationObjectId)!.name;
+
       normalizedConnectors.push(createNormalizedConnector(
         connector,
-        connector.name,
+        `${sourceObjectName}.${connector.name}`,
         connector.destinationObjectId,
         connector.sourceObjectId,
         connector.sourceCardinality,
         connector.tags,
       ));
-    }
 
-    if (connector.destinationCardinality && connector.destinationCardinality !== '') {
       normalizedConnectors.push(createNormalizedConnector(
         connector,
-        connector.name,
+        `${destinationObjectName}.${connector.name}`,
         connector.sourceObjectId,
         connector.destinationObjectId,
         connector.destinationCardinality,
         connector.tags,
       ));
+    } else {
+      if (connector.sourceCardinality && connector.sourceCardinality !== '') {
+        normalizedConnectors.push(createNormalizedConnector(
+          connector,
+          connector.name,
+          connector.destinationObjectId,
+          connector.sourceObjectId,
+          connector.sourceCardinality,
+          connector.tags,
+        ));
+      }
+
+      if (connector.destinationCardinality && connector.destinationCardinality !== '') {
+        normalizedConnectors.push(createNormalizedConnector(
+          connector,
+          connector.name,
+          connector.sourceObjectId,
+          connector.destinationObjectId,
+          connector.destinationCardinality,
+          connector.tags,
+        ));
+      }
     }
   }
 

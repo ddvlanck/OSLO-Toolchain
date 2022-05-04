@@ -41,21 +41,25 @@ export abstract class ConverterHandler {
       this.getLanguageDependentTag(object, TagName.UsageNote);
   }
 
+  // TODO: watch out for URI tags containing a data.vlaanderen URI
   public getScope(object: any, packageBaseUri: string, idUriMap: Map<number, string>): Scope {
-    const externalUri = getTagValue(object, TagName.Externaluri, null);
+    const uri = getTagValue(object, TagName.ExternalUri, null) || idUriMap.get(object.id);
 
-    if (externalUri) {
-      return Scope.External;
+    if (!uri) {
+      // TODO: log error
+      return Scope.Undefined;
     }
 
-    // TODO: log error if it not exists?
-    const objectUri = idUriMap.get(object.id)!;
-
-    if (objectUri.startsWith(packageBaseUri)) {
+    if (uri.startsWith(packageBaseUri)) {
       return Scope.InPackage;
     }
 
-    return Scope.InPublicationEnvironment;
+    // TODO: this parameter should be configurable (e.g. domain could be purl.eu as well)
+    if (uri.startsWith('https://data.vlaanderen.be/')) {
+      return Scope.InPublicationEnvironment;
+    }
+
+    return Scope.External;
   }
 
   private getLanguageDependentTag(object: any, tagName: TagName, fallbackTag?: TagName): Map<string, string> {
