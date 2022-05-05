@@ -1,3 +1,4 @@
+import { getLoggerFor } from '@oslo-flanders/core';
 import type MDBReader from 'mdb-reader';
 import { EaAttribute } from './types/EaAttribute';
 import type { EaElement } from './types/EaElement';
@@ -40,11 +41,12 @@ export function loadAttributes(reader: MDBReader, elements: EaElement[]): EaAttr
 }
 
 function setPath(attribute: EaAttribute, elements: EaElement[]): void {
+  const logger = getLoggerFor(`AttributeLoader`);
   const eaClass = elements.find(x => x.id === attribute.classId);
   let path: string;
 
   if (!eaClass) {
-    // Log error
+    logger.warn(`Unable to find class for attribute with guid ${attribute.guid}. Setting path to '${attribute.name}'.`);
     path = attribute.name;
   } else {
     path = `${eaClass.path()}:${attribute.name}`;

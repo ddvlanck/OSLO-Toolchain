@@ -18,6 +18,7 @@ export enum ConnectorDirection {
   SourceToDest,
   Bidirectional,
   DestToSource,
+  Unknown
 }
 
 /**

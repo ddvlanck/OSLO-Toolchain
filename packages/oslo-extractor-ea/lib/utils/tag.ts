@@ -26,7 +26,7 @@ export function addEaTagsToElements(
     const element = elements.find(x => x.id === tag[objectIdPropertyName]);
 
     if (!element) {
-      logger.warn(`Could not find EaElement with id ${tag[objectIdPropertyName]} to add tag following tag to: ${JSON.stringify(tag, null, 4)}`);
+      logger.warn(`Unable to find element with id ${tag[objectIdPropertyName]} to add following tag to: ${JSON.stringify(tag, null, 4)}`);
     } else {
       const eaTag: Tag = {
         id: <number>tag.PropertyID,

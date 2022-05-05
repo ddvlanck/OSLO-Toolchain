@@ -1,3 +1,7 @@
+/**
+ * Enum containing the table names that are used to extract data from the
+ * Enterprise Architect file.
+ */
 export enum EaTable {
   Diagram = 't_diagram',
   DiagramObject = 't_diagramobjects',

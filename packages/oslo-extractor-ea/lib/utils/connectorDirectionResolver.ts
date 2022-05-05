@@ -1,3 +1,4 @@
+import { getLoggerFor } from '@oslo-flanders/core';
 import { ConnectorDirection } from '../types/EaConnector';
 
 /**
@@ -7,6 +8,7 @@ import { ConnectorDirection } from '../types/EaConnector';
  * @see ConnectorDirection for the possible direction values.
  */
 export function resolveConnectorDirection(geometry: string): ConnectorDirection {
+  const logger = getLoggerFor(`ResolveConnectorDirectionFunction`);
   let labelDirection = ConnectorDirection.Unspecified;
 
   const labelPattern = /LMT=[^;]+/u;
@@ -32,7 +34,8 @@ export function resolveConnectorDirection(geometry: string): ConnectorDirection 
           break;
 
         default:
-        // TODO: log error
+          logger.error(`Could not resolve connector direction of geometry '${geometry}'. Returning connector direction 'Unknown'.`);
+          labelDirection = ConnectorDirection.Unknown;
       }
     }
   }
@@ -41,6 +44,8 @@ export function resolveConnectorDirection(geometry: string): ConnectorDirection 
 }
 
 export function convertToConnectorDirection(direction: string): ConnectorDirection {
+  const logger = getLoggerFor(`ConvertToConnectorDirectionFunction`);
+
   switch (direction) {
     case 'Source -> Destination':
       return ConnectorDirection.SourceToDest;
@@ -55,7 +60,7 @@ export function convertToConnectorDirection(direction: string): ConnectorDirecti
       return ConnectorDirection.Unspecified;
 
     default:
-      // TODO: log error
-      throw new Error(`Direction string could not be mapped to connector direction enum.`);
+      logger.error(`Direction string '${direction}' could not be mapped to connector direction enum. Returning connector direction 'Unknown'.`);
+      return ConnectorDirection.Unknown;
   }
 }

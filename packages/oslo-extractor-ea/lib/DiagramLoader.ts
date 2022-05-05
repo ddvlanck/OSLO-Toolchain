@@ -1,3 +1,4 @@
+import { getLoggerFor } from '@oslo-flanders/core';
 import alasql from 'alasql';
 import type MDBReader from 'mdb-reader';
 import type { EaConnector } from './types/EaConnector';
@@ -90,7 +91,7 @@ function setPath(diagram: EaDiagram, packages: EaPackage[]): void {
   let path: string;
 
   if (!diagramPackage) {
-    // Log error
+    // TODO: Log error
     path = diagram.name;
   } else {
     path = `${diagramPackage.path()}:${diagram.name}`;
