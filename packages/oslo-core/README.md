@@ -1,11 +1,3 @@
-# `types`
+# OSLO Core
 
-> TODO: description
-
-## Usage
-
-```
-const types = require('types');
-
-// TODO: DEMONSTRATE API
-```
+The core package used by the OSLO Toolchain.

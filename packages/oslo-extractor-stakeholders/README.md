@@ -1,11 +1,3 @@
-# `contributor-oslo`
+# OSLO Toolchain Stakeholder Extractor
 
-> TODO: description
-
-## Usage
-
-```
-const contributorOslo = require('contributor-oslo');
-
-// TODO: DEMONSTRATE API
-```
+Extracts the stakeholders from a CSV file

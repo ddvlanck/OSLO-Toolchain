@@ -1,11 +1,3 @@
-# `data-extractor-ea`
+# OSLO Toolchain Enterprise Architect Data Extractor
 
-> TODO: description
-
-## Usage
-
-```
-const dataExtractorEa = require('data-extractor-ea');
-
-// TODO: DEMONSTRATE API
-```
+Extracts the data from an Enterprise Architect file
