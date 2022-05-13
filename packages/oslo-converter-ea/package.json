@@ -49,10 +49,15 @@
     "testTimeout": 30000
   },
   "dependencies": {
+    "@oslo-flanders/configurations": "^0.0.0",
     "@oslo-flanders/core": "^0.0.0",
-    "@oslo-flanders/ea-converter-configuration": "^0.0.0",
     "@oslo-flanders/ea-extractor": "^0.0.0",
     "@oslo-flanders/stakeholder-extractor": "^0.0.0",
+    "@rdfjs/types": "^1.1.0",
+    "jsonld": "^5.2.0",
+    "jsonld-streaming-serializer": "^1.3.0",
+    "n3": "^1.16.1",
+    "rdf-data-factory": "^1.1.0",
     "uniqid": "^5.4.0"
   }
 }

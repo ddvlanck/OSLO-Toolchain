@@ -1,21 +1,13 @@
 {
-  "name": "@oslo-flanders/ea-converter-configuration",
+  "name": "@oslo-flanders/rdf-generator",
   "version": "0.0.0",
-  "description": "Package that exports a configuration object for the EA converter in the OSLO Toolchain",
-  "typings": "index",
-  "lsd:module": true,
-  "keywords": [
-    "semantic",
-    "web",
-    "data",
-    "toolchain",
-    "uml",
-    "configuration"
-  ],
+  "description": "> TODO: description",
   "author": "Dwight Van Lancker <dwight.vanlancker@hotmail.com>",
-  "homepage": "https://github.com/ddvlanck/OSLO-Toolchain/tree/main/packages/ea-converter-configuration#readme",
+  "homepage": "https://github.com/ddvlanck/OSLO-Toolchain/tree/main/packages/oslo-generator-rdf#readme",
   "license": "MIT",
   "main": "index.js",
+  "lsd:module": true,
+  "typings": "index",
   "directories": {
     "lib": "lib",
     "test": "__tests__"

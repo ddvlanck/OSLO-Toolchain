@@ -1,0 +1,39 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/componentsjs/^5.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@oslo-flanders/core/^0.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@oslo-flanders/ea-to-rdf-converter/^0.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@oslo-flanders/converter-runner/^0.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@oslo-flanders/configurations/^0.0.0/components/context.jsonld",
+    { 
+      "ex": "http://example.org/"
+    }
+  ],
+  "@graph" : [
+    {
+      "@id": "ex:OsloConverterRunner",
+      "@type": "OsloConverterRunner",
+      "OsloConverterRunner:_converter": {
+        "@id" : "ex:EaConverter",
+        "@type": "EaConverter"
+      },
+      "OsloConverterRunner:_outputHandler" : {
+        "@id": "ex:OutputHandler",
+        "@type": "JsonLdOutputHandler"
+      },
+      "OsloConverterRunner:_configuration": {
+        "@id": "ex:EaConverterConfiguration"
+      }
+    },
+    {
+      "@id": "ex:EaConverterConfiguration",
+      "@type": "EaConverterConfiguration",
+      "EaConverterConfiguration:_diagramName" : "MijnDomeinMetUriTags",
+      "EaConverterConfiguration:_umlFile" : "https://github.com/Informatievlaanderen/OSLOthema-toolchainTestbed/blob/master/testAssociatiesMijnDomeinMetUriTags.EAP?raw=true",
+      "EaConverterConfiguration:_outputFile" : "report.jsonld",
+      "EaConverterConfiguration:_specificationType" : "ApplicationProfile",
+      "EaConverterConfiguration:_targetDomain": "https://data.vlaanderen.be/"
+    }
+  ]
+  
+}

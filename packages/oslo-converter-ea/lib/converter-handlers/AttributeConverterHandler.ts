@@ -7,11 +7,11 @@ import { TagName } from '../types/TagName';
 import type { UriAssigner } from '../UriAssigner';
 import { getTagValue, ignore } from '../utils/utils';
 
-export class AttributeConverterHandler extends ConverterHandler {
+export class AttributeConverterHandler extends ConverterHandler<EaAttribute> {
   private elements: EaElement[];
 
-  public constructor(targetDiagram: EaDiagram, specificationType: string) {
-    super(targetDiagram, specificationType);
+  public constructor(targetDiagram: EaDiagram, specificationType: string, targetDomain: string) {
+    super(targetDiagram, specificationType, targetDomain);
     this.elements = [];
   }
 
@@ -21,14 +21,14 @@ export class AttributeConverterHandler extends ConverterHandler {
     this.elements = document.eaElements;
   }
 
-  public convertToOslo(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
+  public createOsloObject(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
     const attributeUriMap = uriAssigner.attributeIdUriMap;
     const elementUriMap = uriAssigner.elementIdUriMap;
     const elementNameToElementMap = uriAssigner.elementNameToElementMap;
     const packageUri = uriAssigner.packageIdUriMap.get(this.targetDiagram.packageId)!;
 
     this.objects.forEach(attribute => {
-      const eaAttribute = <EaAttribute>attribute;
+      const eaAttribute = attribute;
 
       const attributeUri = attributeUriMap.get(attribute.id);
 

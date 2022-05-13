@@ -1,5 +1,5 @@
 import { ComponentsManager } from 'componentsjs';
-import type { ToolchainRunner } from '../lib/ToolchainRunner';
+import type { GeneratorRunner } from '../lib/GeneratorRunner';
 
 const run = async (): Promise<void> => {
   const manager = await ComponentsManager.build({
@@ -7,7 +7,7 @@ const run = async (): Promise<void> => {
   });
 
   await manager.configRegistry.register('./config/config.jsonld');
-  const runner: ToolchainRunner = await manager.instantiate('http://example.org/ToolchainRunner');
+  const runner: GeneratorRunner = await manager.instantiate('http://example.org/GeneratorRunner');
 
   await runner.start();
 };

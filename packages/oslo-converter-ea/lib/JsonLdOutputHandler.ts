@@ -15,6 +15,7 @@ export class JsonLdOutputHandler implements OutputHandler {
   private readonly contributors: any[];
   private readonly authors: any[];
   private readonly editors: any[];
+  private id: string;
 
   public constructor() {
     this.jsonLdPackages = [];
@@ -24,6 +25,7 @@ export class JsonLdOutputHandler implements OutputHandler {
     this.contributors = [];
     this.authors = [];
     this.editors = [];
+    this.id = '';
   }
 
   /**
@@ -31,7 +33,11 @@ export class JsonLdOutputHandler implements OutputHandler {
    */
   public async write(path: string): Promise<void> {
     const report = this.createReport();
-    await writeFile(path, JSON.stringify(report, null, 4));
+    await writeFile(path, JSON.stringify(report, null, 2));
+  }
+
+  public addOntologyUri(id: string): void {
+    this.id = id;
   }
 
   public async addStakeholders(stakeholdersFile: string): Promise<void> {
@@ -79,6 +85,7 @@ export class JsonLdOutputHandler implements OutputHandler {
     });
   }
 
+  // FIXME: @language within label of associaiton class pointing to target class, language is 'label'
   public addAttribute(attribute: Property): void {
     this.jsonLdAttributes.push({
       '@id': attribute.uri,
@@ -114,6 +121,8 @@ export class JsonLdOutputHandler implements OutputHandler {
 
   private createReport(): any {
     return {
+      '@context': this.getContext(),
+      '@id': this.id,
       packages: this.jsonLdPackages,
       classes: this.jsonLdClasses,
       attributes: this.jsonLdAttributes,
@@ -121,6 +130,86 @@ export class JsonLdOutputHandler implements OutputHandler {
       contributors: this.contributors,
       editors: this.editors,
       authors: this.authors,
+    };
+  }
+
+  private getContext(): any {
+    return {
+      vlaanderen: 'http://data.vlaanderen.be/ns/',
+      owl: 'http://www.w3.org/2002/07/owl#',
+      void: 'http://rdfs.org/ns/void#',
+      dcterms: 'http://purl.org/dc/terms/',
+      rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+      dcat: 'http://www.w3.org/ns/dcat#',
+      rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+      qb: 'http://purl.org/linked-data/cube#',
+      skos: 'http://www.w3.org/2004/02/skos/core#',
+      xsd: 'http://www.w3.org/2001/XMLSchema#',
+      foaf: 'http://xmlns.com/foaf/0.1/',
+      person: 'http://www.w3.org/ns/person#',
+      rec: 'http://www.w3.org/2001/02pd/rec54#',
+      vann: 'http://purl.org/vocab/vann/',
+      sh: 'http://w3.org/ns/shacl#',
+      label: {
+        '@id': 'rdfs:label',
+        '@container': '@language',
+      },
+      authors: {
+        '@type': 'foaf:Person',
+        '@id': 'foaf:maker',
+      },
+      editors: {
+        '@type': 'foaf:Person',
+        '@id': 'rec:editor',
+      },
+      contributors: {
+        '@type': 'foaf:Person',
+        '@id': 'dcterms:contributor',
+      },
+      affiliation: {
+        '@id': 'http://schema.org/affiliation',
+      },
+      classes: '@included',
+      datatypes: '@included',
+      attributes: '@included',
+      name: {
+        '@id': 'rdfs:label',
+        '@container': '@language',
+      },
+      definition: {
+        '@id': 'rdfs:comment',
+        '@container': '@language',
+      },
+      properties: {
+        '@reverse': 'rdfs:isDefinedBy',
+      },
+      domain: {
+        '@id': 'rdfs:domain',
+      },
+      range: {
+        '@id': 'rdfs:range',
+      },
+      minCardinality: {
+        '@id': 'sh:minCount',
+      },
+      maxCardinality: {
+        '@id': 'sh:maxCount',
+      },
+      generalization: {
+        '@id': 'rdfs:subPropertyOf',
+      },
+      externals: {
+        '@type': 'http://www.w3.org/2000/01/rdf-schema#Class',
+        '@id': 'rdfs:seeAlso',
+      },
+      usage: {
+        '@id': 'vann:usageNote',
+        '@container': '@language',
+      },
+      parent: {
+        '@id': 'rdfs:subClassOf',
+        '@type': 'rdfs:Class',
+      },
     };
   }
 }

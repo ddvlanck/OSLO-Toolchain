@@ -1,6 +1,5 @@
-import type { OutputHandler } from '@oslo-flanders/core';
-import { Converter, getLoggerFor } from '@oslo-flanders/core';
-import type { Configuration } from '@oslo-flanders/ea-converter-configuration';
+import type { EaConverterConfiguration } from '@oslo-flanders/configurations';
+import { Converter } from '@oslo-flanders/core';
 import type { EaDiagram, EaDocument } from '@oslo-flanders/ea-extractor';
 import { DataExtractor } from '@oslo-flanders/ea-extractor';
 
@@ -9,21 +8,11 @@ import { ConnectorConverterHandler } from './converter-handlers/ConnectorConvert
 import { ElementConverterHandler } from './converter-handlers/ElementConverterHandler';
 import { PackageConverterHandler } from './converter-handlers/PackageConverterHandler';
 
-import type { ConverterHandler } from './types/ConverterHandler';
+import type { ConverterHandler, GenericOsloType } from './types/ConverterHandler';
 import { UriAssigner } from './UriAssigner';
 
-export class EaConverter extends Converter {
-  private readonly logger = getLoggerFor(this);
-
-  private readonly configuration: Configuration;
-  private converterHandlers: ConverterHandler[];
-
-  public constructor(configuration: Configuration, outputHandler: OutputHandler) {
-    super(configuration.umlFile, outputHandler);
-
-    this.configuration = configuration;
-    this.converterHandlers = [];
-  }
+export class EaConverter extends Converter<EaConverterConfiguration> {
+  private converterHandlers: ConverterHandler<GenericOsloType>[] = [];
 
   public async convert(): Promise<void> {
     const extractor = new DataExtractor(this.configuration.umlFile);
@@ -38,12 +27,13 @@ export class EaConverter extends Converter {
 
     this.attachHandlers(targetDiagram);
     this.converterHandlers.forEach(handler => handler.documentNotification(eaDocument));
+
     uriAssigner.assignUris(
       targetDiagram,
       this.converterHandlers,
     );
 
-    this.converterHandlers.forEach(handler => handler.convertToOslo(uriAssigner, this.outputHandler));
+    this.converterHandlers.forEach(handler => handler.createOsloObject(uriAssigner, this.outputHandler));
 
     await this.outputHandler.write(this.configuration.outputFile);
   }
@@ -66,10 +56,10 @@ export class EaConverter extends Converter {
 
   private attachHandlers(targetDiagram: EaDiagram): void {
     this.converterHandlers = [
-      new PackageConverterHandler(targetDiagram, this.configuration.specificationType),
-      new ElementConverterHandler(targetDiagram, this.configuration.specificationType),
-      new AttributeConverterHandler(targetDiagram, this.configuration.specificationType),
-      new ConnectorConverterHandler(targetDiagram, this.configuration.specificationType),
+      new PackageConverterHandler(targetDiagram, this.configuration.specificationType, this.configuration.targetDomain),
+      new ElementConverterHandler(targetDiagram, this.configuration.specificationType, this.configuration.targetDomain),
+      new AttributeConverterHandler(targetDiagram, this.configuration.specificationType, this.configuration.targetDomain),
+      new ConnectorConverterHandler(targetDiagram, this.configuration.specificationType, this.configuration.targetDomain),
     ];
   }
 }

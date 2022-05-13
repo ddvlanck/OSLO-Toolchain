@@ -1,5 +1,5 @@
 import { getLoggerFor } from '@oslo-flanders/core';
-import type { EaAttribute, EaDiagram, EaElement, EaPackage } from '@oslo-flanders/ea-extractor';
+import type { EaAttribute, EaDiagram, EaElement, EaObject, EaPackage } from '@oslo-flanders/ea-extractor';
 import { ConnectorType, ElementType } from '@oslo-flanders/ea-extractor';
 import type { AttributeConverterHandler } from './converter-handlers/AttributeConverterHandler';
 import type { ConnectorConverterHandler } from './converter-handlers/ConnectorConverterHandler';
@@ -11,6 +11,7 @@ import type { NormalizedConnector } from './types/NormalizedConnector';
 import { TagName } from './types/TagName';
 import { CasingType, convertToCase, extractUri, getTagValue } from './utils/utils';
 
+// FIXME: discuss what we should do with this
 const backupBaseUri = 'https://fixme.com#';
 
 export class UriAssigner {
@@ -48,7 +49,7 @@ export class UriAssigner {
 
   public assignUris(
     diagram: EaDiagram,
-    handlers: ConverterHandler[],
+    handlers: ConverterHandler<EaObject | NormalizedConnector>[],
   ): void {
     const packageHandler = <PackageConverterHandler>handlers.find(x => x.name === 'PackageConverterHandler')!;
     const elementHandler = <ElementConverterHandler>handlers.find(x => x.name === 'ElementConverterHandler')!;
@@ -61,9 +62,9 @@ export class UriAssigner {
 
     const elements = elementHandler.objects;
 
-    this.assignUrisToPackages(<EaPackage[]>packageHandler.objects);
+    this.assignUrisToPackages(packageHandler.objects);
     this.assignUrisToElements(elements);
-    this.assignUrisToAttributes(<EaAttribute[]>attributeHandler.objects, elements);
+    this.assignUrisToAttributes(attributeHandler.objects, elements);
     this.assignConnectorUris(diagram, <NormalizedConnector[]>connectorHandler.objects, elements);
   }
 

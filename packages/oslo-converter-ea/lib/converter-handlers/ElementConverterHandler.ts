@@ -10,11 +10,11 @@ import { TagName } from '../types/TagName';
 import type { UriAssigner } from '../UriAssigner';
 import { getTagValue, ignore } from '../utils/utils';
 
-export class ElementConverterHandler extends ConverterHandler {
+export class ElementConverterHandler extends ConverterHandler<EaElement> {
   public generalizationConnectors: EaConnector[];
 
-  public constructor(targetDiagram: EaDiagram, specificationType: string) {
-    super(targetDiagram, specificationType);
+  public constructor(targetDiagram: EaDiagram, specificationType: string, targetDomain: string) {
+    super(targetDiagram, specificationType, targetDomain);
     this.generalizationConnectors = [];
   }
 
@@ -27,13 +27,13 @@ export class ElementConverterHandler extends ConverterHandler {
   // will be passed to the OutputHandler. This flow is necessary because element types could be
   // in other packages and their URIs are needed to refer to in the output file.If filtering
   // would be applied in documentNotification, external types would not have an URI.
-  public convertToOslo(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
+  public createOsloObject(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
     const elementUriMap = uriAssigner.elementIdUriMap;
     const packageUri = uriAssigner.packageIdUriMap.get(this.targetDiagram.packageId)!;
     const diagramElements = this.objects.filter(x => this.targetDiagram.elementIds.includes(x.id));
 
     diagramElements.forEach(element => {
-      const eaElement = <EaElement>element;
+      const eaElement = element;
 
       switch (eaElement.type) {
         case ElementType.Class: {

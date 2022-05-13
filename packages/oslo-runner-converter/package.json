@@ -1,5 +1,5 @@
 {
-	"name": "@oslo-flanders/toolchain-runner",
+	"name": "@oslo-flanders/converter-runner",
 	"version": "0.0.0",
 	"description": "> TODO: description",
 	"author": "Dwight Van Lancker <dwight.vanlancker@hotmail.com>",
@@ -22,11 +22,12 @@
 	"bugs": {
 		"url": "https://github.com/ddvlanck/OSLO-Toolchain/issues"
 	},
-	"scripts" : {
-    "build:components": "componentsjs-generator -s ."
+	"scripts": {
+		"build:components": "componentsjs-generator -s ."
 	},
 	"dependencies": {
 		"@oslo-flanders/core": "^0.0.0",
+		"@oslo-flanders/ea-to-rdf-converter": "^0.0.0",
 		"componentsjs": "^5.0.1"
 	}
 }

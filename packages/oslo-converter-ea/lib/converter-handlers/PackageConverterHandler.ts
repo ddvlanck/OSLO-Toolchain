@@ -1,15 +1,15 @@
 import type { OutputHandler, Package } from '@oslo-flanders/core';
-import type { EaDocument } from '@oslo-flanders/ea-extractor';
+import type { EaDocument, EaPackage } from '@oslo-flanders/ea-extractor';
 import { ConverterHandler } from '../types/ConverterHandler';
 import type { UriAssigner } from '../UriAssigner';
 import { ignore } from '../utils/utils';
 
-export class PackageConverterHandler extends ConverterHandler {
+export class PackageConverterHandler extends ConverterHandler<EaPackage> {
   public documentNotification(document: EaDocument): void {
     this.objects = document.eaPackages.filter(x => !ignore(x, false));
   }
 
-  public convertToOslo(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
+  public createOsloObject(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
     const ontologyUriMap = uriAssigner.packageIdOntologyUriMap;
     const baseUriMap = uriAssigner.packageIdUriMap;
 

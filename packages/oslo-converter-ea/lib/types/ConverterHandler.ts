@@ -1,19 +1,27 @@
 import type { OutputHandler } from '@oslo-flanders/core';
 import { Scope } from '@oslo-flanders/core';
-import type { EaDiagram, EaDocument, Tag } from '@oslo-flanders/ea-extractor';
+import type { EaDiagram, EaDocument, EaObject, Tag } from '@oslo-flanders/ea-extractor';
 import type { UriAssigner } from '../UriAssigner';
 import { getTagValue } from '../utils/utils';
+import type { NormalizedConnector } from './NormalizedConnector';
 import { TagName } from './TagName';
 
-export abstract class ConverterHandler {
-  public objects: any[];
+/**
+ * Type indicating what type of objects are handled within a ConverterHandler
+ */
+export type GenericOsloType = EaObject | NormalizedConnector;
+
+export abstract class ConverterHandler<T extends GenericOsloType> {
+  public objects: T[];
   public readonly targetDiagram: EaDiagram;
   public readonly specifcationType: string;
+  public readonly targetDomain: string;
 
-  public constructor(targetDiagram: EaDiagram, specificationType: string) {
+  public constructor(targetDiagram: EaDiagram, specificationType: string, targetDomain: string) {
     this.objects = [];
     this.targetDiagram = targetDiagram;
     this.specifcationType = specificationType;
+    this.targetDomain = targetDomain;
   }
 
   public get name(): string {
@@ -21,28 +29,28 @@ export abstract class ConverterHandler {
   }
 
   public abstract documentNotification(document: EaDocument): void;
-  public abstract convertToOslo(uriAssigner: UriAssigner, outputHandler: OutputHandler): void;
+  public abstract createOsloObject(uriAssigner: UriAssigner, outputHandler: OutputHandler): void;
 
-  public getLabel(object: any): Map<string, string> {
+  public getLabel(object: T): Map<string, string> {
     return this.specifcationType === 'ApplicationProfile' ?
       this.getLanguageDependentTag(object, TagName.ApLabel, TagName.Label) :
       this.getLanguageDependentTag(object, TagName.Label);
   }
 
-  public getDefinition(object: any): Map<string, string> {
+  public getDefinition(object: T): Map<string, string> {
     return this.specifcationType === 'ApplicationProfile' ?
       this.getLanguageDependentTag(object, TagName.ApDefinition, TagName.Definition) :
       this.getLanguageDependentTag(object, TagName.Definition);
   }
 
-  public getUsageNote(object: any): Map<string, string> {
+  public getUsageNote(object: T): Map<string, string> {
     return this.specifcationType === 'ApplicationProfile' ?
       this.getLanguageDependentTag(object, TagName.ApUsageNote, TagName.UsageNote) :
       this.getLanguageDependentTag(object, TagName.UsageNote);
   }
 
   // TODO: watch out for URI tags containing a data.vlaanderen URI
-  public getScope(object: any, packageBaseUri: string, idUriMap: Map<number, string>): Scope {
+  public getScope(object: T, packageBaseUri: string, idUriMap: Map<number, string>): Scope {
     const uri = getTagValue(object, TagName.ExternalUri, null) || idUriMap.get(object.id);
 
     if (!uri) {
@@ -54,15 +62,14 @@ export abstract class ConverterHandler {
       return Scope.InPackage;
     }
 
-    // TODO: this parameter should be configurable (e.g. domain could be purl.eu as well)
-    if (uri.startsWith('https://data.vlaanderen.be/')) {
+    if (uri.startsWith(this.targetDomain)) {
       return Scope.InPublicationEnvironment;
     }
 
     return Scope.External;
   }
 
-  private getLanguageDependentTag(object: any, tagName: TagName, fallbackTag?: TagName): Map<string, string> {
+  private getLanguageDependentTag(object: T, tagName: TagName, fallbackTag?: TagName): Map<string, string> {
     const tags = object.tags?.filter((x: Tag) => x.tagName.startsWith(tagName));
 
     const languageToTagValueMap = new Map<string, string>();

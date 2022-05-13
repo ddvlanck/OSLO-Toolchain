@@ -7,11 +7,11 @@ import { NormalizedConnectorType } from '../types/NormalizedConnector';
 import type { UriAssigner } from '../UriAssigner';
 import { ignore, normalize } from '../utils/utils';
 
-export class ConnectorConverterHandler extends ConverterHandler {
+export class ConnectorConverterHandler extends ConverterHandler<EaConnector | NormalizedConnector> {
   private elements: EaElement[];
 
-  public constructor(targetDiagram: EaDiagram, specificationType: string) {
-    super(targetDiagram, specificationType);
+  public constructor(targetDiagram: EaDiagram, specificationType: string, targetDomain: string) {
+    super(targetDiagram, specificationType, targetDomain);
     this.elements = [];
   }
 
@@ -22,7 +22,7 @@ export class ConnectorConverterHandler extends ConverterHandler {
     this.elements = document.eaElements;
   }
 
-  public convertToOslo(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
+  public createOsloObject(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
     const connectorIdUriMap = uriAssigner.connectorIdUriMap;
     const elementUriMap = uriAssigner.elementIdUriMap;
     const packageUri = uriAssigner.packageIdUriMap.get(this.targetDiagram.packageId)!;

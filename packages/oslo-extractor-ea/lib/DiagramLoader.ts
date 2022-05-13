@@ -1,4 +1,3 @@
-import { getLoggerFor } from '@oslo-flanders/core';
 import alasql from 'alasql';
 import type MDBReader from 'mdb-reader';
 import type { EaConnector } from './types/EaConnector';

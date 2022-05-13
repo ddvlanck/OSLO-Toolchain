@@ -1,0 +1,39 @@
+{
+  "name": "@oslo-flanders/configurations",
+  "version": "0.0.0",
+  "description": "Package that exports configuration objects that can be injected in a runner.",
+  "typings": "index",
+  "lsd:module": true,
+  "keywords": [
+    "semantic",
+    "web",
+    "data",
+    "toolchain",
+    "uml",
+    "configuration"
+  ],
+  "author": "Dwight Van Lancker <dwight.vanlancker@hotmail.com>",
+  "homepage": "https://github.com/ddvlanck/OSLO-Toolchain/tree/main/packages/ea-converter-configuration#readme",
+  "license": "MIT",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ddvlanck/OSLO-Toolchain.git"
+  },
+  "scripts": {
+    "build:components": "componentsjs-generator -s ."
+  },
+  "bugs": {
+    "url": "https://github.com/ddvlanck/OSLO-Toolchain/issues"
+  },
+  "dependencies": {
+    "@oslo-flanders/core": "^0.0.0"
+  }
+}
