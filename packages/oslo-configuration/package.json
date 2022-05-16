@@ -1,5 +1,5 @@
 {
-  "name": "@oslo-flanders/configurations",
+  "name": "@oslo-flanders/configuration",
   "version": "0.0.0",
   "description": "Package that exports configuration objects that can be injected in a runner.",
   "typings": "index",
@@ -34,6 +34,5 @@
     "url": "https://github.com/ddvlanck/OSLO-Toolchain/issues"
   },
   "dependencies": {
-    "@oslo-flanders/core": "^0.0.0"
   }
 }
