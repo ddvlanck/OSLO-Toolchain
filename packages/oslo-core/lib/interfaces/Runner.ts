@@ -11,4 +11,5 @@ export interface Runner<T> {
   converterOutputHandler: OutputHandler;
   generators: Generator[];
   start: () => Promise<void>;
+  init: () => Promise<void>;
 }

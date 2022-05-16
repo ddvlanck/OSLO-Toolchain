@@ -1,0 +1,7 @@
+{
+  "umlFile": "https://github.com/Informatievlaanderen/OSLOthema-toolchainTestbed/blob/master/testAssociatiesMijnDomeinMetUriTags.EAP?raw=true",
+  "diagramName": "MijnDomeinMetUriTags",
+  "outputFile": "report-test.jsonld",
+  "specificationType": "ApplicationProfile",
+  "targetDomain": "https://data.vlaanderen.be/"
+}

@@ -1,15 +1,12 @@
-import { ComponentsManager } from 'componentsjs';
-import type { OsloConverterRunner } from '../lib/OsloConverterRunner';
+import type { EaConverterConfiguration } from '@oslo-flanders/configuration';
+import { transformToEaConverterConfiguration } from '../lib/EaConverterConfigurationTransformer';
+import { OsloConverterRunner } from '../lib/OsloConverterRunner';
 
-const run = async <T>(): Promise<void> => {
-  const manager = await ComponentsManager.build({
-    // Path to your npm package's root
-    mainModulePath: `${__dirname}/..`,
-  });
+const run = async (): Promise<void> => {
+  const config: EaConverterConfiguration = await transformToEaConverterConfiguration('./config/config.json');
+  const runner: OsloConverterRunner = new OsloConverterRunner(config);
 
-  await manager.configRegistry.register('./config/config.jsonld');
-  const runner: OsloConverterRunner<T> = await manager.instantiate('http://example.org/OsloConverterRunner');
-
+  await runner.init();
   await runner.start();
 };
 
