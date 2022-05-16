@@ -1,10 +1,6 @@
 import { writeFile } from 'fs/promises';
-import type { OutputHandler } from '@oslo-flanders/core';
+import type { OutputHandler, Package, Class, DataType, Property } from '@oslo-flanders/core';
 import { ContributorType } from '@oslo-flanders/core';
-import type { Class } from '@oslo-flanders/core/lib/oslo/Class';
-import type { DataType } from '@oslo-flanders/core/lib/oslo/DataType';
-import type { Package } from '@oslo-flanders/core/lib/oslo/Package';
-import type { Property } from '@oslo-flanders/core/lib/oslo/Property';
 import { CsvParser } from '@oslo-flanders/stakeholder-extractor';
 
 export class JsonLdOutputHandler implements OutputHandler {
