@@ -1,12 +1,12 @@
-import type { EaConverterConfiguration } from '@oslo-flanders/configurations';
+import type { EaConverterConfiguration } from '@oslo-flanders/configuration';
 import { Converter } from '@oslo-flanders/core';
 import type { EaDiagram, EaDocument } from '@oslo-flanders/ea-extractor';
 import { DataExtractor } from '@oslo-flanders/ea-extractor';
 
-import { AttributeConverterHandler } from './converter-handlers/AttributeConverterHandler';
-import { ConnectorConverterHandler } from './converter-handlers/ConnectorConverterHandler';
-import { ElementConverterHandler } from './converter-handlers/ElementConverterHandler';
-import { PackageConverterHandler } from './converter-handlers/PackageConverterHandler';
+import { AttributeConverterHandler } from './converterHandlers/AttributeConverterHandler';
+import { ConnectorConverterHandler } from './converterHandlers/ConnectorConverterHandler';
+import { ElementConverterHandler } from './converterHandlers/ElementConverterHandler';
+import { PackageConverterHandler } from './converterHandlers/PackageConverterHandler';
 
 import type { ConverterHandler, GenericOsloType } from './types/ConverterHandler';
 import { UriAssigner } from './UriAssigner';

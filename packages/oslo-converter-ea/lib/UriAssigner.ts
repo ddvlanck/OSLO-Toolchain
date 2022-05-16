@@ -1,10 +1,10 @@
 import { getLoggerFor } from '@oslo-flanders/core';
 import type { EaAttribute, EaDiagram, EaElement, EaObject, EaPackage } from '@oslo-flanders/ea-extractor';
 import { ConnectorType, ElementType } from '@oslo-flanders/ea-extractor';
-import type { AttributeConverterHandler } from './converter-handlers/AttributeConverterHandler';
-import type { ConnectorConverterHandler } from './converter-handlers/ConnectorConverterHandler';
-import type { ElementConverterHandler } from './converter-handlers/ElementConverterHandler';
-import type { PackageConverterHandler } from './converter-handlers/PackageConverterHandler';
+import type { AttributeConverterHandler } from './converterHandlers/AttributeConverterHandler';
+import type { ConnectorConverterHandler } from './converterHandlers/ConnectorConverterHandler';
+import type { ElementConverterHandler } from './converterHandlers/ElementConverterHandler';
+import type { PackageConverterHandler } from './converterHandlers/PackageConverterHandler';
 import type { ConverterHandler } from './types/ConverterHandler';
 import type { NormalizedConnector } from './types/NormalizedConnector';
 
