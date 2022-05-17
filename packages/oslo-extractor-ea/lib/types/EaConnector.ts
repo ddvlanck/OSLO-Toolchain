@@ -54,7 +54,7 @@ export class EaConnector extends EaObject {
     sourceRole: string,
     destinationRole: string,
     associationClassId: number | null,
-    direction: ConnectorDirection,
+    direction: ConnectorDirection = ConnectorDirection.Unspecified,
   ) {
     super(id, guid, name);
 
@@ -68,7 +68,7 @@ export class EaConnector extends EaObject {
     this.associationClassId = associationClassId;
     this.direction = direction;
 
-    this.diagramGeometryDirection = ConnectorDirection.Unspecified;
+    this.diagramGeometryDirection = direction;
     this.hidden = false;
   }
 

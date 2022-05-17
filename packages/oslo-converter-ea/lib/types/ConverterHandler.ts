@@ -3,15 +3,9 @@ import { Scope } from '@oslo-flanders/core';
 import type { EaDiagram, EaDocument, EaObject, Tag } from '@oslo-flanders/ea-extractor';
 import type { UriAssigner } from '../UriAssigner';
 import { getTagValue } from '../utils/utils';
-import type { NormalizedConnector } from './NormalizedConnector';
 import { TagName } from './TagName';
 
-/**
- * Type indicating what type of objects are handled within a ConverterHandler
- */
-export type GenericOsloType = EaObject | NormalizedConnector;
-
-export abstract class ConverterHandler<T extends GenericOsloType> {
+export abstract class ConverterHandler<T extends EaObject> {
   public objects: T[];
   public readonly targetDiagram: EaDiagram;
   public readonly specifcationType: string;

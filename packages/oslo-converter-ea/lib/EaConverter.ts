@@ -1,6 +1,6 @@
 import type { EaConverterConfiguration } from '@oslo-flanders/configuration';
 import { Converter } from '@oslo-flanders/core';
-import type { EaDiagram, EaDocument } from '@oslo-flanders/ea-extractor';
+import type { EaDiagram, EaDocument, EaObject } from '@oslo-flanders/ea-extractor';
 import { DataExtractor } from '@oslo-flanders/ea-extractor';
 
 import { AttributeConverterHandler } from './converterHandlers/AttributeConverterHandler';
@@ -8,11 +8,11 @@ import { ConnectorConverterHandler } from './converterHandlers/ConnectorConverte
 import { ElementConverterHandler } from './converterHandlers/ElementConverterHandler';
 import { PackageConverterHandler } from './converterHandlers/PackageConverterHandler';
 
-import type { ConverterHandler, GenericOsloType } from './types/ConverterHandler';
+import type { ConverterHandler } from './types/ConverterHandler';
 import { UriAssigner } from './UriAssigner';
 
 export class EaConverter extends Converter<EaConverterConfiguration> {
-  private converterHandlers: ConverterHandler<GenericOsloType>[] = [];
+  private converterHandlers: ConverterHandler<EaObject>[] = [];
 
   public async convert(): Promise<void> {
     const extractor = new DataExtractor(this.configuration.umlFile);
