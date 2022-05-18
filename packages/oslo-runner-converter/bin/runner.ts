@@ -6,7 +6,10 @@ const run = async (): Promise<void> => {
   const config: EaConverterConfiguration = await transformToEaConverterConfiguration('./config/config.json');
   const runner: OsloConverterRunner = new OsloConverterRunner(config);
 
+  runner.logger.info(`Start initialization.`);
   await runner.init();
+
+  runner.logger.info(`Starting conversion.`);
   await runner.start();
 };
 

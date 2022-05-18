@@ -1,3 +1,4 @@
+import type { Logger } from '../logging/Logger';
 import type { Converter } from './Converter';
 import type { OutputHandler } from './OutputHandler';
 
@@ -6,10 +7,10 @@ import type { OutputHandler } from './OutputHandler';
  * Implementor can choose to run part or all of the Toolchain
  */
 export interface Runner<T> {
+  logger: Logger;
   configuration: T;
   converter: Converter<T>;
   converterOutputHandler: OutputHandler;
   generators: Generator[];
   start: () => Promise<void>;
-  init: () => Promise<void>;
 }

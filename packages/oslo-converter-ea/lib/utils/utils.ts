@@ -12,7 +12,7 @@ export enum CasingType {
   AssociationClassCase
 }
 
-export function ignore(object: EaObject, _default: any): boolean {
+export function ignore(object: EaObject): boolean {
   const ignoreObject = getTagValue(object, TagName.Ignore, false, true);
   return Boolean(ignoreObject);
 }

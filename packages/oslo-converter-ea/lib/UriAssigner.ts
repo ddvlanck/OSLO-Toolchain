@@ -1,11 +1,6 @@
 import { getLoggerFor } from '@oslo-flanders/core';
-import type { EaAttribute, EaDiagram, EaElement, EaObject, EaPackage } from '@oslo-flanders/ea-extractor';
+import type { EaAttribute, EaDiagram, EaElement, EaPackage } from '@oslo-flanders/ea-extractor';
 import { ConnectorType, ElementType } from '@oslo-flanders/ea-extractor';
-import type { AttributeConverterHandler } from './converterHandlers/AttributeConverterHandler';
-import type { ConnectorConverterHandler } from './converterHandlers/ConnectorConverterHandler';
-import type { ElementConverterHandler } from './converterHandlers/ElementConverterHandler';
-import type { PackageConverterHandler } from './converterHandlers/PackageConverterHandler';
-import type { ConverterHandler } from './types/ConverterHandler';
 import type { NormalizedConnector } from './types/NormalizedConnector';
 
 import { TagName } from './types/TagName';
@@ -16,6 +11,7 @@ const backupBaseUri = 'https://fixme.com#';
 
 export class UriAssigner {
   public readonly logger = getLoggerFor(this);
+
   // Package id mapped to a URI
   public readonly packageIdUriMap: Map<number, string>;
 
@@ -47,25 +43,24 @@ export class UriAssigner {
     this.connectorIdUriMap = new Map();
   }
 
-  public assignUris(
+  public async assignUris(
     diagram: EaDiagram,
-    handlers: ConverterHandler<EaObject | NormalizedConnector>[],
-  ): void {
-    const packageHandler = <PackageConverterHandler>handlers.find(x => x.name === 'PackageConverterHandler')!;
-    const elementHandler = <ElementConverterHandler>handlers.find(x => x.name === 'ElementConverterHandler')!;
-    const attributeHandler = <AttributeConverterHandler>handlers.find(x => x.name === 'AttributeConverterHandler')!;
-    const connectorHandler = <ConnectorConverterHandler>handlers.find(x => x.name === 'ConnectorConverterHandler')!;
-
-    packageHandler.objects.forEach(_package =>
+    packages: EaPackage[],
+    elements: EaElement[],
+    attributes: EaAttribute[],
+    connectors: NormalizedConnector[],
+  ): Promise<void> {
+    packages.forEach(_package =>
       this.packageNameToPackageMap
         .set(_package.name, [...this.packageNameToPackageMap.get(_package.name) || [], _package]));
 
-    const elements = elementHandler.objects;
+    this.assignUrisToPackages(packages);
 
-    this.assignUrisToPackages(packageHandler.objects);
-    this.assignUrisToElements(elements);
-    this.assignUrisToAttributes(attributeHandler.objects, elements);
-    this.assignConnectorUris(diagram, <NormalizedConnector[]>connectorHandler.objects, elements);
+    await Promise.all([
+      this.assignUrisToElements(elements),
+      this.assignUrisToAttributes(attributes, elements),
+      this.assignConnectorUris(diagram, connectors, elements),
+    ]);
   }
 
   public assignUrisToPackages(packages: EaPackage[]): void {
@@ -79,7 +74,7 @@ export class UriAssigner {
     });
   }
 
-  public assignUrisToElements(elements: EaElement[]): void {
+  public async assignUrisToElements(elements: EaElement[]): Promise<void> {
     elements.forEach(element => {
       const packageUri = this.packageIdUriMap.get(element.packageId);
 
@@ -105,7 +100,7 @@ export class UriAssigner {
     });
   }
 
-  public assignUrisToAttributes(attributes: EaAttribute[], elements: EaElement[]): void {
+  public async assignUrisToAttributes(attributes: EaAttribute[], elements: EaElement[]): Promise<void> {
     attributes.forEach(attribute => {
       const attributeClass = elements.find(x => x.id === attribute.classId);
 
@@ -150,7 +145,11 @@ export class UriAssigner {
     });
   }
 
-  public assignConnectorUris(diagram: EaDiagram, connectors: NormalizedConnector[], elements: EaElement[]): void {
+  public async assignConnectorUris(
+    diagram: EaDiagram,
+    connectors: NormalizedConnector[],
+    elements: EaElement[],
+  ): Promise<void> {
     const diagramConnectors: NormalizedConnector[] = [];
 
     diagram.connectorsIds.forEach(connectorId => {
@@ -216,7 +215,7 @@ export class UriAssigner {
     const referencedPackages = this.packageNameToPackageMap.get(packageName) || [];
 
     if (referencedPackages.length === 0) {
-      this.logger.warn(`Specified package '${packageName}' was not found.`);
+      this.logger.warn(`Specified package '${packageName}' was not found. Returning ${currentPackageUri}`);
       return currentPackageUri;
     }
 

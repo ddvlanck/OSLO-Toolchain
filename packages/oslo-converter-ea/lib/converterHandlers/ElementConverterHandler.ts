@@ -2,25 +2,21 @@ import type { OutputHandler } from '@oslo-flanders/core';
 import { Scope } from '@oslo-flanders/core';
 import type { Class } from '@oslo-flanders/core/lib/oslo/Class';
 import type { DataType } from '@oslo-flanders/core/lib/oslo/DataType';
-import type { EaConnector, EaDiagram, EaDocument, EaElement } from '@oslo-flanders/ea-extractor';
-import { ElementType, ConnectorType } from '@oslo-flanders/ea-extractor';
+import type { EaConnector, EaElement } from '@oslo-flanders/ea-extractor';
+import { ElementType } from '@oslo-flanders/ea-extractor';
+import type { EaConverter } from '../EaConverter';
 
 import { ConverterHandler } from '../types/ConverterHandler';
 import { TagName } from '../types/TagName';
 import type { UriAssigner } from '../UriAssigner';
-import { getTagValue, ignore } from '../utils/utils';
+import { getTagValue } from '../utils/utils';
 
 export class ElementConverterHandler extends ConverterHandler<EaElement> {
   public generalizationConnectors: EaConnector[];
 
-  public constructor(targetDiagram: EaDiagram, specificationType: string, targetDomain: string) {
-    super(targetDiagram, specificationType, targetDomain);
+  public constructor(converter: EaConverter) {
+    super(converter);
     this.generalizationConnectors = [];
-  }
-
-  public documentNotification(document: EaDocument): void {
-    this.objects = document.eaElements.filter(x => !ignore(x, false));
-    this.generalizationConnectors = document.eaConnectors.filter(x => x.type === ConnectorType.Generalization);
   }
 
   // All elements will be processed and receive a URI, but only elements on the target diagram
@@ -28,9 +24,10 @@ export class ElementConverterHandler extends ConverterHandler<EaElement> {
   // in other packages and their URIs are needed to refer to in the output file.If filtering
   // would be applied in documentNotification, external types would not have an URI.
   public createOsloObject(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
+    const targetDiagram = this.converter.getTargetDiagram();
     const elementUriMap = uriAssigner.elementIdUriMap;
-    const packageUri = uriAssigner.packageIdUriMap.get(this.targetDiagram.packageId)!;
-    const diagramElements = this.objects.filter(x => this.targetDiagram.elementIds.includes(x.id));
+    const packageUri = uriAssigner.packageIdUriMap.get(targetDiagram.packageId)!;
+    const diagramElements = this.converter.getElements().filter(x => targetDiagram.elementIds.includes(x.id));
 
     diagramElements.forEach(element => {
       const eaElement = element;

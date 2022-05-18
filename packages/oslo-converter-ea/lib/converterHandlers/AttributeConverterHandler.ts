@@ -1,33 +1,25 @@
 import type { OutputHandler, Property } from '@oslo-flanders/core';
 import { PropertyType } from '@oslo-flanders/core';
-import type { EaAttribute, EaDiagram, EaDocument, EaElement } from '@oslo-flanders/ea-extractor';
+import type { EaAttribute } from '@oslo-flanders/ea-extractor';
+import type { EaConverter } from '../EaConverter';
 import { ConverterHandler } from '../types/ConverterHandler';
 import { DataTypes } from '../types/DataTypes';
 import { TagName } from '../types/TagName';
 import type { UriAssigner } from '../UriAssigner';
-import { getTagValue, ignore } from '../utils/utils';
+import { getTagValue } from '../utils/utils';
 
 export class AttributeConverterHandler extends ConverterHandler<EaAttribute> {
-  private elements: EaElement[];
-
-  public constructor(targetDiagram: EaDiagram, specificationType: string, targetDomain: string) {
-    super(targetDiagram, specificationType, targetDomain);
-    this.elements = [];
-  }
-
-  public documentNotification(document: EaDocument): void {
-    const diagramAttributes = document.eaAttributes.filter(x => this.targetDiagram.elementIds.includes(x.classId));
-    this.objects = diagramAttributes.filter(x => !ignore(x, false));
-    this.elements = document.eaElements;
+  public constructor(converter: EaConverter) {
+    super(converter);
   }
 
   public createOsloObject(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
     const attributeUriMap = uriAssigner.attributeIdUriMap;
     const elementUriMap = uriAssigner.elementIdUriMap;
     const elementNameToElementMap = uriAssigner.elementNameToElementMap;
-    const packageUri = uriAssigner.packageIdUriMap.get(this.targetDiagram.packageId)!;
+    const packageUri = uriAssigner.packageIdUriMap.get(this.converter.getTargetDiagram().packageId)!;
 
-    this.objects.forEach(attribute => {
+    this.converter.getAttributes().forEach(attribute => {
       const eaAttribute = attribute;
 
       const attributeUri = attributeUriMap.get(attribute.id);
@@ -74,7 +66,7 @@ export class AttributeConverterHandler extends ConverterHandler<EaAttribute> {
       const label = this.getLabel(eaAttribute);
       const usageNote = this.getUsageNote(eaAttribute);
       const domain = elementUriMap.get(eaAttribute.classId)!;
-      const domainLabel = this.elements.find(x => x.id === eaAttribute.classId)!.name;
+      const domainLabel = this.converter.getElements().find(x => x.id === eaAttribute.classId)!.name;
       const scope = this.getScope(eaAttribute, packageUri, attributeUriMap);
 
       const osloAttribute: Property = {

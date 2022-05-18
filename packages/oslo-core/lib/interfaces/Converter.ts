@@ -1,6 +1,10 @@
 import type { Logger } from '../logging/Logger';
 import type { OutputHandler } from './OutputHandler';
 
+/**
+ * Class that handles the conversion of a UML model to an RDF file.
+ */
+// Does not contain a constructor to keep componentsjs config file as simple as possible
 export abstract class Converter<T> {
   private _logger: Logger | undefined;
   private _configuration: T | undefined;

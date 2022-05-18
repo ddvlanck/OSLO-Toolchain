@@ -1,5 +1,5 @@
 import { writeFile } from 'fs/promises';
-import type { OutputHandler, Package, Class, DataType, Property } from '@oslo-flanders/core';
+import type { OutputHandler, Package, Class, DataType, Property, Logger } from '@oslo-flanders/core';
 import { ContributorType } from '@oslo-flanders/core';
 import { CsvParser } from '@oslo-flanders/stakeholder-extractor';
 
