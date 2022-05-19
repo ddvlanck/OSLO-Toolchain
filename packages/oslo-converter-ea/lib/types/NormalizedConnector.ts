@@ -1,5 +1,5 @@
-import { EaObject, Tag } from '@oslo-flanders/ea-extractor';
-import { EaConnector } from '@oslo-flanders/ea-extractor';
+import type { Tag, EaConnector } from '@oslo-flanders/ea-extractor';
+import { EaObject } from '@oslo-flanders/ea-extractor';
 
 export enum NormalizedConnectorType {
   AssociationClassConnector,

@@ -1,132 +1,212 @@
 import { writeFile } from 'fs/promises';
-import type { OutputHandler, Package, Class, DataType, Property, Logger } from '@oslo-flanders/core';
-import { ContributorType } from '@oslo-flanders/core';
-import { CsvParser } from '@oslo-flanders/stakeholder-extractor';
+import { ns, OutputHandler } from '@oslo-flanders/core';
+import type * as RDF from '@rdfjs/types';
 
-export class JsonLdOutputHandler implements OutputHandler {
-  private readonly jsonLdPackages: any[];
-  private readonly jsonLdClasses: any[];
-  private readonly jsonLdDataTypes: any[];
-  private readonly jsonLdAttributes: any[];
-  private readonly contributors: any[];
-  private readonly authors: any[];
-  private readonly editors: any[];
-  private id: string;
-
-  public constructor() {
-    this.jsonLdPackages = [];
-    this.jsonLdClasses = [];
-    this.jsonLdDataTypes = [];
-    this.jsonLdAttributes = [];
-    this.contributors = [];
-    this.authors = [];
-    this.editors = [];
-    this.id = '';
-  }
-
-  /**
-   * Writes a JSON-LD document
-   */
+// TODO: check if we can use a serializer npm package
+export class JsonLdOutputHandler extends OutputHandler {
   public async write(path: string): Promise<void> {
-    const report = this.createReport();
-    await writeFile(path, JSON.stringify(report, null, 2));
+    const osloPackages = this.getOsloPackages();
+    const osloClasses = this.getOsloClasses();
+    const osloAttribtues = this.getOsloAttributes();
+    const osloDatatypes = this.getDatatypes();
+
+    const document: any = {};
+    document['@context'] = this.getContext();
+    document['@id'] = ns.example('TestId').value;
+    document.packages = osloPackages;
+    document.classes = osloClasses;
+    document.attributes = osloAttribtues;
+    document.datatypes = osloDatatypes;
+
+    // TODO: add stakeholders
+
+    await writeFile(path, JSON.stringify(document, null, 2));
   }
 
-  public addOntologyUri(id: string): void {
-    this.id = id;
+  // Returns an array because a literal can be annotated with multiple languages
+  private getLiterals(quads: RDF.Quad[], predicate: RDF.NamedNode): RDF.Literal[] {
+    return quads.filter(x => x.predicate.equals(predicate)).map(x => <RDF.Literal>x.object);
   }
 
-  public async addStakeholders(stakeholdersFile: string): Promise<void> {
-    const parser = new CsvParser();
-    await parser.parseCsv(stakeholdersFile);
+  private getLiteral(quads: RDF.Quad[], predicate: RDF.NamedNode): RDF.Literal {
+    return <RDF.Literal>quads.find(x => x.predicate.equals(predicate))?.object;
+  }
 
-    parser.contributors.forEach(contributor => {
-      switch (contributor.contributorType) {
-        case ContributorType.Author:
-          this.authors.push(contributor);
-          break;
+  private getOsloPackages(): any {
+    const packages = this.store.getQuads(null, ns.rdf('type'), ns.example('Package'), null);
 
-        case ContributorType.Editor:
-          this.editors.push(contributor);
-          break;
+    return packages.map(packageQuad => {
+      const quads = this.store.getQuads(packageQuad.subject, null, null, null);
+      const baseUriLiteral = this.getLiteral(quads, ns.example('baseUri'));
 
-        case ContributorType.Contributor:
-          this.contributors.push(contributor);
-          break;
+      return {
+        '@id': packageQuad.subject.value,
+        '@type': 'Package',
+        baseUri: baseUriLiteral.value,
+      };
+    });
+  }
 
-        case ContributorType.Unknown:
-        default:
-        // Log error
+  private getOsloClasses(): any {
+    const classes = this.store.getQuads(null, ns.rdf('type'), ns.owl('Class'), null);
+
+    return classes.map(classQuad => {
+      const quads = this.store.getQuads(classQuad.subject, null, null, null);
+      const definitionLiterals = this.getLiterals(quads, ns.rdfs('comment'));
+      const labelLiterals = this.getLiterals(quads, ns.rdfs('label'));
+      const usageNoteLiterals = this.getLiterals(quads, ns.vann('usageNote'));
+      // TODO: when using a codelist for scope, this can not be a literal anymore.
+      const scopeLiteral = this.getLiteral(quads, ns.example('scope'));
+      const parentLiteral = this.getLiteral(quads, ns.rdfs('subClassOf'));
+      let parentLabelLiterals: RDF.Literal[] | undefined;
+
+      if (parentLiteral) {
+        const labelQuads = this.store.getQuads(
+          this.factory.namedNode(parentLiteral.value),
+          ns.rdfs('label'),
+          null,
+          null,
+        );
+
+        if (labelQuads.length === 0) {
+          // TODO: log warning that label for parent could not be found?
+        }
+
+        parentLabelLiterals = labelQuads.map(x => <RDF.Literal>x.object);
       }
+
+      return {
+        '@id': classQuad.subject.value,
+        '@type': 'Class',
+        label: labelLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
+        definition: definitionLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
+        usageNote: usageNoteLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
+        ...parentLiteral && {
+          parent: {
+            '@id': parentLiteral.value,
+            '@type': 'Class',
+            ...parentLabelLiterals && {
+              label: parentLabelLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
+            },
+          },
+        },
+        scope: scopeLiteral.value,
+      };
     });
   }
 
-  public addPackage(_package: Package): void {
-    this.jsonLdPackages.push({
-      '@id': _package.ontologyUri,
-      '@type': 'Package',
-      baseUri: _package.baseUri,
+  public getOsloAttributes(): any {
+    const datatypeAttributes = this.store.getQuads(null, ns.rdf('type'), ns.owl('DatatypeProperty'), null);
+    const objectPropertyAttributes = this.store.getQuads(null, ns.rdf('type'), ns.owl('ObjectProperty'), null);
+    const propertyAttributes = this.store.getQuads(null, ns.rdf('type'), ns.rdf('Property'), null);
+
+    return [
+      ...datatypeAttributes,
+      ...objectPropertyAttributes,
+      ...propertyAttributes,
+    ].map(attributeQuad => {
+      const quads = this.store.getQuads(attributeQuad.subject, null, null, null);
+
+      // Attributes generated by the normalization of the connectors (associationclasses)
+      // do not have a definition
+      const definitionLiterals = this.getLiterals(quads, ns.rdfs('comment'));
+      const labelLiterals = this.getLiterals(quads, ns.rdfs('label'));
+      const usageNoteLiterals = this.getLiterals(quads, ns.vann('usageNote'));
+      const domainLiteral = this.getLiteral(quads, ns.rdfs('domain'));
+      let domainLabelLiterals: RDF.Literal[] | undefined;
+
+      if (domainLiteral) {
+        const domainLabelQuads = this.store.getQuads(
+          this.factory.namedNode(domainLiteral.value),
+          ns.rdfs('label'),
+          null,
+          null,
+        );
+
+        if (domainLabelQuads.length === 0) {
+          // TODO: log warning that label for domain could not be found?
+        }
+
+        domainLabelLiterals = domainLabelQuads.map(x => <RDF.Literal>x.object);
+      }
+
+      const rangeLiteral = this.getLiteral(quads, ns.rdfs('range'));
+      let rangeLabelLiterals: RDF.Literal[] | undefined;
+
+      if (rangeLiteral) {
+        const rangeLabelQuads = this.store.getQuads(
+          this.factory.namedNode(rangeLiteral.value),
+          ns.rdfs('label'),
+          null,
+          null,
+        );
+
+        if (rangeLabelQuads.length === 0) {
+          // TODO: log warning that label for range could not be found?
+        }
+
+        // TODO: log warning that range has multiple labels
+        rangeLabelLiterals = rangeLabelQuads.map(x => <RDF.Literal>x.object);
+      }
+
+      const maxCardinalityLiteral = this.getLiteral(quads, ns.shacl('maxCount'));
+      const minCardinalityLiteral = this.getLiteral(quads, ns.shacl('minCount'));
+      // TODO: when using codelists, this will not by a literal anymore
+      const scopeLiteral = this.getLiteral(quads, ns.example('scope'));
+
+      return {
+        '@id': attributeQuad.subject.value,
+        '@type': attributeQuad.object.value,
+        label: labelLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
+        ...definitionLiterals && {
+          definition: definitionLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
+        },
+        ...usageNoteLiterals && {
+          usageNote: usageNoteLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
+        },
+        domain: {
+          '@id': domainLiteral.value,
+          '@type': 'Class',
+          ...domainLabelLiterals && {
+            label: domainLabelLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
+          },
+        },
+        range: {
+          '@id': rangeLiteral.value,
+          ...(rangeLabelLiterals && rangeLabelLiterals.length > 0) && {
+            label: rangeLabelLiterals.length > 1 ?
+              rangeLabelLiterals.map(x => ({ '@language': x.language, '@value': x.value })) :
+              rangeLabelLiterals[0].value,
+          },
+        },
+        minCount: minCardinalityLiteral.value,
+        maxCount: maxCardinalityLiteral.value,
+        scope: scopeLiteral.value,
+      };
     });
   }
 
-  public addClass(_class: Class): void {
-    this.jsonLdClasses.push({
-      '@id': _class.uri,
-      '@type': 'http://www.w3.org/2002/07/owl#Class',
-      definition: Array.from(_class.definition, ([language, value]) => ({ '@language': language, '@value': value })),
-      label: Array.from(_class.label, ([language, value]) => ({ '@language': language, '@value': value })),
-      usageNote: Array.from(_class.usageNote, ([language, value]) => ({ '@language': language, '@value': value })),
-      parent: _class.parent,
-      scope: _class.scope,
-    });
-  }
+  private getDatatypes(): any {
+    const datatypes = this.store.getQuads(null, ns.rdf('type'), ns.example('DataType'), null);
 
-  // FIXME: @language within label of associaiton class pointing to target class, language is 'label'
-  public addAttribute(attribute: Property): void {
-    this.jsonLdAttributes.push({
-      '@id': attribute.uri,
-      '@type': attribute.type,
-      definition: Array.from(attribute.definition, ([language, value]) => ({ '@language': language, '@value': value })),
-      label: Array.from(attribute.label, ([language, value]) => ({ '@language': language, '@value': value })),
-      usageNote: Array.from(attribute.usageNote, ([language, value]) => ({ '@language': language, '@value': value })),
-      domain: {
-        '@id': attribute.domain,
-        '@type': 'http://www.w3.org/2002/07/owl#Class',
-        label: attribute.domainLabel,
-      },
-      range: {
-        '@id': attribute.range,
-        label: attribute.rangeLabel,
-      },
-      maxCard: attribute.maxCardinality,
-      minCard: attribute.minCardinality,
-      scope: attribute.scope,
-    });
-  }
+    return datatypes.map(datatypeQuad => {
+      const quads = this.store.getQuads(datatypeQuad.subject, null, null, null);
 
-  public addDataType(datatype: DataType): void {
-    this.jsonLdDataTypes.push({
-      '@id': datatype.uri,
-      '@type': 'DataType',
-      definition: Array.from(datatype.definition, ([language, value]) => ({ '@language': language, '@value': value })),
-      label: Array.from(datatype.label, ([language, value]) => ({ '@language': language, '@value': value })),
-      usageNote: Array.from(datatype.usageNote, ([language, value]) => ({ '@language': language, '@value': value })),
-      scope: datatype.scope,
-    });
-  }
+      const definitionLiterals = this.getLiterals(quads, ns.rdfs('comment'));
+      const labelLiterals = this.getLiterals(quads, ns.rdfs('label'));
+      const usageNoteLiterals = this.getLiterals(quads, ns.vann('usageNote'));
+      // TODO: when using a codelist for scope, this can not be a literal anymore.
+      const scopeLiteral = this.getLiteral(quads, ns.example('scope'));
 
-  private createReport(): any {
-    return {
-      '@context': this.getContext(),
-      '@id': this.id,
-      packages: this.jsonLdPackages,
-      classes: this.jsonLdClasses,
-      attributes: this.jsonLdAttributes,
-      dataTypes: this.jsonLdDataTypes,
-      contributors: this.contributors,
-      editors: this.editors,
-      authors: this.authors,
-    };
+      return {
+        '@id': datatypeQuad.subject.value,
+        '@type': 'Datatype',
+        label: labelLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
+        definition: definitionLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
+        usageNote: usageNoteLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
+        scope: scopeLiteral.value,
+      };
+    });
   }
 
   private getContext(): any {
@@ -146,10 +226,6 @@ export class JsonLdOutputHandler implements OutputHandler {
       rec: 'http://www.w3.org/2001/02pd/rec54#',
       vann: 'http://purl.org/vocab/vann/',
       sh: 'http://w3.org/ns/shacl#',
-      label: {
-        '@id': 'rdfs:label',
-        '@container': '@language',
-      },
       authors: {
         '@type': 'foaf:Person',
         '@id': 'foaf:maker',
@@ -165,10 +241,10 @@ export class JsonLdOutputHandler implements OutputHandler {
       affiliation: {
         '@id': 'http://schema.org/affiliation',
       },
-      classes: '@included',
-      datatypes: '@included',
-      attributes: '@included',
-      name: {
+      classes: 'http://example.org/classes',
+      datatypes: 'http://example.org/datatypes',
+      attributes: 'http://example.org/attributes',
+      label: {
         '@id': 'rdfs:label',
         '@container': '@language',
       },
@@ -176,8 +252,9 @@ export class JsonLdOutputHandler implements OutputHandler {
         '@id': 'rdfs:comment',
         '@container': '@language',
       },
-      properties: {
-        '@reverse': 'rdfs:isDefinedBy',
+      usageNote: {
+        '@id': 'vann:usageNote',
+        '@container': '@language',
       },
       domain: {
         '@id': 'rdfs:domain',
@@ -191,20 +268,15 @@ export class JsonLdOutputHandler implements OutputHandler {
       maxCardinality: {
         '@id': 'sh:maxCount',
       },
-      generalization: {
-        '@id': 'rdfs:subPropertyOf',
-      },
-      externals: {
-        '@type': 'http://www.w3.org/2000/01/rdf-schema#Class',
-        '@id': 'rdfs:seeAlso',
-      },
-      usage: {
-        '@id': 'vann:usageNote',
-        '@container': '@language',
-      },
       parent: {
         '@id': 'rdfs:subClassOf',
         '@type': 'rdfs:Class',
+      },
+      scope: {
+        '@id': 'http://example.org/scope',
+      },
+      Class: {
+        '@id': 'rdfs:Class',
       },
     };
   }

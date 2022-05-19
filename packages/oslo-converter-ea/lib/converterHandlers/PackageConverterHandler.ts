@@ -1,24 +1,26 @@
-import type { OutputHandler, Package } from '@oslo-flanders/core';
+import type { OutputHandler } from '@oslo-flanders/core';
+import { ns } from '@oslo-flanders/core';
 import type { EaPackage } from '@oslo-flanders/ea-extractor';
 import { ConverterHandler } from '../types/ConverterHandler';
 import type { UriAssigner } from '../UriAssigner';
 
 export class PackageConverterHandler extends ConverterHandler<EaPackage> {
-  public createOsloObject(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
+  public addObjectsToOutput(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
     const ontologyUriMap = uriAssigner.packageIdOntologyUriMap;
     const baseUriMap = uriAssigner.packageIdUriMap;
 
-    this.converter.getPackages().forEach(_package => {
-      const ontologyUri = ontologyUriMap.get(_package.packageId)!;
-      const baseUri = baseUriMap.get(_package.packageId)!;
+    // Only package from target diagram is added
+    const targetPackage = this.converter.getPackages()
+      .find(x => x.packageId === this.converter.getTargetDiagram().packageId)!;
 
-      const osloPackage: Package = {
-        name: _package.name,
-        baseUri: new URL(baseUri),
-        ontologyUri: new URL(ontologyUri),
-      };
+    const ontologyUri = ontologyUriMap.get(targetPackage.packageId)!;
+    const ontologyNamedNode = this.factory.namedNode(ontologyUri);
 
-      outputHandler.addPackage(osloPackage);
-    });
+    outputHandler.add(ontologyNamedNode, ns.rdf('type'), ns.example('Package'));
+
+    const baseUri = baseUriMap.get(targetPackage.packageId)!;
+    const baseUriNamedNode = this.factory.namedNode(baseUri);
+
+    outputHandler.add(ontologyNamedNode, ns.example('baseUri'), baseUriNamedNode);
   }
 }

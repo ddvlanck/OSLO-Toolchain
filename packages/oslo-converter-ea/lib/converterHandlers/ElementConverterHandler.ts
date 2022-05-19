@@ -1,10 +1,8 @@
 import type { OutputHandler } from '@oslo-flanders/core';
-import { Scope } from '@oslo-flanders/core';
-import type { Class } from '@oslo-flanders/core/lib/oslo/Class';
-import type { DataType } from '@oslo-flanders/core/lib/oslo/DataType';
-import type { EaConnector, EaElement } from '@oslo-flanders/ea-extractor';
+import { ns, Scope } from '@oslo-flanders/core';
+
+import type { EaElement } from '@oslo-flanders/ea-extractor';
 import { ElementType } from '@oslo-flanders/ea-extractor';
-import type { EaConverter } from '../EaConverter';
 
 import { ConverterHandler } from '../types/ConverterHandler';
 import { TagName } from '../types/TagName';
@@ -12,18 +10,11 @@ import type { UriAssigner } from '../UriAssigner';
 import { getTagValue } from '../utils/utils';
 
 export class ElementConverterHandler extends ConverterHandler<EaElement> {
-  public generalizationConnectors: EaConnector[];
-
-  public constructor(converter: EaConverter) {
-    super(converter);
-    this.generalizationConnectors = [];
-  }
-
   // All elements will be processed and receive a URI, but only elements on the target diagram
   // will be passed to the OutputHandler. This flow is necessary because element types could be
   // in other packages and their URIs are needed to refer to in the output file.If filtering
   // would be applied in documentNotification, external types would not have an URI.
-  public createOsloObject(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
+  public addObjectsToOutput(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
     const targetDiagram = this.converter.getTargetDiagram();
     const elementUriMap = uriAssigner.elementIdUriMap;
     const packageUri = uriAssigner.packageIdUriMap.get(targetDiagram.packageId)!;
@@ -34,121 +25,133 @@ export class ElementConverterHandler extends ConverterHandler<EaElement> {
 
       switch (eaElement.type) {
         case ElementType.Class: {
-          const osloClass = this.convertToOsloClass(eaElement, elementUriMap, packageUri)!;
-          outputHandler.addClass(osloClass);
-          break;
+          return this.convertToOsloClass(outputHandler, eaElement, elementUriMap, packageUri);
         }
 
         case ElementType.DataType: {
-          const osloDatatype = this.convertToOsloDataType(eaElement, elementUriMap, packageUri)!;
-          outputHandler.addDataType(osloDatatype);
-          break;
+          return this.convertToOsloDataType(outputHandler, eaElement, elementUriMap, packageUri);
         }
 
         case ElementType.Enumeration: {
-          const osloEnumeration = this.convertToOsloEnumeration(eaElement, elementUriMap, packageUri)!;
-          outputHandler.addClass(osloEnumeration);
-          break;
+          return this.convertToOsloEnumeration(outputHandler, eaElement, elementUriMap);
         }
 
         default:
-          console.log('Other types soon.');
+          throw new Error(`Element type not supported`);
       }
     });
   }
 
   private convertToOsloDataType(
+    outputHandler: OutputHandler,
     dataType: EaElement,
     elementUriMap: Map<number, string>,
     packageUri: string,
-  ): DataType | null {
+  ): void {
     const dataTypeUri = elementUriMap.get(dataType.id);
 
     if (!dataTypeUri) {
-      // Log error
-      return null;
+      // TODO: Log error
+      return;
     }
 
-    const definition = this.getDefinition(dataType);
-    const label = this.getLabel(dataType);
-    const usageNote = this.getUsageNote(dataType);
-    const scope = this.getScope(dataType, packageUri, elementUriMap);
+    const dataTypeUriNamedNode = this.factory.namedNode(dataTypeUri);
+    outputHandler.add(dataTypeUriNamedNode, ns.rdf('type'), ns.example('DataType'));
 
-    return {
-      uri: new URL(dataTypeUri),
-      definition,
-      label,
-      usageNote,
-      scope,
-    };
+    const definition = this.getDefinition(dataType);
+    outputHandler.add(dataTypeUriNamedNode, ns.rdfs('comment'), definition);
+
+    const label = this.getLabel(dataType);
+    outputHandler.add(dataTypeUriNamedNode, ns.rdfs('label'), label);
+
+    const usageNote = this.getUsageNote(dataType);
+    outputHandler.add(dataTypeUriNamedNode, ns.vann('usageNote'), usageNote);
+
+    const scope = this.getScope(dataType, packageUri, elementUriMap);
+    // TODO: remove example.org
+    const scopeLiteral = this.factory.literal(scope);
+    outputHandler.add(dataTypeUriNamedNode, ns.example('scope'), scopeLiteral);
   }
 
   private convertToOsloEnumeration(
+    outputHandler: OutputHandler,
     enumeration: EaElement,
     elementUriMap: Map<number, string>,
-    packageUri: string,
-  ): Class | null {
+  ): void {
     const enumerationUri = elementUriMap.get(enumeration.id);
+
     if (!enumerationUri) {
-      return null;
+      // TODO: log error
+      return;
     }
 
+    const enumerationUriNamedNode = this.factory.namedNode(enumerationUri);
+    outputHandler.add(enumerationUriNamedNode, ns.rdf('type'), ns.owl('Class'));
+
     const definition = this.getDefinition(enumeration);
+    outputHandler.add(enumerationUriNamedNode, ns.rdfs('comment'), definition);
+
     // FIXME: this should be available through a tag
-    const label = new Map<string, string>([['nl', enumeration.name]]);
+    const label = this.factory.literal(enumeration.name, 'nl');
+    outputHandler.add(enumerationUriNamedNode, ns.rdfs('label'), label);
+
     const usageNote = this.getUsageNote(enumeration);
+    outputHandler.add(enumerationUriNamedNode, ns.vann('usageNote'), usageNote);
+
     const scope = Scope.External;
+    // TODO: remove example.org
+    const scopeLiteral = this.factory.literal(scope);
+    outputHandler.add(enumerationUriNamedNode, ns.example('scope'), scopeLiteral);
+
     const codelist = getTagValue(enumeration, TagName.ApCodelist, null);
-
-    const osloEnumeration: Class = {
-      uri: new URL(enumerationUri),
-      definition,
-      label,
-      usageNote,
-      scope,
-      ...codelist && { codelist: new URL(codelist) },
-    };
-
-    return osloEnumeration;
+    // TODO: check what the value of this tag can be - now expecting an IRI
+    if (codelist) {
+      outputHandler.add(enumerationUriNamedNode, ns.example('codelist'), this.factory.namedNode(codelist));
+    }
   }
 
   private convertToOsloClass(
+    outputHandler: OutputHandler,
     _class: EaElement,
     elementUriMap: Map<number, string>,
     packageUri: string,
-  ): Class | null {
+  ): void {
     const classUri = elementUriMap.get(_class.id);
 
     if (!classUri) {
       // Log error
-      return null;
+      return;
     }
 
-    const definition = this.getDefinition(_class);
-    const label = this.getLabel(_class);
-    const usageNote = this.getUsageNote(_class);
-    const scope = this.getScope(_class, packageUri, elementUriMap);
+    const classUriNamedNode = this.factory.namedNode(classUri);
+    outputHandler.add(classUriNamedNode, ns.rdf('type'), ns.owl('Class'));
 
-    const parentClass = this.generalizationConnectors.find(x => x.sourceObjectId === _class.id);
+    const definition = this.getDefinition(_class);
+    outputHandler.add(classUriNamedNode, ns.rdfs('comment'), definition);
+
+    const label = this.getLabel(_class);
+    outputHandler.add(classUriNamedNode, ns.rdfs('label'), label);
+
+    const usageNote = this.getUsageNote(_class);
+    outputHandler.add(classUriNamedNode, ns.vann('usageNote'), usageNote);
+
+    const scope = this.getScope(_class, packageUri, elementUriMap);
+    // TODO: remove example.org
+    const scopeLiteral = this.factory.literal(scope);
+    outputHandler.add(classUriNamedNode, ns.example('scope'), scopeLiteral);
+
+    const parentClass = this.converter.getGeneralizationConnectors().find(x => x.sourceObjectId === _class.id);
     let parentUri;
 
     if (parentClass) {
       parentUri = elementUriMap.get(parentClass.destinationObjectId);
 
       if (!parentUri) {
-        // Log error
+        // TODO: Log error
+        return;
       }
+
+      outputHandler.add(classUriNamedNode, ns.rdfs('subClassOf'), this.factory.namedNode(parentUri));
     }
-
-    const osloClass = {
-      uri: new URL(classUri),
-      definition,
-      label,
-      usageNote,
-      scope,
-      parent: parentUri,
-    };
-
-    return osloClass;
   }
 }

@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "@rdfjs/types": "^1.1.0",
+    "n3": "^1.16.2",
     "node-fetch": "2.6.7",
     "rdf-data-factory": "^1.1.0",
     "winston": "^3.6.0"

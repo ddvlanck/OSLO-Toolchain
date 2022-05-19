@@ -1,33 +1,37 @@
 import type { EaConverterConfiguration } from '@oslo-flanders/configuration';
 import { Converter } from '@oslo-flanders/core';
 import type { EaAttribute, EaConnector, EaDiagram, EaElement, EaObject, EaPackage } from '@oslo-flanders/ea-extractor';
-import { DataExtractor } from '@oslo-flanders/ea-extractor';
+import { ConnectorType, DataExtractor } from '@oslo-flanders/ea-extractor';
 
+import type { DataFactory } from 'rdf-data-factory';
 import { AttributeConverterHandler } from './converterHandlers/AttributeConverterHandler';
 import { ConnectorConverterHandler } from './converterHandlers/ConnectorConverterHandler';
 import { ElementConverterHandler } from './converterHandlers/ElementConverterHandler';
 import { PackageConverterHandler } from './converterHandlers/PackageConverterHandler';
 
 import type { ConverterHandler } from './types/ConverterHandler';
-import type { NormalizedConnector } from './types/NormalizedConnector';
 import { NormalizedConnectorType } from './types/NormalizedConnector';
+import type { NormalizedConnector } from './types/NormalizedConnector';
+
 import { UriAssigner } from './UriAssigner';
 import { ignore, normalize } from './utils/utils';
 
 export class EaConverter extends Converter<EaConverterConfiguration> {
-  private converterHandlers: ConverterHandler<EaObject>[] = [];
   private readonly extractor: DataExtractor;
+  private normalizedConnectors: NormalizedConnector[];
 
   public constructor() {
     super();
-
     this.extractor = new DataExtractor();
-    this.attachHandlers();
+    this.normalizedConnectors = [];
   }
 
   public async convert(): Promise<void> {
     await this.extractor.extractData(this.configuration.umlFile);
     this.extractor.setTargetDiagram(this.configuration.diagramName);
+
+    // Normalize the connectors
+    this.normalizeConnectors(this.extractor.connectors);
 
     const uriAssigner = new UriAssigner();
     await uriAssigner.assignUris(
@@ -38,7 +42,8 @@ export class EaConverter extends Converter<EaConverterConfiguration> {
       this.getConnectors(),
     );
 
-    this.converterHandlers.forEach(handler => handler.createOsloObject(uriAssigner, this.outputHandler));
+    const converterHandlers = this.getConverterHandlers(this.outputHandler.factory);
+    converterHandlers.forEach(handler => handler.addObjectsToOutput(uriAssigner, this.outputHandler));
 
     await this.outputHandler.write(this.configuration.outputFile);
   }
@@ -55,25 +60,28 @@ export class EaConverter extends Converter<EaConverterConfiguration> {
     return this.extractor.elements.filter(x => !ignore(x));
   }
 
+  public getGeneralizationConnectors(): EaConnector[] {
+    return this.extractor.connectors.filter(x => x.type === ConnectorType.Generalization);
+  }
+
   public getConnectors(): NormalizedConnector[] {
-    const filtered = this.extractor.connectors.filter(x => !ignore(x));
-    return this.normalizeConnectors(filtered);
+    return this.normalizedConnectors;
   }
 
   public getTargetDiagram(): EaDiagram {
     return this.extractor.targetDiagram;
   }
 
-  private attachHandlers(): void {
-    this.converterHandlers = [
-      new PackageConverterHandler(this),
-      new ElementConverterHandler(this),
-      new AttributeConverterHandler(this),
-      new ConnectorConverterHandler(this),
+  private getConverterHandlers(factory: DataFactory): ConverterHandler<EaObject>[] {
+    return [
+      new ConnectorConverterHandler(this, factory),
+      new PackageConverterHandler(this, factory),
+      new ElementConverterHandler(this, factory),
+      new AttributeConverterHandler(this, factory),
     ];
   }
 
-  private normalizeConnectors(connectors: EaConnector[]): NormalizedConnector[] {
+  private normalizeConnectors(connectors: EaConnector[]): void {
     const normalizedConnectors: NormalizedConnector[] = [];
     const elements = this.getElements();
 
@@ -96,6 +104,6 @@ export class EaConverter extends Converter<EaConverterConfiguration> {
       }
     });
 
-    return normalizedConnectors;
+    this.normalizedConnectors = normalizedConnectors;
   }
 }
