@@ -2,7 +2,9 @@ import type { OutputHandler } from '@oslo-flanders/core';
 import { ns } from '@oslo-flanders/core';
 import { ConverterHandler } from '../types/ConverterHandler';
 import type { NormalizedConnector } from '../types/NormalizedConnector';
+import { TagName } from '../types/TagName';
 import type { UriAssigner } from '../UriAssigner';
+import { getTagValue } from '../utils/utils';
 
 export class ConnectorConverterHandler extends ConverterHandler<NormalizedConnector> {
   public addObjectsToOutput(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
@@ -61,6 +63,11 @@ export class ConnectorConverterHandler extends ConverterHandler<NormalizedConnec
       const maxCardLiteral = this.factory.literal(maxCardinality);
       outputHandler.add(connectorUriNamedNode, ns.shacl('minCount'), minCardLiteral);
       outputHandler.add(connectorUriNamedNode, ns.shacl('maxCount'), maxCardLiteral);
+
+      const parentUri = getTagValue(connector, TagName.ParentUri, null);
+      if (parentUri) {
+        outputHandler.add(connectorUriNamedNode, ns.rdfs('subPropertyOf'), this.factory.namedNode(parentUri));
+      }
     });
   }
 }

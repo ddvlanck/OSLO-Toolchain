@@ -64,13 +64,25 @@ export class AttributeConverterHandler extends ConverterHandler<EaAttribute> {
       const rangeNamedNode = this.factory.namedNode(range);
       outputHandler.add(attributeUriNamedNode, ns.rdfs('range'), rangeNamedNode);
 
-      // It is possible that this triple was already added in ElementConverterHandler, so don't add it again
-      if (rangeLabel && !outputHandler.exists(rangeNamedNode, ns.rdfs('label'))) {
-        outputHandler.add(rangeNamedNode, ns.rdfs('label'), this.factory.literal(rangeLabel));
-      }
+      if (rangeLabel) {
+        // Add rangeLabel to the N3.Store if it is not added yet.
+        // E.g. when type is string with label 'String', this is only known in the attribute itself
+        // So this triple must be added to the store here.
+        if (!outputHandler.exists(rangeNamedNode, ns.rdfs('label'))) {
+          outputHandler.add(rangeNamedNode, ns.rdfs('label'), this.factory.literal(rangeLabel));
+        }
 
-      // TODO: handle subproperties
-      // TODO: derived not yet available
+        // FIXME: what if range is not yet added by the ElementConverterHandler?
+
+        // When adding a range, the graph is set to the attribute URI
+        // This is necessary for codelists, because they share the same URI
+        // (http://www.w3.org/2004/02/skos/core#Concept)
+        // Otherwise, it is impossible to extract the correct label, definition and usage note
+        // attached to the skos:Concept URI for this attribute
+        if (rangeNamedNode.equals(ns.skos('Concept'))) {
+          outputHandler.updateGraph(rangeNamedNode, this.factory.literal(rangeLabel), attributeUriNamedNode);
+        }
+      }
 
       const definition = this.getDefinition(attribute);
       outputHandler.add(attributeUriNamedNode, ns.rdfs('comment'), definition);
@@ -91,6 +103,11 @@ export class AttributeConverterHandler extends ConverterHandler<EaAttribute> {
 
       outputHandler.add(attributeUriNamedNode, ns.shacl('minCount'), this.factory.literal(attribute.lowerBound));
       outputHandler.add(attributeUriNamedNode, ns.shacl('maxCount'), this.factory.literal(attribute.upperBound));
+
+      const parentUri = getTagValue(attribute, TagName.ParentUri, null);
+      if (parentUri) {
+        outputHandler.add(attributeUriNamedNode, ns.rdfs('subPropertyOf'), this.factory.namedNode(parentUri));
+      }
     });
   }
 }

@@ -1,7 +1,7 @@
 import type { OutputHandler } from '@oslo-flanders/core';
 import { ns, Scope } from '@oslo-flanders/core';
 
-import type { EaElement } from '@oslo-flanders/ea-extractor';
+import { EaElement } from '@oslo-flanders/ea-extractor';
 import { ElementType } from '@oslo-flanders/ea-extractor';
 
 import { ConverterHandler } from '../types/ConverterHandler';
@@ -78,7 +78,16 @@ export class ElementConverterHandler extends ConverterHandler<EaElement> {
     enumeration: EaElement,
     elementUriMap: Map<number, string>,
   ): void {
+    /**
+     * Since an enumeration is a codelist, and adding its
+     * information to an N3.Store, we do not longer know
+     * which label, definition and usage note belong together.
+     * For that reason, we set a temporary graph for each enumeration
+     * object, based on its id.
+     * This graph will then be updated in the AttributeConverterHandler
+     */
     const enumerationUri = elementUriMap.get(enumeration.id);
+    const tempGraph = ns.example(enumeration.guid);
 
     if (!enumerationUri) {
       // TODO: log error
@@ -86,27 +95,27 @@ export class ElementConverterHandler extends ConverterHandler<EaElement> {
     }
 
     const enumerationUriNamedNode = this.factory.namedNode(enumerationUri);
-    outputHandler.add(enumerationUriNamedNode, ns.rdf('type'), ns.owl('Class'));
+    outputHandler.add(enumerationUriNamedNode, ns.rdf('type'), ns.owl('Class'), tempGraph);
 
     const definition = this.getDefinition(enumeration);
-    outputHandler.add(enumerationUriNamedNode, ns.rdfs('comment'), definition);
+    outputHandler.add(enumerationUriNamedNode, ns.rdfs('comment'), definition, tempGraph);
 
-    // FIXME: this should be available through a tag
-    const label = this.factory.literal(enumeration.name, 'nl');
-    outputHandler.add(enumerationUriNamedNode, ns.rdfs('label'), label);
+    // FIXME: this should be available through a tag (language-aware)
+    const label = this.factory.literal(enumeration.name);
+    outputHandler.add(enumerationUriNamedNode, ns.rdfs('label'), label, tempGraph);
 
     const usageNote = this.getUsageNote(enumeration);
-    outputHandler.add(enumerationUriNamedNode, ns.vann('usageNote'), usageNote);
+    outputHandler.add(enumerationUriNamedNode, ns.vann('usageNote'), usageNote, tempGraph);
 
     const scope = Scope.External;
     // TODO: remove example.org
     const scopeLiteral = this.factory.literal(scope);
-    outputHandler.add(enumerationUriNamedNode, ns.example('scope'), scopeLiteral);
+    outputHandler.add(enumerationUriNamedNode, ns.example('scope'), scopeLiteral, tempGraph);
 
     const codelist = getTagValue(enumeration, TagName.ApCodelist, null);
     // TODO: check what the value of this tag can be - now expecting an IRI
     if (codelist) {
-      outputHandler.add(enumerationUriNamedNode, ns.example('codelist'), this.factory.namedNode(codelist));
+      outputHandler.add(enumerationUriNamedNode, ns.example('codelist'), this.factory.namedNode(codelist), tempGraph);
     }
   }
 

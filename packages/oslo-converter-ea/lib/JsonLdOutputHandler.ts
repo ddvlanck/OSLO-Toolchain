@@ -47,10 +47,17 @@ export class JsonLdOutputHandler extends OutputHandler {
     });
   }
 
+  // FIXME: skip enumeration classes 'skos:Concept'
   private getOsloClasses(): any {
     const classes = this.store.getQuads(null, ns.rdf('type'), ns.owl('Class'), null);
 
     return classes.map(classQuad => {
+      // We don't publish codelists (enumerations) as separate classes in the document
+      // FIXME: returns 'null' which is also added --> fix this by using .reduce instead of .map
+      if (classQuad.subject.equals(ns.skos('Concept'))) {
+        return;
+      }
+
       const quads = this.store.getQuads(classQuad.subject, null, null, null);
       const definitionLiterals = this.getLiterals(quads, ns.rdfs('comment'));
       const labelLiterals = this.getLiterals(quads, ns.rdfs('label'));
@@ -133,19 +140,43 @@ export class JsonLdOutputHandler extends OutputHandler {
       const rangeLiteral = this.getLiteral(quads, ns.rdfs('range'));
       let rangeLabelLiterals: RDF.Literal[] | undefined;
 
+      // When range is a codelist (skos:Concept), its definition
+      // and usage note is included in the attribute object
+      let rangeDefinitionLiterals: RDF.Literal[] | undefined;
+      let rangeUsageNoteLiterals: RDF.Literal[] | undefined;
+
       if (rangeLiteral) {
-        const rangeLabelQuads = this.store.getQuads(
-          this.factory.namedNode(rangeLiteral.value),
-          ns.rdfs('label'),
-          null,
-          null,
-        );
+        let rangeLabelQuads: RDF.Quad[] = [];
+
+        if (rangeLiteral.equals(ns.skos('Concept'))) {
+          const skosConceptQuads = this.store.getQuads(
+            this.factory.namedNode(rangeLiteral.value),
+            null,
+            null,
+            attributeQuad.subject,
+          );
+
+          rangeLabelQuads = skosConceptQuads.filter(x => x.predicate.equals(ns.rdfs('label')));
+          rangeDefinitionLiterals = skosConceptQuads
+            .filter(x => x.predicate.equals(ns.rdfs('comment')))
+            .map(x => <RDF.Literal>x.object);
+
+          rangeUsageNoteLiterals = skosConceptQuads
+            .filter(x => x.predicate.equals(ns.vann('usageNote')))
+            .map(x => <RDF.Literal>x.object);
+        } else {
+          rangeLabelQuads = this.store.getQuads(
+            this.factory.namedNode(rangeLiteral.value),
+            ns.rdfs('label'),
+            null,
+            null,
+          );
+        }
 
         if (rangeLabelQuads.length === 0) {
           // TODO: log warning that label for range could not be found?
         }
 
-        // TODO: log warning that range has multiple labels
         rangeLabelLiterals = rangeLabelQuads.map(x => <RDF.Literal>x.object);
       }
 
@@ -153,6 +184,7 @@ export class JsonLdOutputHandler extends OutputHandler {
       const minCardinalityLiteral = this.getLiteral(quads, ns.shacl('minCount'));
       // TODO: when using codelists, this will not by a literal anymore
       const scopeLiteral = this.getLiteral(quads, ns.example('scope'));
+      const parentLiteral = this.getLiteral(quads, ns.rdfs('subPropertyOf'));
 
       return {
         '@id': attributeQuad.subject.value,
@@ -178,6 +210,19 @@ export class JsonLdOutputHandler extends OutputHandler {
               rangeLabelLiterals.map(x => ({ '@language': x.language, '@value': x.value })) :
               rangeLabelLiterals[0].value,
           },
+          ...(rangeDefinitionLiterals && rangeDefinitionLiterals.length > 0) && {
+            definition: rangeDefinitionLiterals.length > 1 ?
+              rangeDefinitionLiterals.map(x => ({ '@language': x.language, '@value': x.value })) :
+              rangeDefinitionLiterals[0].value,
+          },
+          ...(rangeUsageNoteLiterals && rangeUsageNoteLiterals.length > 0) && {
+            usageNote: rangeUsageNoteLiterals.length > 1 ?
+              rangeUsageNoteLiterals.map(x => ({ '@language': x.language, '@value': x.value })) :
+              rangeUsageNoteLiterals[0].value,
+          },
+        },
+        ...parentLiteral && {
+          parent: parentLiteral.value,
         },
         minCount: minCardinalityLiteral.value,
         maxCount: maxCardinalityLiteral.value,
@@ -270,13 +315,13 @@ export class JsonLdOutputHandler extends OutputHandler {
       },
       parent: {
         '@id': 'rdfs:subClassOf',
-        '@type': 'rdfs:Class',
+        '@type': 'owl:Class',
       },
       scope: {
         '@id': 'http://example.org/scope',
       },
       Class: {
-        '@id': 'rdfs:Class',
+        '@id': 'owl:Class',
       },
     };
   }

@@ -17,6 +17,7 @@ export enum TagName {
   PackageBaseUri = 'baseURI',
   PackageOntologyUri = 'ontologyURI',
   PackageBaseUriAbbreviation = 'baseURIabbrev',
+  ParentUri = 'parentURI',
   Range = 'range',
   UsageNote = 'usageNote'
 }
