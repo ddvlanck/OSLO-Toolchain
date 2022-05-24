@@ -1,4 +1,5 @@
 import { EaObject } from './Object';
+import hash from 'object-hash';
 
 /**
  * Represents an attribute in Enterprise Architect
@@ -25,6 +26,8 @@ export class EaAttribute extends EaObject {
     this.type = type;
     this.lowerBound = lowerBound;
     this.upperBound = upperBound;
+
+    this.internalGuid = hash(this);
   }
 
   public path(): string {

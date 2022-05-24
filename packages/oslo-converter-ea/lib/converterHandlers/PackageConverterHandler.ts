@@ -4,6 +4,8 @@ import type { EaPackage } from '@oslo-flanders/ea-extractor';
 import { ConverterHandler } from '../types/ConverterHandler';
 import type { UriAssigner } from '../UriAssigner';
 
+// See comment in attribute handler about strategy
+
 export class PackageConverterHandler extends ConverterHandler<EaPackage> {
   public addObjectsToOutput(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
     const ontologyUriMap = uriAssigner.packageIdOntologyUriMap;
@@ -16,11 +18,15 @@ export class PackageConverterHandler extends ConverterHandler<EaPackage> {
     const ontologyUri = ontologyUriMap.get(targetPackage.packageId)!;
     const ontologyNamedNode = this.factory.namedNode(ontologyUri);
 
-    outputHandler.add(ontologyNamedNode, ns.rdf('type'), ns.example('Package'));
+    // Publish a unique reference of this attribute
+    const uniqueInternalIdNamedNode = ns.example(`.well-known/${targetPackage.internalGuid}`);
+    outputHandler.add(uniqueInternalIdNamedNode, ns.example('guid'), ontologyNamedNode);
+
+    outputHandler.add(uniqueInternalIdNamedNode, ns.rdf('type'), ns.example('Package'));
 
     const baseUri = baseUriMap.get(targetPackage.packageId)!;
     const baseUriNamedNode = this.factory.namedNode(baseUri);
 
-    outputHandler.add(ontologyNamedNode, ns.example('baseUri'), baseUriNamedNode);
+    outputHandler.add(uniqueInternalIdNamedNode, ns.example('baseUri'), baseUriNamedNode);
   }
 }

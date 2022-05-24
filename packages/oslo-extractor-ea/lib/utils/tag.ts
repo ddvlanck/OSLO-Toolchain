@@ -49,7 +49,7 @@ export function addRoleTagsToElements(
   eaConnectors: EaConnector[],
 ): void {
   eaConnectors.forEach(con => {
-    const connectorRoleTags = tags.filter(x => x.ElementID === con.guid);
+    const connectorRoleTags = tags.filter(x => x.ElementID === con.eaGuid);
 
     if (connectorRoleTags.length === 0) {
       return;

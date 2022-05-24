@@ -1,3 +1,4 @@
+import hash from 'object-hash';
 import { EaObject } from './Object';
 
 /**
@@ -20,6 +21,8 @@ export class EaDiagram extends EaObject {
     this.packageId = packageId;
     this.connectorsIds = [];
     this.elementIds = [];
+
+    this.internalGuid = hash(this);
   }
 
   public path(): string {

@@ -1,3 +1,4 @@
+import hash from 'object-hash';
 import { EaObject } from './Object';
 import type { Tag } from './Tag';
 
@@ -70,6 +71,8 @@ export class EaConnector extends EaObject {
 
     this.diagramGeometryDirection = direction;
     this.hidden = false;
+
+    this.internalGuid = hash(this);
   }
 
   public path(): string {

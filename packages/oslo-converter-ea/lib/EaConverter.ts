@@ -1,15 +1,13 @@
 import type { EaConverterConfiguration } from '@oslo-flanders/configuration';
 import { Converter } from '@oslo-flanders/core';
-import type { EaAttribute, EaConnector, EaDiagram, EaElement, EaObject, EaPackage } from '@oslo-flanders/ea-extractor';
+import type { EaAttribute, EaConnector, EaDiagram, EaElement, EaPackage } from '@oslo-flanders/ea-extractor';
 import { ConnectorType, DataExtractor } from '@oslo-flanders/ea-extractor';
 
-import type { DataFactory } from 'rdf-data-factory';
 import { AttributeConverterHandler } from './converterHandlers/AttributeConverterHandler';
 import { ConnectorConverterHandler } from './converterHandlers/ConnectorConverterHandler';
 import { ElementConverterHandler } from './converterHandlers/ElementConverterHandler';
 import { PackageConverterHandler } from './converterHandlers/PackageConverterHandler';
 
-import type { ConverterHandler } from './types/ConverterHandler';
 import { NormalizedConnectorType } from './types/NormalizedConnector';
 import type { NormalizedConnector } from './types/NormalizedConnector';
 
@@ -18,12 +16,23 @@ import { ignore, normalize } from './utils/utils';
 
 export class EaConverter extends Converter<EaConverterConfiguration> {
   private readonly extractor: DataExtractor;
+  private readonly uriAssigner: UriAssigner;
   private normalizedConnectors: NormalizedConnector[];
+  private readonly elementConverterHandler: ElementConverterHandler;
+  private readonly connectorConverterHandler: ConnectorConverterHandler;
+  private readonly attributeConverterHandler: AttributeConverterHandler;
+  private readonly packageConverterHandler: PackageConverterHandler;
 
   public constructor() {
     super();
     this.extractor = new DataExtractor();
+    this.uriAssigner = new UriAssigner();
     this.normalizedConnectors = [];
+
+    this.elementConverterHandler = new ElementConverterHandler(this);
+    this.connectorConverterHandler = new ConnectorConverterHandler(this);
+    this.attributeConverterHandler = new AttributeConverterHandler(this);
+    this.packageConverterHandler = new PackageConverterHandler(this);
   }
 
   public async convert(): Promise<void> {
@@ -33,8 +42,7 @@ export class EaConverter extends Converter<EaConverterConfiguration> {
     // Normalize the connectors
     this.normalizeConnectors(this.extractor.connectors);
 
-    const uriAssigner = new UriAssigner();
-    await uriAssigner.assignUris(
+    await this.uriAssigner.assignUris(
       this.getTargetDiagram(),
       this.getPackages(),
       this.getElements(),
@@ -42,8 +50,15 @@ export class EaConverter extends Converter<EaConverterConfiguration> {
       this.getConnectors(),
     );
 
-    const converterHandlers = this.getConverterHandlers(this.outputHandler.factory);
-    converterHandlers.forEach(handler => handler.addObjectsToOutput(uriAssigner, this.outputHandler));
+    [
+      this.packageConverterHandler,
+      this.elementConverterHandler,
+      this.attributeConverterHandler,
+      this.connectorConverterHandler,
+    ].forEach(handler => {
+      handler.factory = this.outputHandler.factory;
+      handler.addObjectsToOutput(this.uriAssigner, this.outputHandler);
+    });
 
     await this.outputHandler.write(this.configuration.outputFile);
   }
@@ -72,15 +87,6 @@ export class EaConverter extends Converter<EaConverterConfiguration> {
     return this.extractor.targetDiagram;
   }
 
-  private getConverterHandlers(factory: DataFactory): ConverterHandler<EaObject>[] {
-    return [
-      new ConnectorConverterHandler(this, factory),
-      new PackageConverterHandler(this, factory),
-      new ElementConverterHandler(this, factory),
-      new AttributeConverterHandler(this, factory),
-    ];
-  }
-
   private normalizeConnectors(connectors: EaConnector[]): void {
     const normalizedConnectors: NormalizedConnector[] = [];
     const elements = this.getElements();
@@ -105,5 +111,16 @@ export class EaConverter extends Converter<EaConverterConfiguration> {
     });
 
     this.normalizedConnectors = normalizedConnectors;
+  }
+
+  // TODO: make abstract function that is called and then this function private
+  //(mediator pattern)
+  public addElementToOutput(element: EaElement): void {
+    this.elementConverterHandler.addObjectToOutput(
+      element,
+      this.getTargetDiagram(),
+      this.uriAssigner,
+      this.outputHandler,
+    );
   }
 }

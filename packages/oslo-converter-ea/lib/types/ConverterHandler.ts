@@ -10,15 +10,26 @@ import { TagName } from './TagName';
 
 export abstract class ConverterHandler<T extends EaObject> {
   protected readonly converter: EaConverter;
-  protected readonly factory: DataFactory;
+  protected _factory: DataFactory | undefined;
 
-  public constructor(converter: EaConverter, dataFactory: DataFactory) {
+  public constructor(converter: EaConverter) {
     this.converter = converter;
-    this.factory = dataFactory;
   }
 
   public abstract addObjectsToOutput(uriAssigner: UriAssigner, outputHandler: OutputHandler): void;
 
+  public get factory(): DataFactory {
+    if (!this._factory) {
+      throw new Error(`DataFactory has not been set yet.`);
+    }
+    return this._factory;
+  }
+
+  public set factory(value: DataFactory) {
+    this._factory = value;
+  }
+
+  // FIXME: when there is no TagName.Label, do we fallback to diagram name of the object?
   public getLabel(object: T): RDF.Literal[] {
     return this.converter.configuration.specificationType === 'ApplicationProfile' ?
       this.getLanguageDependentTag(object, TagName.ApLabel, TagName.Label) :

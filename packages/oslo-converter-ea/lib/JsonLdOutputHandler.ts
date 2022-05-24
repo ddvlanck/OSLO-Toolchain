@@ -33,69 +33,73 @@ export class JsonLdOutputHandler extends OutputHandler {
   }
 
   private getOsloPackages(): any {
-    const packages = this.store.getQuads(null, ns.rdf('type'), ns.example('Package'), null);
+    const packageWellKnownIdSubjects = this.store.getSubjects(ns.rdf('type'), ns.example('Package'), null);
 
-    return packages.map(packageQuad => {
-      const quads = this.store.getQuads(packageQuad.subject, null, null, null);
-      const baseUriLiteral = this.getLiteral(quads, ns.example('baseUri'));
+    return packageWellKnownIdSubjects.map(wellKnownIdSubject => {
+      const packageSubject = this.store.getObjects(wellKnownIdSubject, ns.example('guid'), null)[0];
+      const quads = this.store.getQuads(wellKnownIdSubject, null, null, null);
+      const baseUriObject = this.getLiteral(quads, ns.example('baseUri'));
 
       return {
-        '@id': packageQuad.subject.value,
+        '@id': packageSubject.value,
         '@type': 'Package',
-        baseUri: baseUriLiteral.value,
+        baseUri: baseUriObject.value,
       };
     });
   }
 
   // FIXME: skip enumeration classes 'skos:Concept'
   private getOsloClasses(): any {
-    const classes = this.store.getQuads(null, ns.rdf('type'), ns.owl('Class'), null);
+    const classWellKnownIdSubjects = this.store.getSubjects(ns.rdf('type'), ns.owl('Class'), null);
 
-    return classes.map(classQuad => {
-      // We don't publish codelists (enumerations) as separate classes in the document
-      // FIXME: returns 'null' which is also added --> fix this by using .reduce instead of .map
-      if (classQuad.subject.equals(ns.skos('Concept'))) {
+    return classWellKnownIdSubjects.map(wellKnownIdSubject => {
+      const classSubject = this.store.getObjects(wellKnownIdSubject, ns.example('guid'), null)[0];
+
+      if (classSubject.equals(ns.skos('Concept'))) {
         return;
       }
 
-      const quads = this.store.getQuads(classQuad.subject, null, null, null);
+      const quads = this.store.getQuads(wellKnownIdSubject, null, null, null);
+
       const definitionLiterals = this.getLiterals(quads, ns.rdfs('comment'));
       const labelLiterals = this.getLiterals(quads, ns.rdfs('label'));
       const usageNoteLiterals = this.getLiterals(quads, ns.vann('usageNote'));
       // TODO: when using a codelist for scope, this can not be a literal anymore.
       const scopeLiteral = this.getLiteral(quads, ns.example('scope'));
-      const parentLiteral = this.getLiteral(quads, ns.rdfs('subClassOf'));
-      let parentLabelLiterals: RDF.Literal[] | undefined;
+      const parentObjects = this.getLiterals(quads, ns.rdfs('subClassOf'));
+      const parentLabelLiterals: { id: string; labels: RDF.Literal[] }[] = [];
 
-      if (parentLiteral) {
-        const labelQuads = this.store.getQuads(
-          this.factory.namedNode(parentLiteral.value),
-          ns.rdfs('label'),
-          null,
-          null,
-        );
+      if (parentObjects.length > 0) {
+        parentObjects.forEach(x => {
+          const labelQuads = this.store.getQuads(
+            this.factory.namedNode(x.value),
+            ns.rdfs('label'),
+            null,
+            null,
+          );
 
-        if (labelQuads.length === 0) {
-          // TODO: log warning that label for parent could not be found?
-        }
-
-        parentLabelLiterals = labelQuads.map(x => <RDF.Literal>x.object);
+          parentLabelLiterals.push({
+            id: x.value,
+            labels: labelQuads.map(y => <RDF.Literal>y.object),
+          });
+        });
       }
 
       return {
-        '@id': classQuad.subject.value,
+        '@id': classSubject.value,
         '@type': 'Class',
+        guid: wellKnownIdSubject.value,
         label: labelLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
         definition: definitionLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
         usageNote: usageNoteLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
-        ...parentLiteral && {
-          parent: {
-            '@id': parentLiteral.value,
-            '@type': 'Class',
-            ...parentLabelLiterals && {
-              label: parentLabelLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
-            },
-          },
+        ...parentObjects && {
+          parent: parentLabelLiterals.map(x => (
+            {
+              '@id': x.id,
+              ...x.labels && x.labels.length > 0 && {
+                label: x.labels.length > 1 ? x.labels.map(y => y.value) : x.labels[0].value,
+              },
+            })),
         },
         scope: scopeLiteral.value,
       };
@@ -103,41 +107,43 @@ export class JsonLdOutputHandler extends OutputHandler {
   }
 
   public getOsloAttributes(): any {
-    const datatypeAttributes = this.store.getQuads(null, ns.rdf('type'), ns.owl('DatatypeProperty'), null);
-    const objectPropertyAttributes = this.store.getQuads(null, ns.rdf('type'), ns.owl('ObjectProperty'), null);
-    const propertyAttributes = this.store.getQuads(null, ns.rdf('type'), ns.rdf('Property'), null);
+    const datatypeAttributes = this.store.getSubjects(ns.rdf('type'), ns.owl('DatatypeProperty'), null);
+    const objectPropertyAttributes = this.store.getSubjects(ns.rdf('type'), ns.owl('ObjectProperty'), null);
+    const propertyAttributes = this.store.getSubjects(ns.rdf('type'), ns.rdf('Property'), null);
 
     return [
       ...datatypeAttributes,
       ...objectPropertyAttributes,
       ...propertyAttributes,
-    ].map(attributeQuad => {
-      const quads = this.store.getQuads(attributeQuad.subject, null, null, null);
+    ].map(wellKnownIdSubject => {
+      const attributeSubject = this.store.getObjects(wellKnownIdSubject, ns.example('guid'), null)[0];
+      const quads = this.store.getQuads(wellKnownIdSubject.value, null, null, null);
 
       // Attributes generated by the normalization of the connectors (associationclasses)
       // do not have a definition
       const definitionLiterals = this.getLiterals(quads, ns.rdfs('comment'));
+      const attributeType = this.getLiteral(quads, ns.rdf('type'));
       const labelLiterals = this.getLiterals(quads, ns.rdfs('label'));
       const usageNoteLiterals = this.getLiterals(quads, ns.vann('usageNote'));
-      const domainLiteral = this.getLiteral(quads, ns.rdfs('domain'));
+      const domainWellKnownIdNode = this.getLiteral(quads, ns.rdfs('domain'));
+      let domainSubject: RDF.NamedNode | undefined;
       let domainLabelLiterals: RDF.Literal[] | undefined;
 
-      if (domainLiteral) {
+      if (domainWellKnownIdNode) {
+        // We assume that there is only one subject attached to this well-known id
+        domainSubject = <RDF.NamedNode>this.store.getObjects(domainWellKnownIdNode, ns.example('guid'), null)[0];
         const domainLabelQuads = this.store.getQuads(
-          this.factory.namedNode(domainLiteral.value),
+          domainWellKnownIdNode,
           ns.rdfs('label'),
           null,
           null,
         );
 
-        if (domainLabelQuads.length === 0) {
-          // TODO: log warning that label for domain could not be found?
-        }
-
         domainLabelLiterals = domainLabelQuads.map(x => <RDF.Literal>x.object);
       }
 
-      const rangeLiteral = this.getLiteral(quads, ns.rdfs('range'));
+      const rangeNamedNode = this.getLiteral(quads, ns.rdfs('range'));
+      let rangeSubject: RDF.Term | undefined;
       let rangeLabelLiterals: RDF.Literal[] | undefined;
 
       // When range is a codelist (skos:Concept), its definition
@@ -145,37 +151,21 @@ export class JsonLdOutputHandler extends OutputHandler {
       let rangeDefinitionLiterals: RDF.Literal[] | undefined;
       let rangeUsageNoteLiterals: RDF.Literal[] | undefined;
 
-      if (rangeLiteral) {
+      if (rangeNamedNode) {
         let rangeLabelQuads: RDF.Quad[] = [];
 
-        if (rangeLiteral.equals(ns.skos('Concept'))) {
-          const skosConceptQuads = this.store.getQuads(
-            this.factory.namedNode(rangeLiteral.value),
-            null,
-            null,
-            attributeQuad.subject,
-          );
-
-          rangeLabelQuads = skosConceptQuads.filter(x => x.predicate.equals(ns.rdfs('label')));
-          rangeDefinitionLiterals = skosConceptQuads
-            .filter(x => x.predicate.equals(ns.rdfs('comment')))
-            .map(x => <RDF.Literal>x.object);
-
-          rangeUsageNoteLiterals = skosConceptQuads
-            .filter(x => x.predicate.equals(ns.vann('usageNote')))
-            .map(x => <RDF.Literal>x.object);
+        if (rangeNamedNode.value.startsWith(ns.example('.well-known').value)) {
+          rangeSubject = <RDF.NamedNode>this.store.getObjects(rangeNamedNode, ns.example('guid'), null)[0];
         } else {
-          rangeLabelQuads = this.store.getQuads(
-            this.factory.namedNode(rangeLiteral.value),
-            ns.rdfs('label'),
-            null,
-            null,
-          );
+          rangeSubject = rangeNamedNode;
         }
 
-        if (rangeLabelQuads.length === 0) {
-          // TODO: log warning that label for range could not be found?
-        }
+        rangeLabelQuads = this.store.getQuads(
+          rangeNamedNode,
+          ns.rdfs('label'),
+          null,
+          null,
+        );
 
         rangeLabelLiterals = rangeLabelQuads.map(x => <RDF.Literal>x.object);
       }
@@ -187,8 +177,9 @@ export class JsonLdOutputHandler extends OutputHandler {
       const parentLiteral = this.getLiteral(quads, ns.rdfs('subPropertyOf'));
 
       return {
-        '@id': attributeQuad.subject.value,
-        '@type': attributeQuad.object.value,
+        '@id': attributeSubject.value,
+        '@type': attributeType.value,
+        guid: wellKnownIdSubject.value,
         label: labelLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
         ...definitionLiterals && {
           definition: definitionLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
@@ -197,14 +188,14 @@ export class JsonLdOutputHandler extends OutputHandler {
           usageNote: usageNoteLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
         },
         domain: {
-          '@id': domainLiteral.value,
+          '@id': domainSubject?.value,
           '@type': 'Class',
           ...domainLabelLiterals && {
             label: domainLabelLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
           },
         },
         range: {
-          '@id': rangeLiteral.value,
+          '@id': rangeSubject?.value,
           ...(rangeLabelLiterals && rangeLabelLiterals.length > 0) && {
             label: rangeLabelLiterals.length > 1 ?
               rangeLabelLiterals.map(x => ({ '@language': x.language, '@value': x.value })) :
@@ -232,10 +223,11 @@ export class JsonLdOutputHandler extends OutputHandler {
   }
 
   private getDatatypes(): any {
-    const datatypes = this.store.getQuads(null, ns.rdf('type'), ns.example('DataType'), null);
+    const datatypesWellKnowIdSubjects = this.store.getSubjects(ns.rdf('type'), ns.example('DataType'), null);
 
-    return datatypes.map(datatypeQuad => {
-      const quads = this.store.getQuads(datatypeQuad.subject, null, null, null);
+    return datatypesWellKnowIdSubjects.map(wellKnownIdSubject => {
+      const datatypeSubject = this.store.getObjects(wellKnownIdSubject, ns.example('guid'), null)[0];
+      const quads = this.store.getQuads(wellKnownIdSubject, null, null, null);
 
       const definitionLiterals = this.getLiterals(quads, ns.rdfs('comment'));
       const labelLiterals = this.getLiterals(quads, ns.rdfs('label'));
@@ -244,8 +236,9 @@ export class JsonLdOutputHandler extends OutputHandler {
       const scopeLiteral = this.getLiteral(quads, ns.example('scope'));
 
       return {
-        '@id': datatypeQuad.subject.value,
+        '@id': datatypeSubject.value,
         '@type': 'Datatype',
+        guid: wellKnownIdSubject.value,
         label: labelLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
         definition: definitionLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
         usageNote: usageNoteLiterals.map(x => ({ '@language': x.language, '@value': x.value })),

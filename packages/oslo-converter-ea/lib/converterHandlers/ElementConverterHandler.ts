@@ -1,13 +1,16 @@
 import type { OutputHandler } from '@oslo-flanders/core';
 import { ns, Scope } from '@oslo-flanders/core';
 
-import { EaElement } from '@oslo-flanders/ea-extractor';
 import { ElementType } from '@oslo-flanders/ea-extractor';
+import type { EaElement, EaDiagram } from '@oslo-flanders/ea-extractor';
 
+import type * as RDF from '@rdfjs/types';
 import { ConverterHandler } from '../types/ConverterHandler';
 import { TagName } from '../types/TagName';
 import type { UriAssigner } from '../UriAssigner';
 import { getTagValue } from '../utils/utils';
+
+// See comment in attribute handler about strategy
 
 export class ElementConverterHandler extends ConverterHandler<EaElement> {
   // All elements will be processed and receive a URI, but only elements on the target diagram
@@ -16,30 +19,38 @@ export class ElementConverterHandler extends ConverterHandler<EaElement> {
   // would be applied in documentNotification, external types would not have an URI.
   public addObjectsToOutput(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
     const targetDiagram = this.converter.getTargetDiagram();
-    const elementUriMap = uriAssigner.elementIdUriMap;
-    const packageUri = uriAssigner.packageIdUriMap.get(targetDiagram.packageId)!;
     const diagramElements = this.converter.getElements().filter(x => targetDiagram.elementIds.includes(x.id));
 
     diagramElements.forEach(element => {
-      const eaElement = element;
-
-      switch (eaElement.type) {
-        case ElementType.Class: {
-          return this.convertToOsloClass(outputHandler, eaElement, elementUriMap, packageUri);
-        }
-
-        case ElementType.DataType: {
-          return this.convertToOsloDataType(outputHandler, eaElement, elementUriMap, packageUri);
-        }
-
-        case ElementType.Enumeration: {
-          return this.convertToOsloEnumeration(outputHandler, eaElement, elementUriMap);
-        }
-
-        default:
-          throw new Error(`Element type not supported`);
-      }
+      this.addObjectToOutput(element, targetDiagram, uriAssigner, outputHandler);
     });
+  }
+
+  public addObjectToOutput(
+    element: EaElement,
+    targetDiagram: EaDiagram,
+    uriAssigner: UriAssigner,
+    outputHandler: OutputHandler,
+  ): void {
+    const elementUriMap = uriAssigner.elementIdUriMap;
+    const packageUri = uriAssigner.packageIdUriMap.get(targetDiagram.packageId)!;
+
+    switch (element.type) {
+      case ElementType.Class: {
+        return this.convertToOsloClass(outputHandler, element, elementUriMap, packageUri);
+      }
+
+      case ElementType.DataType: {
+        return this.convertToOsloDataType(outputHandler, element, elementUriMap, packageUri);
+      }
+
+      case ElementType.Enumeration: {
+        return this.convertToOsloEnumeration(outputHandler, element, elementUriMap);
+      }
+
+      default:
+        throw new Error(`Element type not supported`);
+    }
   }
 
   private convertToOsloDataType(
@@ -56,21 +67,26 @@ export class ElementConverterHandler extends ConverterHandler<EaElement> {
     }
 
     const dataTypeUriNamedNode = this.factory.namedNode(dataTypeUri);
-    outputHandler.add(dataTypeUriNamedNode, ns.rdf('type'), ns.example('DataType'));
+
+    // Publish a unique reference of this data type
+    const uniqueInternalIdNamedNode = ns.example(`.well-known/${dataType.internalGuid}`);
+    outputHandler.add(uniqueInternalIdNamedNode, ns.example('guid'), dataTypeUriNamedNode);
+
+    outputHandler.add(uniqueInternalIdNamedNode, ns.rdf('type'), ns.example('DataType'));
 
     const definition = this.getDefinition(dataType);
-    outputHandler.add(dataTypeUriNamedNode, ns.rdfs('comment'), definition);
+    outputHandler.add(uniqueInternalIdNamedNode, ns.rdfs('comment'), definition);
 
     const label = this.getLabel(dataType);
-    outputHandler.add(dataTypeUriNamedNode, ns.rdfs('label'), label);
+    outputHandler.add(uniqueInternalIdNamedNode, ns.rdfs('label'), label);
 
     const usageNote = this.getUsageNote(dataType);
-    outputHandler.add(dataTypeUriNamedNode, ns.vann('usageNote'), usageNote);
+    outputHandler.add(uniqueInternalIdNamedNode, ns.vann('usageNote'), usageNote);
 
     const scope = this.getScope(dataType, packageUri, elementUriMap);
     // TODO: remove example.org
     const scopeLiteral = this.factory.literal(scope);
-    outputHandler.add(dataTypeUriNamedNode, ns.example('scope'), scopeLiteral);
+    outputHandler.add(uniqueInternalIdNamedNode, ns.example('scope'), scopeLiteral);
   }
 
   private convertToOsloEnumeration(
@@ -87,7 +103,6 @@ export class ElementConverterHandler extends ConverterHandler<EaElement> {
      * This graph will then be updated in the AttributeConverterHandler
      */
     const enumerationUri = elementUriMap.get(enumeration.id);
-    const tempGraph = ns.example(enumeration.guid);
 
     if (!enumerationUri) {
       // TODO: log error
@@ -95,27 +110,32 @@ export class ElementConverterHandler extends ConverterHandler<EaElement> {
     }
 
     const enumerationUriNamedNode = this.factory.namedNode(enumerationUri);
-    outputHandler.add(enumerationUriNamedNode, ns.rdf('type'), ns.owl('Class'), tempGraph);
+
+    // Publish a unique reference of this enumeration
+    const uniqueInternalIdNamedNode = ns.example(`.well-known/${enumeration.internalGuid}`);
+    outputHandler.add(uniqueInternalIdNamedNode, ns.example('guid'), enumerationUriNamedNode);
+
+    outputHandler.add(uniqueInternalIdNamedNode, ns.rdf('type'), ns.owl('Class'));
 
     const definition = this.getDefinition(enumeration);
-    outputHandler.add(enumerationUriNamedNode, ns.rdfs('comment'), definition, tempGraph);
+    outputHandler.add(uniqueInternalIdNamedNode, ns.rdfs('comment'), definition);
 
     // FIXME: this should be available through a tag (language-aware)
     const label = this.factory.literal(enumeration.name);
-    outputHandler.add(enumerationUriNamedNode, ns.rdfs('label'), label, tempGraph);
+    outputHandler.add(uniqueInternalIdNamedNode, ns.rdfs('label'), label);
 
     const usageNote = this.getUsageNote(enumeration);
-    outputHandler.add(enumerationUriNamedNode, ns.vann('usageNote'), usageNote, tempGraph);
+    outputHandler.add(uniqueInternalIdNamedNode, ns.vann('usageNote'), usageNote);
 
     const scope = Scope.External;
     // TODO: remove example.org
     const scopeLiteral = this.factory.literal(scope);
-    outputHandler.add(enumerationUriNamedNode, ns.example('scope'), scopeLiteral, tempGraph);
+    outputHandler.add(uniqueInternalIdNamedNode, ns.example('scope'), scopeLiteral);
 
     const codelist = getTagValue(enumeration, TagName.ApCodelist, null);
     // TODO: check what the value of this tag can be - now expecting an IRI
     if (codelist) {
-      outputHandler.add(enumerationUriNamedNode, ns.example('codelist'), this.factory.namedNode(codelist), tempGraph);
+      outputHandler.add(uniqueInternalIdNamedNode, ns.example('codelist'), this.factory.namedNode(codelist));
     }
   }
 
@@ -132,35 +152,47 @@ export class ElementConverterHandler extends ConverterHandler<EaElement> {
       return;
     }
 
+    // TODO: add extra triple with {guid} {sameAs} {classUriNamedNode}
+
     const classUriNamedNode = this.factory.namedNode(classUri);
-    outputHandler.add(classUriNamedNode, ns.rdf('type'), ns.owl('Class'));
+
+    // Publish a unique reference of this attribute
+    const uniqueInternalIdNamedNode = ns.example(`.well-known/${_class.internalGuid}`);
+    outputHandler.add(uniqueInternalIdNamedNode, ns.example('guid'), classUriNamedNode);
+
+    outputHandler.add(uniqueInternalIdNamedNode, ns.rdf('type'), ns.owl('Class'));
 
     const definition = this.getDefinition(_class);
-    outputHandler.add(classUriNamedNode, ns.rdfs('comment'), definition);
+    outputHandler.add(uniqueInternalIdNamedNode, ns.rdfs('comment'), definition);
 
     const label = this.getLabel(_class);
-    outputHandler.add(classUriNamedNode, ns.rdfs('label'), label);
+    outputHandler.add(uniqueInternalIdNamedNode, ns.rdfs('label'), label);
 
     const usageNote = this.getUsageNote(_class);
-    outputHandler.add(classUriNamedNode, ns.vann('usageNote'), usageNote);
+    outputHandler.add(uniqueInternalIdNamedNode, ns.vann('usageNote'), usageNote);
 
     const scope = this.getScope(_class, packageUri, elementUriMap);
     // TODO: remove example.org
     const scopeLiteral = this.factory.literal(scope);
-    outputHandler.add(classUriNamedNode, ns.example('scope'), scopeLiteral);
+    outputHandler.add(uniqueInternalIdNamedNode, ns.example('scope'), scopeLiteral);
 
-    const parentClass = this.converter.getGeneralizationConnectors().find(x => x.sourceObjectId === _class.id);
-    let parentUri;
+    const parentClasses = this.converter.getGeneralizationConnectors().filter(x => x.sourceObjectId === _class.id);
 
-    if (parentClass) {
-      parentUri = elementUriMap.get(parentClass.destinationObjectId);
+    // FIXME: use well known id for this
+    if (parentClasses.length > 0) {
+      const parentUris = parentClasses.reduce<RDF.NamedNode[]>((uris, parentClass) => {
+        const parentUri = elementUriMap.get(parentClass.destinationObjectId);
 
-      if (!parentUri) {
-        // TODO: Log error
-        return;
-      }
+        if (!parentUri) {
+          // TODO: log error
+        } else {
+          uris.push(this.factory.namedNode(parentUri));
+        }
 
-      outputHandler.add(classUriNamedNode, ns.rdfs('subClassOf'), this.factory.namedNode(parentUri));
+        return uris;
+      }, []);
+
+      outputHandler.add(uniqueInternalIdNamedNode, ns.rdfs('subClassOf'), parentUris);
     }
   }
 }

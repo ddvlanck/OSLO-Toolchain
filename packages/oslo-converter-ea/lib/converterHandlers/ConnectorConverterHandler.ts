@@ -6,6 +6,8 @@ import { TagName } from '../types/TagName';
 import type { UriAssigner } from '../UriAssigner';
 import { getTagValue } from '../utils/utils';
 
+// See comment in attribute handler about strategy
+
 export class ConnectorConverterHandler extends ConverterHandler<NormalizedConnector> {
   public addObjectsToOutput(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
     const targetDiagram = this.converter.getTargetDiagram();
@@ -26,29 +28,33 @@ export class ConnectorConverterHandler extends ConverterHandler<NormalizedConnec
       }
 
       const connectorUriNamedNode = this.factory.namedNode(connectorUri);
-      outputHandler.add(connectorUriNamedNode, ns.rdf('type'), ns.owl('ObjectProperty'));
+
+      // Publish a unique reference of this attribute
+      const uniqueInternalIdNamedNode = ns.example(`.well-known/${connector.internalGuid}`);
+      outputHandler.add(uniqueInternalIdNamedNode, ns.example('guid'), connectorUriNamedNode);
+
+      outputHandler.add(uniqueInternalIdNamedNode, ns.rdf('type'), ns.owl('ObjectProperty'));
 
       const definition = this.getDefinition(connector);
-      outputHandler.add(connectorUriNamedNode, ns.rdfs('comment'), definition);
+      outputHandler.add(uniqueInternalIdNamedNode, ns.rdfs('comment'), definition);
 
       const label = this.getLabel(connector);
-      outputHandler.add(connectorUriNamedNode, ns.rdfs('label'), label);
+      outputHandler.add(uniqueInternalIdNamedNode, ns.rdfs('label'), label);
 
       const usageNote = this.getUsageNote(connector);
-      outputHandler.add(connectorUriNamedNode, ns.vann('usageNote'), usageNote);
+      outputHandler.add(uniqueInternalIdNamedNode, ns.vann('usageNote'), usageNote);
 
-      const domain = elementUriMap.get(connector.sourceObjectId)!;
-      const domainNamedNode = this.factory.namedNode(domain);
-      outputHandler.add(connectorUriNamedNode, ns.rdfs('domain'), domainNamedNode);
+      const domainWellKnownId = this.converter.getElements().find(x => x.id === connector.sourceObjectId)?.internalGuid;
+      outputHandler.add(uniqueInternalIdNamedNode, ns.rdfs('domain'), ns.example(`.well-known/${domainWellKnownId}`));
 
-      const range = elementUriMap.get(connector.destinationObjectId)!;
-      const rangeNamedNode = this.factory.namedNode(range);
-      outputHandler.add(connectorUriNamedNode, ns.rdfs('range'), rangeNamedNode);
+      const rangeWellKnownId = this.converter.getElements()
+        .find(x => x.id === connector.destinationObjectId)?.internalGuid;
+      outputHandler.add(uniqueInternalIdNamedNode, ns.rdfs('range'), ns.example(`.well-known/${rangeWellKnownId}`));
 
       const scope = this.getScope(connector, packageUri, connectorIdUriMap);
       // TODO: remove example.org
       const scopeLiteral = this.factory.literal(scope);
-      outputHandler.add(connectorUriNamedNode, ns.example('scope'), scopeLiteral);
+      outputHandler.add(uniqueInternalIdNamedNode, ns.example('scope'), scopeLiteral);
 
       let minCardinality;
       let maxCardinality;
@@ -61,12 +67,12 @@ export class ConnectorConverterHandler extends ConverterHandler<NormalizedConnec
 
       const minCardLiteral = this.factory.literal(minCardinality);
       const maxCardLiteral = this.factory.literal(maxCardinality);
-      outputHandler.add(connectorUriNamedNode, ns.shacl('minCount'), minCardLiteral);
-      outputHandler.add(connectorUriNamedNode, ns.shacl('maxCount'), maxCardLiteral);
+      outputHandler.add(uniqueInternalIdNamedNode, ns.shacl('minCount'), minCardLiteral);
+      outputHandler.add(uniqueInternalIdNamedNode, ns.shacl('maxCount'), maxCardLiteral);
 
       const parentUri = getTagValue(connector, TagName.ParentUri, null);
       if (parentUri) {
-        outputHandler.add(connectorUriNamedNode, ns.rdfs('subPropertyOf'), this.factory.namedNode(parentUri));
+        outputHandler.add(uniqueInternalIdNamedNode, ns.rdfs('subPropertyOf'), this.factory.namedNode(parentUri));
       }
     });
   }

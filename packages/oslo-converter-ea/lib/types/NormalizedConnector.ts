@@ -1,5 +1,6 @@
 import type { Tag, EaConnector } from '@oslo-flanders/ea-extractor';
 import { EaObject } from '@oslo-flanders/ea-extractor';
+import hash from 'object-hash';
 
 export enum NormalizedConnectorType {
   AssociationClassConnector,
@@ -25,7 +26,7 @@ export class NormalizedConnector extends EaObject {
     super(
       Math.floor(Math.random() * Date.now()),
       name,
-      innerConnector.guid,
+      innerConnector.eaGuid,
     );
     this.innerConnector = innerConnector;
     this.normalizedSourceObjectId = sourceObjectId;
@@ -37,6 +38,8 @@ export class NormalizedConnector extends EaObject {
     if (name) {
       this.addNameTag(name);
     }
+
+    this.internalGuid = hash(this);
   }
 
   public get innerConnectorName(): string {

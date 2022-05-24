@@ -46,8 +46,10 @@
 	},
 	"dependencies": {
 		"@oslo-flanders/core": "^0.0.0",
+		"@types/object-hash": "^2.2.1",
 		"alasql": "^1.7.3",
 		"mdb-reader": "^1.2.1",
-		"node-fetch": "2.6.7"
+		"node-fetch": "2.6.7",
+		"object-hash": "^3.0.0"
 	}
 }

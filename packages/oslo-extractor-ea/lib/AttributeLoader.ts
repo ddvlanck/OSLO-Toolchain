@@ -46,7 +46,7 @@ function setPath(attribute: EaAttribute, elements: EaElement[]): void {
   let path: string;
 
   if (!eaClass) {
-    logger.warn(`Unable to find class for attribute with guid ${attribute.guid}. Setting path to '${attribute.name}'.`);
+    logger.warn(`Unable to find class for attribute with guid ${attribute.eaGuid}. Setting path to '${attribute.name}'.`);
     path = attribute.name;
   } else {
     path = `${eaClass.path()}:${attribute.name}`;
