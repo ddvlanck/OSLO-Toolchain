@@ -16,7 +16,7 @@ export abstract class ConverterHandler<T extends EaObject> {
     this.converter = converter;
   }
 
-  public abstract addObjectsToOutput(uriAssigner: UriAssigner, outputHandler: OutputHandler): void;
+  public abstract addObjectsToOutput(uriAssigner: UriAssigner, outputHandler: OutputHandler): Promise<void>;
 
   public get factory(): DataFactory {
     if (!this._factory) {

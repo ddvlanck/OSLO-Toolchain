@@ -9,7 +9,7 @@ import { getTagValue } from '../utils/utils';
 // See comment in attribute handler about strategy
 
 export class ConnectorConverterHandler extends ConverterHandler<NormalizedConnector> {
-  public addObjectsToOutput(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
+  public async addObjectsToOutput(uriAssigner: UriAssigner, outputHandler: OutputHandler): Promise<void> {
     const targetDiagram = this.converter.getTargetDiagram();
 
     const connectorIdUriMap = uriAssigner.connectorIdUriMap;

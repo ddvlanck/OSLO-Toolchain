@@ -17,7 +17,7 @@ export class ElementConverterHandler extends ConverterHandler<EaElement> {
   // will be passed to the OutputHandler. This flow is necessary because element types could be
   // in other packages and their URIs are needed to refer to in the output file.If filtering
   // would be applied in documentNotification, external types would not have an URI.
-  public addObjectsToOutput(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
+  public async addObjectsToOutput(uriAssigner: UriAssigner, outputHandler: OutputHandler): Promise<void> {
     const targetDiagram = this.converter.getTargetDiagram();
     const diagramElements = this.converter.getElements().filter(x => targetDiagram.elementIds.includes(x.id));
 
@@ -151,8 +151,6 @@ export class ElementConverterHandler extends ConverterHandler<EaElement> {
       // Log error
       return;
     }
-
-    // TODO: add extra triple with {guid} {sameAs} {classUriNamedNode}
 
     const classUriNamedNode = this.factory.namedNode(classUri);
 

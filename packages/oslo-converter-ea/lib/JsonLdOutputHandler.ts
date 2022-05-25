@@ -52,11 +52,11 @@ export class JsonLdOutputHandler extends OutputHandler {
   private getOsloClasses(): any {
     const classWellKnownIdSubjects = this.store.getSubjects(ns.rdf('type'), ns.owl('Class'), null);
 
-    return classWellKnownIdSubjects.map(wellKnownIdSubject => {
+    return classWellKnownIdSubjects.reduce<any[]>((osloClasses, wellKnownIdSubject) => {
       const classSubject = this.store.getObjects(wellKnownIdSubject, ns.example('guid'), null)[0];
 
       if (classSubject.equals(ns.skos('Concept'))) {
-        return;
+        return osloClasses;
       }
 
       const quads = this.store.getQuads(wellKnownIdSubject, null, null, null);
@@ -85,14 +85,16 @@ export class JsonLdOutputHandler extends OutputHandler {
         });
       }
 
-      return {
+      osloClasses.push({
         '@id': classSubject.value,
         '@type': 'Class',
         guid: wellKnownIdSubject.value,
         label: labelLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
         definition: definitionLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
-        usageNote: usageNoteLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
-        ...parentObjects && {
+        ...usageNoteLiterals.length > 0 && {
+          usageNote: usageNoteLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
+        },
+        ...parentObjects.length > 0 && {
           parent: parentLabelLiterals.map(x => (
             {
               '@id': x.id,
@@ -102,8 +104,10 @@ export class JsonLdOutputHandler extends OutputHandler {
             })),
         },
         scope: scopeLiteral.value,
-      };
-    });
+      });
+
+      return osloClasses;
+    }, []);
   }
 
   public getOsloAttributes(): any {
@@ -145,6 +149,7 @@ export class JsonLdOutputHandler extends OutputHandler {
       const rangeNamedNode = this.getLiteral(quads, ns.rdfs('range'));
       let rangeSubject: RDF.Term | undefined;
       let rangeLabelLiterals: RDF.Literal[] | undefined;
+      let rangeCodelist: RDF.Literal | undefined;
 
       // When range is a codelist (skos:Concept), its definition
       // and usage note is included in the attribute object
@@ -152,22 +157,30 @@ export class JsonLdOutputHandler extends OutputHandler {
       let rangeUsageNoteLiterals: RDF.Literal[] | undefined;
 
       if (rangeNamedNode) {
-        let rangeLabelQuads: RDF.Quad[] = [];
-
         if (rangeNamedNode.value.startsWith(ns.example('.well-known').value)) {
           rangeSubject = <RDF.NamedNode>this.store.getObjects(rangeNamedNode, ns.example('guid'), null)[0];
         } else {
           rangeSubject = rangeNamedNode;
         }
 
-        rangeLabelQuads = this.store.getQuads(
-          rangeNamedNode,
-          ns.rdfs('label'),
-          null,
-          null,
-        );
+        const rangeQuads = this.store.getQuads(rangeNamedNode, null, null, null);
+        rangeLabelLiterals = rangeQuads
+          .filter(x => x.predicate.equals(ns.rdfs('label')))
+          .map(x => <RDF.Literal>x.object);
 
-        rangeLabelLiterals = rangeLabelQuads.map(x => <RDF.Literal>x.object);
+        // When range is a skos:Concept, we add all the information
+        // we have for this skos:Concept to the range
+        if (rangeSubject.equals(ns.skos('Concept'))) {
+          rangeDefinitionLiterals = rangeQuads
+            .filter(x => x.predicate.equals(ns.rdfs('comment')))
+            .map(x => <RDF.Literal>x.object);
+
+          rangeUsageNoteLiterals = rangeQuads
+            .filter(x => x.predicate.equals(ns.vann('usageNote')))
+            .map(x => <RDF.Literal>x.object);
+
+          rangeCodelist = this.getLiteral(rangeQuads, ns.example('codelist'));
+        }
       }
 
       const maxCardinalityLiteral = this.getLiteral(quads, ns.shacl('maxCount'));
@@ -210,6 +223,9 @@ export class JsonLdOutputHandler extends OutputHandler {
             usageNote: rangeUsageNoteLiterals.length > 1 ?
               rangeUsageNoteLiterals.map(x => ({ '@language': x.language, '@value': x.value })) :
               rangeUsageNoteLiterals[0].value,
+          },
+          ...rangeCodelist && {
+            codelist: rangeCodelist.value,
           },
         },
         ...parentLiteral && {

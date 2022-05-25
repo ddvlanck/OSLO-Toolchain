@@ -7,7 +7,7 @@ import type { UriAssigner } from '../UriAssigner';
 // See comment in attribute handler about strategy
 
 export class PackageConverterHandler extends ConverterHandler<EaPackage> {
-  public addObjectsToOutput(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
+  public async addObjectsToOutput(uriAssigner: UriAssigner, outputHandler: OutputHandler): Promise<void> {
     const ontologyUriMap = uriAssigner.packageIdOntologyUriMap;
     const baseUriMap = uriAssigner.packageIdUriMap;
 

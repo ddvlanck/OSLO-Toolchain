@@ -2,6 +2,7 @@ import type { OutputHandler } from '@oslo-flanders/core';
 import { ns, PropertyType } from '@oslo-flanders/core';
 
 import type { EaAttribute } from '@oslo-flanders/ea-extractor';
+import { NotificationMessage } from '../EaConverter';
 import { ConverterHandler } from '../types/ConverterHandler';
 import { DataTypes } from '../types/DataTypes';
 import { TagName } from '../types/TagName';
@@ -15,9 +16,8 @@ import { getTagValue } from '../utils/utils';
 // The output handler will substitute then replace well-known id with the assigned URI
 
 export class AttributeConverterHandler extends ConverterHandler<EaAttribute> {
-  public addObjectsToOutput(uriAssigner: UriAssigner, outputHandler: OutputHandler): void {
+  public async addObjectsToOutput(uriAssigner: UriAssigner, outputHandler: OutputHandler): Promise<void> {
     const attributeUriMap = uriAssigner.attributeIdUriMap;
-    const elementUriMap = uriAssigner.elementIdUriMap;
     const elementNameToElementMap = uriAssigner.elementNameToElementMap;
     const packageUri = uriAssigner.packageIdUriMap.get(this.converter.getTargetDiagram().packageId)!;
 
@@ -64,14 +64,10 @@ export class AttributeConverterHandler extends ConverterHandler<EaAttribute> {
         const elementIsLiteral = getTagValue(element, TagName.IsLiteral, false);
 
         attributeType = elementIsLiteral === 'true' ? PropertyType.DataTypeProperty : PropertyType.ObjectProperty;
-        // Range will be set to the .well-known URI
-        // FIXME: problem here is that elementUriMap contains the correct URI
-        // but the element is not on the diagram, meaning it is not added to the
-        // N3.Store
-        // Possible solution is to check if the element is on the diagram
-        // And if not, then add id, because we reference it
+        // In case an element is references that is not included on the target diagram
+        // We still add it to the output handler
         if (!this.converter.getTargetDiagram().elementIds.includes(element.id)) {
-          this.converter.addElementToOutput(element);
+          this.converter.notify(NotificationMessage.AddElementToOutput, element);
         }
 
         range = ns.example(`.well-known/${element.internalGuid}`).value;
@@ -93,17 +89,6 @@ export class AttributeConverterHandler extends ConverterHandler<EaAttribute> {
         outputHandler.add(rangeNamedNode, ns.rdfs('label'), this.factory.literal(rangeLabel));
       }
 
-      // FIXME: what if range is not yet added by the ElementConverterHandler?
-
-      // When adding a range, the graph is set to the attribute URI
-      // This is necessary for codelists, because they share the same URI
-      // (http://www.w3.org/2004/02/skos/core#Concept)
-      // Otherwise, it is impossible to extract the correct label, definition and usage note
-      // attached to the skos:Concept URI for this attribute
-      // if (rangeNamedNode.equals(ns.skos('Concept'))) {
-      //   outputHandler.updateGraph(rangeNamedNode, this.factory.literal(rangeLabel), attributeUriNamedNode);
-      // }
-
       const definition = this.getDefinition(attribute);
       outputHandler.add(uniqueInternalIdNamedNode, ns.rdfs('comment'), definition);
 
@@ -113,7 +98,6 @@ export class AttributeConverterHandler extends ConverterHandler<EaAttribute> {
       const usageNote = this.getUsageNote(attribute);
       outputHandler.add(uniqueInternalIdNamedNode, ns.vann('usageNote'), usageNote);
 
-      // Const domain = elementUriMap.get(attribute.classId)!;
       const domainWellKnownId = this.converter.getElements().find(x => x.id === attribute.classId)?.internalGuid;
       outputHandler.add(uniqueInternalIdNamedNode, ns.rdfs('domain'), ns.example(`.well-known/${domainWellKnownId}`));
 

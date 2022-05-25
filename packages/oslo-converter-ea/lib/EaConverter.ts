@@ -1,6 +1,6 @@
 import type { EaConverterConfiguration } from '@oslo-flanders/configuration';
 import { Converter } from '@oslo-flanders/core';
-import type { EaAttribute, EaConnector, EaDiagram, EaElement, EaPackage } from '@oslo-flanders/ea-extractor';
+import type { EaAttribute, EaConnector, EaDiagram, EaElement, EaObject, EaPackage } from '@oslo-flanders/ea-extractor';
 import { ConnectorType, DataExtractor } from '@oslo-flanders/ea-extractor';
 
 import { AttributeConverterHandler } from './converterHandlers/AttributeConverterHandler';
@@ -13,6 +13,10 @@ import type { NormalizedConnector } from './types/NormalizedConnector';
 
 import { UriAssigner } from './UriAssigner';
 import { ignore, normalize } from './utils/utils';
+
+export enum NotificationMessage {
+  AddElementToOutput
+}
 
 export class EaConverter extends Converter<EaConverterConfiguration> {
   private readonly extractor: DataExtractor;
@@ -57,8 +61,18 @@ export class EaConverter extends Converter<EaConverterConfiguration> {
       this.connectorConverterHandler,
     ].forEach(handler => {
       handler.factory = this.outputHandler.factory;
-      handler.addObjectsToOutput(this.uriAssigner, this.outputHandler);
     });
+
+    // These elements must be added to the store before we can process attributes and connectors
+    await Promise.all([
+      this.packageConverterHandler.addObjectsToOutput(this.uriAssigner, this.outputHandler),
+      this.elementConverterHandler.addObjectsToOutput(this.uriAssigner, this.outputHandler),
+    ]);
+
+    await Promise.all([
+      this.attributeConverterHandler.addObjectsToOutput(this.uriAssigner, this.outputHandler),
+      this.connectorConverterHandler.addObjectsToOutput(this.uriAssigner, this.outputHandler),
+    ]);
 
     await this.outputHandler.write(this.configuration.outputFile);
   }
@@ -113,9 +127,17 @@ export class EaConverter extends Converter<EaConverterConfiguration> {
     this.normalizedConnectors = normalizedConnectors;
   }
 
-  // TODO: make abstract function that is called and then this function private
-  //(mediator pattern)
-  public addElementToOutput(element: EaElement): void {
+  public notify(message: NotificationMessage, object: EaObject): void {
+    switch (message) {
+      case NotificationMessage.AddElementToOutput:
+        return this.addElementToOutput(<EaElement>object);
+
+      default:
+        throw new Error('Notification message not understood by converter');
+    }
+  }
+
+  private addElementToOutput(element: EaElement): void {
     this.elementConverterHandler.addObjectToOutput(
       element,
       this.getTargetDiagram(),
