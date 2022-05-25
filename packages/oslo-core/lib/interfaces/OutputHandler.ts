@@ -1,6 +1,7 @@
 import type * as RDF from '@rdfjs/types';
 import * as N3 from 'n3';
 import { DataFactory } from 'rdf-data-factory';
+import { getLoggerFor } from '../logging/LogUtil';
 import { ns } from '../utils/namespaces';
 
 export type RdfObjectTypes = RDF.NamedNode | RDF.NamedNode[] | RDF.Literal | RDF.Literal[];
@@ -9,6 +10,8 @@ export type RdfObjectTypes = RDF.NamedNode | RDF.NamedNode[] | RDF.Literal | RDF
  * Interface that writes the OSLO objects to a file in an RDF format
  */
 export abstract class OutputHandler {
+  protected readonly logger = getLoggerFor(this);
+
   protected readonly store: N3.Store;
   public readonly factory: DataFactory;
 

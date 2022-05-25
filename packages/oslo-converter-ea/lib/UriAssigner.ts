@@ -79,8 +79,7 @@ export class UriAssigner {
       const packageUri = this.packageIdUriMap.get(element.packageId);
 
       if (!packageUri) {
-        this.logger.error(`Unnable to find the package URI for element (${element.path()}) with package id: ${element.packageId}.`);
-        this.logger.info(`Element "${element.path()}" will be skipped.`);
+        this.logger.error(`Unnable to find the package URI for element (${element.path()}) with package id '${element.packageId}', skipping it.`);
         return;
       }
 
@@ -105,16 +104,14 @@ export class UriAssigner {
       const attributeClass = elements.find(x => x.id === attribute.classId);
 
       if (!attributeClass) {
-        this.logger.error(`Unnable to find the class (id=${attribute.classId}) to which the attribute (${attribute.path()}) belongs.`);
-        this.logger.info(`Attribute "${attribute.path()}" will be skipped.`);
+        this.logger.error(`Unnable to find the class object to which the attribute (${attribute.path()}) belongs, skipping attribute.`);
         return;
       }
 
       const packageUri = this.packageIdUriMap.get(attributeClass.packageId);
 
       if (!packageUri) {
-        this.logger.error(`Unnable to find the package URI for attribute (${attribute.path()}) with package id: ${attributeClass.packageId}.`);
-        this.logger.info(`Attribute "${attribute.path()}" will be skipped.`);
+        this.logger.error(`Unnable to find the package URI for attribute (${attribute.path()}) with package id '${attributeClass.packageId}', skipping it.`);
         return;
       }
 

@@ -41,6 +41,8 @@ export class DataExtractor {
     this.attributes = loadAttributes(eaReader, this.elements);
     this.connectors = loadElementConnectors(eaReader, this.elements);
     this.diagrams = loadDiagrams(eaReader, this.connectors, this.packages);
+
+    this.logger.info('Done extracting data');
   }
 
   public setTargetDiagram(name: string): void {

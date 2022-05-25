@@ -1,5 +1,5 @@
 import type { EaConverterConfiguration } from '@oslo-flanders/configuration';
-import { Converter } from '@oslo-flanders/core';
+import { Converter, getLoggerFor } from '@oslo-flanders/core';
 import type { EaAttribute, EaConnector, EaDiagram, EaElement, EaObject, EaPackage } from '@oslo-flanders/ea-extractor';
 import { ConnectorType, DataExtractor } from '@oslo-flanders/ea-extractor';
 
@@ -116,8 +116,7 @@ export class EaConverter extends Converter<EaConverterConfiguration> {
         const destinationClass = elements.find(x => x.id === connector.destinationObjectId);
 
         if (!destinationClass) {
-          // TODO: Log warning
-          console.log(`Can't find object for id ${connector.destinationObjectId}.`);
+          this.logger.warn(`Can not find corresponding object for connector with id '${connector.destinationObjectId}'. Path for this connector is ${connector.path()}`);
         } else {
           connector.addNameTag(destinationClass.name);
         }

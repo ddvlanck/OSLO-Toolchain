@@ -1,5 +1,5 @@
 import type { Logger as WinstonLogger } from 'winston';
-import { createLogger, transports, format } from 'winston';
+import { config, createLogger, transports, format } from 'winston';
 
 /**
  * Logs messages on a certain level by using the Winston logger.
@@ -52,20 +52,15 @@ export class Logger {
   }
 
   private createWinstonLogger(label: string): WinstonLogger {
-    const fileLogFormat = format.printf(({ level, message, timestamp, ...metadata }) => {
-      let msg = `${timestamp} [${level}] : ${message} `;
-      if (Object.keys(metadata).length > 0) {
-        msg += `${JSON.stringify(metadata, null, 4)}`;
-      }
-      return msg;
-    });
-
-    // TODO: this should not be here
+    // FIXME: this should not be here
     const silent = process.env.NODE_ENV === 'test';
 
+    // TODO: add file transport
     return createLogger({
+      levels: config.npm.levels,
       transports: [
         new transports.Console({
+          level: 'debug',
           silent,
           format: format.combine(
             format.colorize(),
@@ -78,15 +73,6 @@ export class Logger {
               timestamp,
             }: Record<string, any>): string =>
               `${timestamp} [${labelInner}] ${levelInner}: ${message}`),
-          ),
-        }),
-        new transports.File({
-          filename: `toolchain-debug-info.log`,
-          options: { flags: 'w' },
-          level: 'debug',
-          format: format.combine(
-            format.timestamp(),
-            fileLogFormat,
           ),
         }),
       ],

@@ -1,4 +1,4 @@
-import type { Logger } from '../logging/Logger';
+import { getLoggerFor } from '../logging/LogUtil';
 import type { OutputHandler } from './OutputHandler';
 
 /**
@@ -6,14 +6,15 @@ import type { OutputHandler } from './OutputHandler';
  */
 // Does not contain a constructor to keep componentsjs config file as simple as possible
 export abstract class Converter<T> {
-  private _logger: Logger | undefined;
+  protected readonly logger = getLoggerFor(this);
+
   private _configuration: T | undefined;
   private _outputHandler: OutputHandler | undefined;
 
-  public init(config: T, outputHandler: OutputHandler, logger: Logger): void {
+  public init(config: T, outputHandler: OutputHandler): void {
+    this.logger.info(`Received following configuration from runner: ${JSON.stringify(config)}`);
     this._configuration = config;
     this._outputHandler = outputHandler;
-    this._logger = logger;
   }
 
   public get configuration(): T {
@@ -28,13 +29,6 @@ export abstract class Converter<T> {
       throw new Error('OutputHandler not set yet.');
     }
     return this._outputHandler;
-  }
-
-  public get logger(): Logger {
-    if (!this._logger) {
-      throw new Error('Logger not set yet.');
-    }
-    return this._logger;
   }
 
   public abstract convert(): Promise<void>;

@@ -42,10 +42,9 @@ export class AttributeConverterHandler extends ConverterHandler<EaAttribute> {
       let attributeType: PropertyType;
       let rangeLabel: string | undefined;
 
-      // TODO: range should have a label, but how does is work when range is added through a tag?
-      // TODO: rangeLabels should be added to store as well.
-
-      // FIXME: re-write this part
+      // 1. Check if there was a range tag
+      // 2. If not, check if attribute type belongs to DataTypes (primitive types)
+      // 3. If not, check if range is an EaElement
       if (range) {
         const isLiteral = getTagValue(attribute, TagName.IsLiteral, false);
         attributeType = isLiteral === 'true' ? PropertyType.DataTypeProperty : PropertyType.ObjectProperty;

@@ -69,7 +69,7 @@ export abstract class ConverterHandler<T extends EaObject> {
   }
 
   private getLanguageDependentTag(object: T, tagName: TagName, fallbackTag?: TagName): RDF.Literal[] {
-    const tags = object.tags?.filter((x: Tag) => x.tagName.startsWith(tagName));
+    const tags = object.tags?.filter((x: Tag) => x.tagName?.startsWith(tagName));
     const literals: RDF.Literal[] = [];
 
     const languageToTagValueMap = new Map<string, string>();
@@ -93,13 +93,13 @@ export abstract class ConverterHandler<T extends EaObject> {
         // Log warning that object has multiple occurrences and will be overriden
       }
 
-      const tagValue = tag.tagValue.trim();
+      const tagValue = tag.tagValue;
       if (!tagValue) {
         // Log warning for empty field?
         return;
       }
 
-      literals.push(this.factory.literal(tagValue, languageCode));
+      literals.push(this.factory.literal(tagValue.trim(), languageCode));
     });
 
     return literals;

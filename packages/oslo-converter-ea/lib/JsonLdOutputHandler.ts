@@ -5,17 +5,20 @@ import type * as RDF from '@rdfjs/types';
 // TODO: check if we can use a serializer npm package
 export class JsonLdOutputHandler extends OutputHandler {
   public async write(path: string): Promise<void> {
-    const osloPackages = this.getOsloPackages();
-    const osloClasses = this.getOsloClasses();
-    const osloAttribtues = this.getOsloAttributes();
-    const osloDatatypes = this.getDatatypes();
+    const [osloPackages, osloClasses, osloAttributes, osloDatatypes] = await Promise.all([
+      this.getOsloPackages(),
+      this.getOsloClasses(),
+      this.getOsloAttributes(),
+      this.getOsloDatatypes(),
+    ]);
 
     const document: any = {};
     document['@context'] = this.getContext();
+    // FIXME: document id should come from configuration
     document['@id'] = ns.example('TestId').value;
     document.packages = osloPackages;
     document.classes = osloClasses;
-    document.attributes = osloAttribtues;
+    document.attributes = osloAttributes;
     document.datatypes = osloDatatypes;
 
     // TODO: add stakeholders
@@ -24,32 +27,56 @@ export class JsonLdOutputHandler extends OutputHandler {
   }
 
   // Returns an array because a literal can be annotated with multiple languages
-  private getLiterals(quads: RDF.Quad[], predicate: RDF.NamedNode): RDF.Literal[] {
+  private getObjectLiterals(quads: RDF.Quad[], predicate: RDF.NamedNode): RDF.Literal[] {
     return quads.filter(x => x.predicate.equals(predicate)).map(x => <RDF.Literal>x.object);
   }
 
-  private getLiteral(quads: RDF.Quad[], predicate: RDF.NamedNode): RDF.Literal {
-    return <RDF.Literal>quads.find(x => x.predicate.equals(predicate))?.object;
+  private getObjectLiteral(quads: RDF.Quad[], predicate: RDF.NamedNode): RDF.Term | undefined {
+    const literals = this.getObjectLiterals(quads, predicate);
+
+    if (literals.length > 1) {
+      this.logger.warn(`Multiple literals discovered when only one was expected for ${quads[0].subject.value}.`);
+    }
+
+    return literals.length > 0 ? literals[0] : undefined;
   }
 
-  private getOsloPackages(): any {
+  private getObjectNamedNodes(quads: RDF.Quad[], predicate: RDF.NamedNode): RDF.NamedNode[] {
+    return quads.filter(x => x.predicate.equals(predicate)).map(x => <RDF.NamedNode>x.object);
+  }
+
+  private getObjectNamedNode(quads: RDF.Quad[], predicate: RDF.NamedNode): RDF.NamedNode | undefined {
+    const namedNodes = this.getObjectNamedNodes(quads, predicate);
+
+    if (namedNodes.length > 1) {
+      this.logger.warn(`Multiple named nodes discovered when only one was expected for ${quads[0].subject.value}`);
+    }
+
+    return namedNodes.length > 0 ? namedNodes[0] : undefined;
+  }
+
+  private async getOsloPackages(): Promise<any> {
     const packageWellKnownIdSubjects = this.store.getSubjects(ns.rdf('type'), ns.example('Package'), null);
 
     return packageWellKnownIdSubjects.map(wellKnownIdSubject => {
       const packageSubject = this.store.getObjects(wellKnownIdSubject, ns.example('guid'), null)[0];
       const quads = this.store.getQuads(wellKnownIdSubject, null, null, null);
-      const baseUriObject = this.getLiteral(quads, ns.example('baseUri'));
+
+      const baseUriObject = this.getObjectNamedNode(quads, ns.example('baseUri'));
+
+      if (!baseUriObject) {
+        this.logger.error(`Unnable to find base URI for ${wellKnownIdSubject.value}. Value will be undefined`);
+      }
 
       return {
         '@id': packageSubject.value,
         '@type': 'Package',
-        baseUri: baseUriObject.value,
+        baseUri: baseUriObject?.value,
       };
     });
   }
 
-  // FIXME: skip enumeration classes 'skos:Concept'
-  private getOsloClasses(): any {
+  private async getOsloClasses(): Promise<any> {
     const classWellKnownIdSubjects = this.store.getSubjects(ns.rdf('type'), ns.owl('Class'), null);
 
     return classWellKnownIdSubjects.reduce<any[]>((osloClasses, wellKnownIdSubject) => {
@@ -61,12 +88,12 @@ export class JsonLdOutputHandler extends OutputHandler {
 
       const quads = this.store.getQuads(wellKnownIdSubject, null, null, null);
 
-      const definitionLiterals = this.getLiterals(quads, ns.rdfs('comment'));
-      const labelLiterals = this.getLiterals(quads, ns.rdfs('label'));
-      const usageNoteLiterals = this.getLiterals(quads, ns.vann('usageNote'));
+      const definitionLiterals = this.getObjectLiterals(quads, ns.rdfs('comment'));
+      const labelLiterals = this.getObjectLiterals(quads, ns.rdfs('label'));
+      const usageNoteLiterals = this.getObjectLiterals(quads, ns.vann('usageNote'));
       // TODO: when using a codelist for scope, this can not be a literal anymore.
-      const scopeLiteral = this.getLiteral(quads, ns.example('scope'));
-      const parentObjects = this.getLiterals(quads, ns.rdfs('subClassOf'));
+      const scopeLiteral = this.getObjectLiteral(quads, ns.example('scope'));
+      const parentObjects = this.getObjectNamedNodes(quads, ns.rdfs('subClassOf'));
       const parentLabelLiterals: { id: string; labels: RDF.Literal[] }[] = [];
 
       if (parentObjects.length > 0) {
@@ -103,14 +130,14 @@ export class JsonLdOutputHandler extends OutputHandler {
               },
             })),
         },
-        scope: scopeLiteral.value,
+        scope: scopeLiteral?.value,
       });
 
       return osloClasses;
     }, []);
   }
 
-  public getOsloAttributes(): any {
+  private async getOsloAttributes(): Promise<any> {
     const datatypeAttributes = this.store.getSubjects(ns.rdf('type'), ns.owl('DatatypeProperty'), null);
     const objectPropertyAttributes = this.store.getSubjects(ns.rdf('type'), ns.owl('ObjectProperty'), null);
     const propertyAttributes = this.store.getSubjects(ns.rdf('type'), ns.rdf('Property'), null);
@@ -125,11 +152,12 @@ export class JsonLdOutputHandler extends OutputHandler {
 
       // Attributes generated by the normalization of the connectors (associationclasses)
       // do not have a definition
-      const definitionLiterals = this.getLiterals(quads, ns.rdfs('comment'));
-      const attributeType = this.getLiteral(quads, ns.rdf('type'));
-      const labelLiterals = this.getLiterals(quads, ns.rdfs('label'));
-      const usageNoteLiterals = this.getLiterals(quads, ns.vann('usageNote'));
-      const domainWellKnownIdNode = this.getLiteral(quads, ns.rdfs('domain'));
+      const definitionLiterals = this.getObjectLiterals(quads, ns.rdfs('comment'));
+      const attributeType = this.getObjectNamedNode(quads, ns.rdf('type'));
+      const labelLiterals = this.getObjectLiterals(quads, ns.rdfs('label'));
+      const usageNoteLiterals = this.getObjectLiterals(quads, ns.vann('usageNote'));
+      const domainWellKnownIdNode = this.getObjectNamedNode(quads, ns.rdfs('domain'));
+
       let domainSubject: RDF.NamedNode | undefined;
       let domainLabelLiterals: RDF.Literal[] | undefined;
 
@@ -146,10 +174,10 @@ export class JsonLdOutputHandler extends OutputHandler {
         domainLabelLiterals = domainLabelQuads.map(x => <RDF.Literal>x.object);
       }
 
-      const rangeNamedNode = this.getLiteral(quads, ns.rdfs('range'));
+      const rangeNamedNode = this.getObjectNamedNode(quads, ns.rdfs('range'));
       let rangeSubject: RDF.Term | undefined;
       let rangeLabelLiterals: RDF.Literal[] | undefined;
-      let rangeCodelist: RDF.Literal | undefined;
+      let rangeCodelist: RDF.NamedNode | undefined;
 
       // When range is a codelist (skos:Concept), its definition
       // and usage note is included in the attribute object
@@ -179,19 +207,19 @@ export class JsonLdOutputHandler extends OutputHandler {
             .filter(x => x.predicate.equals(ns.vann('usageNote')))
             .map(x => <RDF.Literal>x.object);
 
-          rangeCodelist = this.getLiteral(rangeQuads, ns.example('codelist'));
+          rangeCodelist = this.getObjectNamedNode(rangeQuads, ns.example('codelist'));
         }
       }
 
-      const maxCardinalityLiteral = this.getLiteral(quads, ns.shacl('maxCount'));
-      const minCardinalityLiteral = this.getLiteral(quads, ns.shacl('minCount'));
+      const maxCardinalityLiteral = this.getObjectLiteral(quads, ns.shacl('maxCount'));
+      const minCardinalityLiteral = this.getObjectLiteral(quads, ns.shacl('minCount'));
       // TODO: when using codelists, this will not by a literal anymore
-      const scopeLiteral = this.getLiteral(quads, ns.example('scope'));
-      const parentLiteral = this.getLiteral(quads, ns.rdfs('subPropertyOf'));
+      const scopeLiteral = this.getObjectLiteral(quads, ns.example('scope'));
+      const parentLiteral = this.getObjectNamedNode(quads, ns.rdfs('subPropertyOf'));
 
       return {
         '@id': attributeSubject.value,
-        '@type': attributeType.value,
+        '@type': attributeType?.value,
         guid: wellKnownIdSubject.value,
         label: labelLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
         ...definitionLiterals && {
@@ -231,25 +259,25 @@ export class JsonLdOutputHandler extends OutputHandler {
         ...parentLiteral && {
           parent: parentLiteral.value,
         },
-        minCount: minCardinalityLiteral.value,
-        maxCount: maxCardinalityLiteral.value,
-        scope: scopeLiteral.value,
+        minCount: minCardinalityLiteral?.value,
+        maxCount: maxCardinalityLiteral?.value,
+        scope: scopeLiteral?.value,
       };
     });
   }
 
-  private getDatatypes(): any {
+  private async getOsloDatatypes(): Promise<any> {
     const datatypesWellKnowIdSubjects = this.store.getSubjects(ns.rdf('type'), ns.example('DataType'), null);
 
     return datatypesWellKnowIdSubjects.map(wellKnownIdSubject => {
       const datatypeSubject = this.store.getObjects(wellKnownIdSubject, ns.example('guid'), null)[0];
       const quads = this.store.getQuads(wellKnownIdSubject, null, null, null);
 
-      const definitionLiterals = this.getLiterals(quads, ns.rdfs('comment'));
-      const labelLiterals = this.getLiterals(quads, ns.rdfs('label'));
-      const usageNoteLiterals = this.getLiterals(quads, ns.vann('usageNote'));
+      const definitionLiterals = this.getObjectLiterals(quads, ns.rdfs('comment'));
+      const labelLiterals = this.getObjectLiterals(quads, ns.rdfs('label'));
+      const usageNoteLiterals = this.getObjectLiterals(quads, ns.vann('usageNote'));
       // TODO: when using a codelist for scope, this can not be a literal anymore.
-      const scopeLiteral = this.getLiteral(quads, ns.example('scope'));
+      const scopeLiteral = this.getObjectLiteral(quads, ns.example('scope'));
 
       return {
         '@id': datatypeSubject.value,
@@ -258,7 +286,7 @@ export class JsonLdOutputHandler extends OutputHandler {
         label: labelLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
         definition: definitionLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
         usageNote: usageNoteLiterals.map(x => ({ '@language': x.language, '@value': x.value })),
-        scope: scopeLiteral.value,
+        scope: scopeLiteral?.value,
       };
     });
   }
